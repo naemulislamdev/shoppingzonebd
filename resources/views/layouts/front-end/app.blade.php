@@ -43,33 +43,33 @@
         .v-size-box {
             display: flex;
             align-items: center;
-            width: 70px;
-            height: 30px !important;
-            margin-top: 0px;
-            margin-right: 10px;
+            width: 4.375rem;
+            height: 1.875rem !important;
+            margin-top: 0rem;
+            margin-right: .625rem;
         }
 
         .v-color-box>.color-label,
         .v-size-box>.size-label {
             cursor: pointer;
-            border: 2px solid #ccc;
-            padding: 2px 6px !important;
-            border-radius: 5px;
+            border: .125rem solid #ccc;
+            padding: .125rem .375rem !important;
+            border-radius: .3125rem;
             width: 100%;
             text-align: center;
-            /* height: 30px !important; */
+            /* height: 1.875rem !important; */
             position: relative;
         }
 
         .v-color-box>input:checked+.color-label,
         .v-size-box>input:checked+.size-label {
-            border: 2px solid #02ab16 !important;
+            border: .125rem solid #02ab16 !important;
         }
 
         .v-size-box>input:checked+.size-label::after {
             content: '✔';
             color: white;
-            font-size: 12px;
+            font-size: .75rem;
             position: absolute;
             top: 50%;
             left: 50%;
@@ -78,7 +78,7 @@
 
         .cs_header_number_wrap {
             position: relative;
-            padding-left: 50px;
+            padding-left: 3.125rem;
             display: -webkit-box;
             display: -ms-flexbox;
             display: flex;
@@ -92,20 +92,20 @@
         .cs_header_number_wrap svg {
             position: absolute;
             left: 0;
-            width: 40px;
-            height: 40px;
-            top: 3px;
+            width: 2.5rem;
+            height: 2.5rem;
+            top: .1875rem;
         }
 
         .cs_header_number_wrap .cs_header_number {
             font-weight: 600;
             font-family: var(--primary-font);
-            font-size: 26px;
+            font-size: 1.625rem;
             line-height: 1.1em;
         }
 
         .cs_header_number_wrap .cs_header_number_text {
-            font-size: 12px;
+            font-size: .75rem;
             line-height: 1.5em;
             color: #636363;
         }
@@ -113,37 +113,37 @@
         .btn-primary {
             background-color: #303030;
             border: none;
-            margin-top: 10px;
-            font-size: 17px;
+            margin-top: .625rem;
+            font-size: 1.0625rem;
             font-weight: 600;
-            bottom: 6px;
+            bottom: .375rem;
             position: absolute;
-            left: 0px;
-            right: 0px;
+            left: 0rem;
+            right: 0rem;
             width: 100%;
         }
 
         .product-box-col-2 {
-            height: 465px;
+            height: 29.0625rem;
         }
         .product-box-col-3 {
-    height: 680px;
+    height: 42.5rem;
 }
 .product-box-col-6 {
-    height: 1235px;
+    height: 77.1875rem;
 }
 .product-box-col-4 {
-    height: 870px;
+    height: 54.375rem;
 }
 .product-box-col-sm-6 {
-    height: 520px;
+    height: 32.5rem;
 }
 .product-box-col-sm-12 {
-    height: 750px;
+    height: 46.875rem;
 }
 
         .product-image2-col-2 {
-            height: 270px
+            height: 16.875rem
         }
     </style>
     @php
@@ -341,7 +341,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     {{-- loader --}}
     <div class="row">
-        <div class="col-12" style="margin-top:10rem;position: fixed;z-index: 9999;">
+        <div class="col-12" style="margin-top:160px;position: fixed;z-index: 9999;">
             <div id="loading" style="display: none;">
                 <center>
                     <img width="200"
@@ -630,7 +630,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         $('.countWishlist').html(data.count);
                         $('.countWishlist-' + product_id).text(data.product_count);
                         $('.tooltip').html('');
-                        /*$('.wishlist' + data.id).html('<button type="button" class="btn" title="Add to wishlist" onclick="addWishlist(' + data.id + ')" style="background-color: transparent ;font-size: 18px; height: 45px; color: #9E9E9E; border: 2px solid #9E9E9E;">' +
+                        /*$('.wishlist' + data.id).html('<button type="button" class="btn" title="Add to wishlist" onclick="addWishlist(' + data.id + ')" style="background-color: transparent ;font-size: 1.125rem; height: 2.8125rem; color: #9E9E9E; border: .125rem solid #9E9E9E;">' +
                             '                       <i class="fa fa-heart-o mr-2" aria-hidden="true"></i>' +
                             '                   </button>');*/
                             // Product AI API integration
@@ -683,7 +683,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     $('.countWishlist').html(data.count);
                     $('#set-wish-list').html(data.wishlist);
                     $('.tooltip').html('');
-                    /*$('.wishlist' + data.id).html('<button type="button" class="btn" title="Add to wishlist" onclick="addWishlist(' + data.id + ')" style="background-color: transparent ;font-size: 18px; height: 45px; color: #9E9E9E; border: 2px solid #9E9E9E;">' +
+                    /*$('.wishlist' + data.id).html('<button type="button" class="btn" title="Add to wishlist" onclick="addWishlist(' + data.id + ')" style="background-color: transparent ;font-size: 1.125rem; height: 2.8125rem; color: #9E9E9E; border: .125rem solid #9E9E9E;">' +
                         '                       <i class="fa fa-heart-o mr-2" aria-hidden="true"></i>' +
                         '                   </button>');*/
                 },
