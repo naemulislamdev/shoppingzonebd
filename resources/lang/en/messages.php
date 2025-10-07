@@ -1875,4 +1875,5 @@
   'Product name' => 'Product name',
   'Batch Discount Create' => 'Batch Discount Create',
   'Batch Discount Form' => 'Batch Discount Form',
+  'Copyright © 2025 - Shopping Zone BD All Rights Reserved. Desing &' => 'Copyright © 2025 - Shopping Zone BD All Rights Reserved. Desing &',
 );

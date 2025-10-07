@@ -1,23 +1,23 @@
-<section class="header-slider-section">
-    @php($main_banner=\App\Model\Banner::where('banner_type','Main Banner')->where('published',1)->orderBy('id','desc')->get())
-    <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+<section class="header-slider-section mt-1 mt-lg-3">
+    @php($main_banner = \App\Model\Banner::where('banner_type', 'Main Banner')->where('published', 1)->orderBy('id', 'desc')->get())
+    <div id="carouselExampleIndicators" class="carousel slide position-relative container " data-ride="carousel">
         <ol class="carousel-indicators">
-            @foreach($main_banner as $key=>$banner)
-            <li data-target="#carouselExampleIndicators" data-slide-to="{{$key}}" class="{{$key == 0? 'active':''}}"></li>
+            @foreach ($main_banner as $key => $banner)
+                <li data-target="#carouselExampleIndicators" data-slide-to="{{ $key }}"
+                    class="{{ $key == 0 ? 'active' : '' }}"></li>
             @endforeach
         </ol>
         <div class="carousel-inner">
-            @foreach($main_banner as $key=>$banner)
-            <div class="carousel-item {{$key==0? 'active':''}}">
-                <div class="main-slider">
-                    <a href="{{$banner['url']}}">
-                        <img class="d-block w-100"
-                             onerror="this.src='{{asset('assets/front-end/img/image-place-holder.png')}}'"
-                             src="{{asset('storage/banner')}}/{{$banner['photo']}}"
-                             alt="">
-                    </a>
+            @foreach ($main_banner as $key => $banner)
+                <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
+                    <div class="main-slider  ">
+                        <a href="{{ $banner['url'] }}">
+                            <img class="d-block w-100 rounded-0 rounded-lg"
+                                onerror="this.src='{{ asset('assets/front-end/img/image-place-holder.png') }}'"
+                                src="{{ asset('storage/banner') }}/{{ $banner['photo'] }}" alt="">
+                        </a>
+                    </div>
                 </div>
-            </div>
             @endforeach
         </div>
         <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">

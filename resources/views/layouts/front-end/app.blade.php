@@ -109,7 +109,13 @@
             line-height: 1.5em;
             color: #636363;
         }
-        .table-cart th{background-color:#424242;color:#fff;text-align:center}
+
+        .table-cart th {
+            background-color: #424242;
+            color: #fff;
+            text-align: center
+        }
+
         .btn-primary {
             background-color: #303030;
             border: none;
@@ -126,21 +132,26 @@
         .product-box-col-2 {
             height: 29.0625rem;
         }
+
         .product-box-col-3 {
-    height: 42.5rem;
-}
-.product-box-col-6 {
-    height: 77.1875rem;
-}
-.product-box-col-4 {
-    height: 54.375rem;
-}
-.product-box-col-sm-6 {
-    height: 32.5rem;
-}
-.product-box-col-sm-12 {
-    height: 46.875rem;
-}
+            height: 42.5rem;
+        }
+
+        .product-box-col-6 {
+            height: 77.1875rem;
+        }
+
+        .product-box-col-4 {
+            height: 54.375rem;
+        }
+
+        .product-box-col-sm-6 {
+            height: 32.5rem;
+        }
+
+        .product-box-col-sm-12 {
+            height: 46.875rem;
+        }
 
         .product-image2-col-2 {
             height: 16.875rem
@@ -173,54 +184,106 @@
     @endif
 
     @php($pixel_analytices_user_code = \App\CPU\Helpers::get_business_settings('pixel_analytics'))
-<!-- Meta Pixel Code -->
-<script>
-!function(f,b,e,v,n,t,s)
-{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];
-s.parentNode.insertBefore(t,s)}(window, document,'script',
-'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init', '1051858697046572');
-fbq('track', 'PageView');
-</script>
-<noscript><img height="1" width="1" style="display:none"
-src="https://www.facebook.com/tr?id=1051858697046572&ev=PageView&noscript=1"
-/></noscript>
-<!-- End Meta Pixel Code -->
+    <!-- Meta Pixel Code -->
+    <script>
+        ! function(f, b, e, v, n, t, s) {
+            if (f.fbq) return;
+            n = f.fbq = function() {
+                n.callMethod ?
+                    n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+            };
+            if (!f._fbq) f._fbq = n;
+            n.push = n;
+            n.loaded = !0;
+            n.version = '2.0';
+            n.queue = [];
+            t = b.createElement(e);
+            t.async = !0;
+            t.src = v;
+            s = b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t, s)
+        }(window, document, 'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '1051858697046572');
+        fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+            src="https://www.facebook.com/tr?id=1051858697046572&ev=PageView&noscript=1" /></noscript>
+    <!-- End Meta Pixel Code -->
 
-<!-- TikTok Pixel Code Start  New-->
-<script>
-!function (w, d, t) {
-  w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
-var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script")
-;n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
+    <!-- TikTok Pixel Code Start  New-->
+    <script>
+        ! function(w, d, t) {
+            w.TiktokAnalyticsObject = t;
+            var ttq = w[t] = w[t] || [];
+            ttq.methods = ["page", "track", "identify", "instances", "debug", "on", "off", "once", "ready", "alias",
+                "group", "enableCookie", "disableCookie", "holdConsent", "revokeConsent", "grantConsent"
+            ], ttq.setAndDefer = function(t, e) {
+                t[e] = function() {
+                    t.push([e].concat(Array.prototype.slice.call(arguments, 0)))
+                }
+            };
+            for (var i = 0; i < ttq.methods.length; i++) ttq.setAndDefer(ttq, ttq.methods[i]);
+            ttq.instance = function(t) {
+                for (
+                    var e = ttq._i[t] || [], n = 0; n < ttq.methods.length; n++) ttq.setAndDefer(e, ttq.methods[n]);
+                return e
+            }, ttq.load = function(e, n) {
+                var r = "https://analytics.tiktok.com/i18n/pixel/events.js",
+                    o = n && n.partner;
+                ttq._i = ttq._i || {}, ttq._i[e] = [], ttq._i[e]._u = r, ttq._t = ttq._t || {}, ttq._t[e] = +new Date,
+                    ttq._o = ttq._o || {}, ttq._o[e] = n || {};
+                n = document.createElement("script");
+                n.type = "text/javascript", n.async = !0, n.src = r + "?sdkid=" + e + "&lib=" + t;
+                e = document.getElementsByTagName("script")[0];
+                e.parentNode.insertBefore(n, e)
+            };
 
 
-  ttq.load('D2I4AAJC77U9R4VI8UOG');
-  ttq.page();
-}(window, document, 'ttq');
-</script>
-<!-- TikTok Pixel Code End -->
+            ttq.load('D2I4AAJC77U9R4VI8UOG');
+            ttq.page();
+        }(window, document, 'ttq');
+    </script>
+    <!-- TikTok Pixel Code End -->
 
 
-<!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-PLM9XQ7X');</script>
-<!-- End Google Tag Manager -->
+    <!-- Google Tag Manager -->
+    <script>
+        (function(w, d, s, l, i) {
+            w[l] = w[l] || [];
+            w[l].push({
+                'gtm.start': new Date().getTime(),
+                event: 'gtm.js'
+            });
+            var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s),
+                dl = l != 'dataLayer' ? '&l=' + l : '';
+            j.async = true;
+            j.src =
+                'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+            f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', 'GTM-PLM9XQ7X');
+    </script>
+    <!-- End Google Tag Manager -->
 
-<!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-WQ6FD77Z');</script>
-<!-- End Google Tag Manager -->
+    <!-- Google Tag Manager -->
+    <script>
+        (function(w, d, s, l, i) {
+            w[l] = w[l] || [];
+            w[l].push({
+                'gtm.start': new Date().getTime(),
+                event: 'gtm.js'
+            });
+            var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s),
+                dl = l != 'dataLayer' ? '&l=' + l : '';
+            j.async = true;
+            j.src =
+                'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+            f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', 'GTM-WQ6FD77Z');
+    </script>
+    <!-- End Google Tag Manager -->
 
 
 </head>
@@ -228,9 +291,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
 <body class="toolbar-enabled">
     <!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WQ6FD77Z"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WQ6FD77Z" height="0" width="0"
+            style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
     <section class="topbar-section">
         <div class="container">
             <div class="row">
@@ -397,6 +460,37 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             toastr.warning("{{ Session::get('warning') }}")
         </script>
     @endif
+    {{-- owl carosel  --}}
+    <script>
+        $(document).ready(function() {
+            $('.owl-carousel').each(function() {
+                const delay = $(this).data('delay') || 3000;
+                $(this).owlCarousel({
+                    loop: true,
+                    margin: 10,
+                    autoplay: true,
+                    autoplayTimeout: delay,
+                    smartSpeed: 600,
+                    nav: true,
+                    navText: [
+                        '<i class="fa fa-chevron-left text-white"></i>',
+                        '<i class="fa fa-chevron-right text-white"></i>'
+                    ],
+                    responsive: {
+                        0: {
+                            items: 2
+                        },
+                        768: {
+                            items: 3
+                        },
+                        992: {
+                            items: 6
+                        }
+                    }
+                });
+            });
+        });
+    </script>
     <script>
         $(document).ready(function() {
             /*mobile menu*/
@@ -633,7 +727,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         /*$('.wishlist' + data.id).html('<button type="button" class="btn" title="Add to wishlist" onclick="addWishlist(' + data.id + ')" style="background-color: transparent ;font-size: 1.125rem; height: 2.8125rem; color: #9E9E9E; border: .125rem solid #9E9E9E;">' +
                             '                       <i class="fa fa-heart-o mr-2" aria-hidden="true"></i>' +
                             '                   </button>');*/
-                            // Product AI API integration
+                        // Product AI API integration
                         const productAPI = new ProductAPI("https://ai.szbdfinancing.com");
                         async function loadProduct() {
                             const product = await productAPI.analyzeProduct(product_id, "view");
@@ -1125,14 +1219,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         });
     </script>
     <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-CMPYP8JY4C"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CMPYP8JY4C"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
 
-  gtag('config', 'G-CMPYP8JY4C');
-</script>
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+
+        gtag('config', 'G-CMPYP8JY4C');
+    </script>
 
     @stack('scripts')
 </body>
