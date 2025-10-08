@@ -17,7 +17,7 @@
     @include('layouts.front-end.partials._modals')
     <!------start  header main slider-->
     @include('layouts.front-end.partials.slider')
-    {{-- <section class="category-section my-4">
+    <section class="category-section my-4">
         <div class="container">
             <div class="row">
                 <div class="col-md-11 mx-auto">
@@ -59,21 +59,22 @@
                 </div>
             </div>
         </div>
-    </section> --}}
+    </section>
     {{-- New Arrivals Section Start --}}
     <section class="new-arrivals-section my-2 my-lg-4">
         <div class="container">
             <div class="row mb-3">
                 <div class="col text-center">
                     <div class="section-heading-title position-relative z-30">
-                        <span>NEW ARRIVALS</span>
                         <h3>NEW ARRIVALS</h3>
-                        {{-- <button class="btn btn-success text-end">Shop More</button> --}}
                         <div class="heading-border"></div>
+                        <div class="d-flex justify-content-end">
+                            <a href="" class="btn btn-outline-warning  text-end  d-none d-lg-block">Shop More</a>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="owl-carousel related-products product-carosel mt-4 mt-lg-5" data-delay="3000">
+            <div class="owl-carousel related-products product-carosel mt-4 mt-lg-4" data-delay="3000">
                 <div class="item">
                     <div class="product-column">
                         <div class="product-box product-box-col-2">
@@ -148,46 +149,6 @@
                                     <span class="mr-2">2999</span>
                                     <del>2500</del>
                                 </div>
-                                <button type="button" style="cursor: pointer;" class="btn btn-primary">অর্ডার করুন</button>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="item">
-                    <div class="product-column">
-                        <div class="product-box product-box-col-2">
-                            <input type="hidden" name="quantity" value="" min="" max="100">
-                            <div class="product-image2 product-image2-col-2">
-
-                                <div class="discount-box float-end">
-                                    <span>
-                                        -10%
-                                    </span>
-                                </div>
-
-                                <a href="">
-                                    <img class="pic-1" src="{{ asset('assets') }}/front-end/images/product/p-3.jpg">
-                                    <img class="pic-2" src="{{ asset('assets') }}/front-end/images/product/p-3.jpg">
-                                </a>
-                                <ul class="social">
-                                    <li><a href="" data-tip="Quick View"><i class="fa fa-eye"></i></a></li>
-                                    <li>
-                                        <a style="cursor: pointer" data-toggle="modal"
-                                            data-target="#addToCartModal_{{ 2 }}" data-tip="Add to Cart">
-                                            <i class="fa fa-shopping-cart"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="product-content">
-                                <h3 class="title"><a href="">product name Lorem ipsum dolor sit amet.</a>
-                                </h3>
-                                <div class="price d-flex justify-content-center align-content-center">
-
-                                    <span class="mr-2">2999</span>
-                                    <del>2500</del>
-                                </div>
                                 <button type="button" style="cursor: pointer;" class="btn btn-primary">অর্ডার
                                     করুন</button>
                             </div>
@@ -482,20 +443,67 @@
                         </div>
                     </div>
                 </div>
+                <div class="item">
+                    <div class="product-column">
+                        <div class="product-box product-box-col-2">
+                            <input type="hidden" name="quantity" value="" min="" max="100">
+                            <div class="product-image2 product-image2-col-2">
+
+                                <div class="discount-box float-end">
+                                    <span>
+                                        -10%
+                                    </span>
+                                </div>
+
+                                <a href="">
+                                    <img class="pic-1" src="{{ asset('assets') }}/front-end/images/product/p-3.jpg">
+                                    <img class="pic-2" src="{{ asset('assets') }}/front-end/images/product/p-3.jpg">
+                                </a>
+                                <ul class="social">
+                                    <li><a href="" data-tip="Quick View"><i class="fa fa-eye"></i></a></li>
+                                    <li>
+                                        <a style="cursor: pointer" data-toggle="modal"
+                                            data-target="#addToCartModal_{{ 2 }}" data-tip="Add to Cart">
+                                            <i class="fa fa-shopping-cart"></i>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="product-content">
+                                <h3 class="title"><a href="">product name Lorem ipsum dolor sit amet.</a>
+                                </h3>
+                                <div class="price d-flex justify-content-center align-content-center">
+
+                                    <span class="mr-2">2999</span>
+                                    <del>2500</del>
+                                </div>
+                                <button type="button" style="cursor: pointer;" class="btn btn-primary">অর্ডার
+                                    করুন</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
 
 
 
+            </div>
+            <div class="d-flex justify-content-center">
+                <a href="" class="btn btn-outline-warning  text-center  d-block d-lg-none">Shop More</a>
             </div>
     </section>
     {{-- New Arrivals Section End --}}
     {{-- Women's Section Start --}}
-    <section class="womens-collection my-2 my-lg-4">
+    <section class="womens-collection mt-4 mb-2 my-lg-4">
         <div class="container">
             <div class="row mb-3">
                 <div class="col text-center">
                     <div class="section-heading-title">
                         <h3>Women's Collection</h3>
                         <div class="heading-border"></div>
+                        <div class="d-flex justify-content-end">
+                            <a href="" class="btn btn-outline-warning  text-end  d-none d-lg-block">Shop More</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -803,16 +811,22 @@
                 </div>
 
             </div>
+            <div class="d-flex justify-content-center">
+                <a href="" class="btn btn-outline-warning  text-center  d-block d-lg-none">Shop More</a>
+            </div>
     </section>
     {{-- Women's Section End --}}
     {{-- men's Section Start --}}
-    <section class="mens-collection my-2 my-lg-4">
+    <section class="mens-collection mt-4 mb-2 my-lg-4">
         <div class="container">
             <div class="row mb-3">
                 <div class="col text-center">
                     <div class="section-heading-title">
                         <h3>Men's Collection</h3>
                         <div class="heading-border"></div>
+                        <div class="d-flex justify-content-end">
+                            <a href="" class="btn btn-outline-warning  text-end  d-none d-lg-block">Shop More</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1155,16 +1169,22 @@
                 </div>
 
             </div>
+            <div class="d-flex justify-content-center">
+                <a href="" class="btn btn-outline-warning  text-center  d-block d-lg-none">Shop More</a>
+            </div>
     </section>
     {{-- men's Section End --}}
     {{-- Kids Section Start --}}
-    <section class="kids-collection my-2 my-lg-4">
+    <section class="kids-collection mt-4 mb-2 my-lg-4">
         <div class="container">
             <div class="row mb-3">
                 <div class="col text-center">
                     <div class="section-heading-title">
                         <h3>Kids Collection</h3>
                         <div class="heading-border"></div>
+                        <div class="d-flex justify-content-end">
+                            <a href="" class="btn btn-outline-warning  text-end  d-none d-lg-block">Shop More</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1429,6 +1449,9 @@
                 </div>
 
 
+            </div>
+            <div class="d-flex justify-content-center">
+                <a href="" class="btn btn-outline-warning  text-center  d-block d-lg-none">Shop More</a>
             </div>
     </section>
     {{-- Kids Section End --}}

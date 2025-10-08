@@ -595,6 +595,9 @@ header.scrolled {
     margin-bottom: 0;
     transition: 0.3s ease-out;
 }
+.product-box {
+    background-color: #fff;
+}
 .tp-category-content-3 span {
     color: #fff;
     display: inline-block;
@@ -1600,7 +1603,7 @@ footer {
 }
 
 .new-arrivals-section .product-box > .product-image2 > a > img {
-    width: 90% !important;
+    width: 100% !important;
     height: auto;
     object-fit: contain;
     display: block;
@@ -1617,4 +1620,15 @@ footer {
     text-transform: uppercase;
     line-height: 0;
     font-family: Open Sans, sans-serif;
+}
+.btn-outline-warning {
+    color: #f26d21;
+    background-color: transparent;
+    background-image: none;
+    border-color: #f26d21;
+}
+.btn-outline-warning:hover {
+    color: #fff;
+    background-color: #f26d21;
+    border-color: #f26d21;
 }
