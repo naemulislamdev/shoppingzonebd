@@ -102,6 +102,9 @@
         margin: 0;
         padding: 0;
     }
+    .main-slider {
+        height: auto;
+    }
 }
 @media (max-width: 570px) {
     .grid-controls {

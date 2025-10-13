@@ -177,8 +177,7 @@
             } elseif (strpos($videoUrl, '/embed/') !== false) {
                 // YouTube Embed URL
                 $embedUrl = $videoUrl;
-            }
-            elseif (strpos($videoUrl, 'shorts') !== false) {
+            } elseif (strpos($videoUrl, 'shorts') !== false) {
                 // YouTube Shorts URL
                 //https://www.youtube.com/shorts/zIDDpjTJRjU?feature=share
                 $videoId = explode('/', $videoUrl)[4];
@@ -212,6 +211,7 @@
                                 </div>
                             </div>
                         @else
+                            {{-- product zoomer --}}
                             <div class="row mb-2">
                                 <div class="col-md-11 mx-auto">
                                     <div class="main-image mb-3 float-right" id="img-zoom">
@@ -251,7 +251,7 @@
 
                                 <div>
                                     <span class="product-price"><span>
-                                        ৳</span> {{ \App\CPU\Helpers::get_price_range($product) }}</span>
+                                            ৳</span> {{ \App\CPU\Helpers::get_price_range($product) }}</span>
                                 </div>
 
                                 @if ($product->discount > 0)
@@ -260,7 +260,7 @@
                                         @if ($product->discount_type == 'percent')
                                             {{ round($product->discount, $decimal_point_settings) }}%
                                         @elseif($product->discount_type == 'flat')
-                                           {{ \App\CPU\Helpers::currency_converter($product->discount) }}
+                                            {{ \App\CPU\Helpers::currency_converter($product->discount) }}
                                         @endif
                                     </span>
                                 @endif
@@ -366,7 +366,8 @@
                                     <div class="row mb-3">
                                         <div class="col-md-6 mb-3">
                                             <button type="button" onclick="buy_now('form-{{ $product->id }}')"
-                                                href="javascript:void(0);" class="w-100 common-btn border-0">অর্ডার করুন</button>
+                                                href="javascript:void(0);" class="w-100 common-btn border-0">অর্ডার
+                                                করুন</button>
                                         </div>
                                         <div class="col-md-6">
                                             <button type="button" class="btn btn-dark d-block w-100"

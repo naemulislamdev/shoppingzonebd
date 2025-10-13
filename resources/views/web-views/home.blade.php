@@ -1,4 +1,33 @@
 @extends('layouts.front-end.app')
+<style>
+    .owl-nav button {
+        position: absolute;
+        top: 45%;
+        transform: translateY(-50%);
+        background: rgba(255, 93, 0, 0.6) !important;
+        color: #fff;
+        border: none;
+        outline: none;
+        border-radius: 5px;
+        width: 40px;
+        height: 50px;
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        transition: 0.3s;
+    }
+
+    .owl-nav button:hover {
+        background-color: #ff5d00 !important;
+        color: #fff;
+    }
+
+    .owl-nav button:focus {
+        border: none !important;
+    }
+</style>
 @section('title', \App\CPU\translate('Welcome To') . ' ' . $web_config['name']->value)
 
 @push('css_or_js')
@@ -1455,8 +1484,9 @@
             </div>
     </section>
     {{-- Kids Section End --}}
+
     <!------Start Product section----->
-    <section class="py-3">
+ <section class="py-3">
         <div class="container">
             {{-- @include('layouts.front-end.partials.product_filter') --}}
 
