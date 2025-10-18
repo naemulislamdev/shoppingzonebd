@@ -102,7 +102,7 @@ a:hover {
 }
 @media (min-width: 1200px) {
     .container {
-        max-width: 1398px;
+        max-width: 1520px;
     }
 }
 .popup {
@@ -1560,10 +1560,10 @@ footer {
 }
 
 .owl-nav .owl-prev {
-    left: -50px;
+    left: 4px;
 }
 .owl-nav .owl-next {
-    right: -50px;
+    right: -4px;
 }
 .owl-nav button.disabled {
     background: #555 !important;
@@ -1609,4 +1609,7 @@ footer {
     color: #fff;
     background-color: #f26d21;
     border-color: #f26d21;
+}
+.category .category-carosel img {
+    height: 200px;
 }
