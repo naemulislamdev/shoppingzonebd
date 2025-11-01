@@ -21,6 +21,7 @@ class Order extends Model
         'shipping_method_id'=>'integer',
         'seller_id'=>'integer'
     ];
+    protected $guarded = ['id'];
 
     public function details()
     {

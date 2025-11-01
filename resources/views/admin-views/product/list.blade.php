@@ -77,6 +77,7 @@
                                 <th>{{\App\CPU\translate('purchase_price')}}</th>
                                 <th>{{\App\CPU\translate('selling_price')}}</th>
                                 <th>{{\App\CPU\translate('featured')}}</th>
+                                <th>{{\App\CPU\translate('New Arrival')}}</th>
                                 <th>{{\App\CPU\translate('Active')}} {{\App\CPU\translate('status')}}</th>
                                 <th style="width: 5px" class="text-center">{{\App\CPU\translate('Action')}}</th>
                             </tr>
@@ -107,6 +108,13 @@
                                         <label class="switch">
                                             <input type="checkbox"
                                                    onclick="featured_status('{{$p['id']}}')" {{$p->featured == 1?'checked':''}}>
+                                            <span class="slider round"></span>
+                                        </label>
+                                    </td>
+                                    <td>
+                                        <label class="switch">
+                                            <input type="checkbox"
+                                                   onclick="arrival_status('{{$p['id']}}')" {{$p->arrival == 1?'checked':''}}>
                                             <span class="slider round"></span>
                                         </label>
                                     </td>
@@ -222,6 +230,23 @@
                 },
                 success: function () {
                     toastr.success('{{\App\CPU\translate('Featured status updated successfully')}}');
+                }
+            });
+        }
+        function arrival_status(id) {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                }
+            });
+            $.ajax({
+                url: "{{route('admin.product.arrival-status')}}",
+                method: 'POST',
+                data: {
+                    id: id
+                },
+                success: function () {
+                    toastr.success('{{\App\CPU\translate('Arrival status updated successfully')}}');
                 }
             });
         }

@@ -207,6 +207,10 @@ class SystemController extends Controller
     public function productCheckoutOrder(Request $request)
     {
         // $request->dd();
+        if(session('cart')==null || count(session('cart'))==0){
+            Toastr::error('Your cart is empty');
+            return redirect()->url('/');
+        }
         $this->validate($request, [
             'name' => 'required|string',
             'email' => 'nullable|email',
@@ -216,10 +220,10 @@ class SystemController extends Controller
             'payment_method' => 'required|in:cash_on_delivery,online_payment'
         ]);
         // Check if user is authenticated
-     
+
         $authUser = Helpers::get_customer_check($request);
         if ($authUser) {
-            if($authUser->is_active == 0){
+            if ($authUser->is_active == 0) {
                 Toastr::error('Your account is inactive. Please contact support.');
                 return redirect()->back();
             }
@@ -266,6 +270,7 @@ class SystemController extends Controller
                     'product_id' => $c['id'],
                     'seller_id' => $product->added_by == 'seller' ? $product->user_id : '0',
                     'product_details' => $product,
+                    'color_image' => $c['color_image'] ?? null,
                     'qty' => $c['quantity'],
                     'price' => $c['price'],
                     'tax' => $c['tax'] * $c['quantity'],
@@ -293,9 +298,12 @@ class SystemController extends Controller
                     ]);
                 }
 
-                // Product::where(['id' => $product['id']])->update([
-                //     'current_stock' => $product['current_stock'] - $c['quantity']
-                // ]);
+                if ($product['current_stock'] > 2) {
+                    Product::where(['id' => $product['id']])->update([
+                        'current_stock' => $product['current_stock'] - $c['quantity']
+                    ]);
+                }
+
 
                 DB::table('order_details')->insert($or_d);
             }
@@ -337,7 +345,10 @@ class SystemController extends Controller
     }
     public function singlepCheckout(Request $request)
     {
-         //$request->dd();
+        if(session('cart')==null || count(session('cart'))==0){
+            Toastr::error('Your cart is empty');
+            return redirect()->url('/');
+        }
         $this->validate($request, [
             'name' => 'required|string|max:150',
             'email' => 'nullable|email',
@@ -366,6 +377,20 @@ class SystemController extends Controller
                 $data['color'] = $request['color'];
                 $str = Color::where('code', $request['color'])->first()->name;
                 $variations[] = $str;
+            }
+            $color_image_path = null;
+            if ($request->has('color')) {
+                $color_image = json_decode($product->color_variant, true);
+                $selected_color_code = $request->color;
+
+                // Find matching color
+                $matched = collect($color_image)->firstWhere('code', $selected_color_code);
+
+                if ($matched) {
+                    $color_image_path = $matched['image'];
+                } else {
+                    dd('No matching color found');
+                }
             }
             //Gets all the choice values of customer choice option and generate a string like Black-S-Cotton
             foreach (json_decode(Product::find($request->product_id)->choice_options) as $key => $choice) {
@@ -428,6 +453,7 @@ class SystemController extends Controller
                 'product_id' => $request['product_id'],
                 'seller_id' => $product->added_by == 'seller' ? $product->user_id : '0',
                 'product_details' => $product,
+                'color_image' => $color_image_path,
                 'qty' => $request['quantity'],
                 'price' => $request['price'],
                 'tax' => $request['tax'] * $request['quantity'],
@@ -454,10 +480,12 @@ class SystemController extends Controller
                     'variation' => json_encode($var_store),
                 ]);
             }
+            if ($product['current_stock'] > 2) {
+                Product::where(['id' => $product['product_id']])->update([
+                    'current_stock' => $product['current_stock'] - $request['quantity']
+                ]);
+            }
 
-            Product::where(['id' => $product['product_id']])->update([
-                'current_stock' => $product['current_stock'] - $request['quantity']
-            ]);
 
             DB::table('order_details')->insert($or_d);
 

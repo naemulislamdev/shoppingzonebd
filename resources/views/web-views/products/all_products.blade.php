@@ -117,4 +117,31 @@
         //     }
         // });
     </script>
+    <script>
+window.dataLayer = window.dataLayer || [];
+
+/* Product List View (Category Page) */
+dataLayer.push({
+    event: "view_item_list",
+    ecommerce: {
+        item_list_id: "category_{{ $category->slug ?? 'default' }}",
+        item_list_name: "{{ $category->name ?? 'Product List' }}",
+        items: [
+            @foreach ($products as $index => $product)
+            {
+                item_id: "{{ $product->id }}",
+                item_name: "{{ $product->name }}",
+                item_brand: "{{ $product->brand->name ?? 'Unknown' }}",
+                item_category: "{{ $product->category->name ?? 'General' }}",
+                item_variant: "{{ $product->variant ?? 'Default' }}",
+                price: {{ number_format($product->price, 2, '.', '') }},
+                currency: "BDT",
+                index: {{ $loop->iteration }}
+            }@if (!$loop->last),@endif
+            @endforeach
+        ]
+    }
+});
+</script>
+
 @endpush

@@ -42,6 +42,9 @@ Route::middleware(['maintenance_mode'])->group(function () {
         Route::get('/shop-cart', 'shop_cart')->name('shop-cart');
         Route::get('/selling-product', 'sellingProducts')->name('selling.product');
         Route::post('/client-review', 'clientReview')->name('client_review');
+        Route::get('/leads', 'leads')->name('leads');
+        Route::post('/leads/store', 'leadsStore')->name('leads.store');
+        Route::post('/save-user-info', 'saveUserInfo')->name('save.user.info');
     });
 
     // Route::get('quick-view', 'WebController@quick_view')->name('quick-view');

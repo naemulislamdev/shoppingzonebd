@@ -6,12 +6,12 @@
     <meta property="og:image" content="{{asset('storage/company')}}/{{$web_config['web_logo']->value}}"/>
     <meta property="og:title" content="{{$web_config['name']->value}} "/>
     <meta property="og:url" content="{{env('APP_URL')}}">
-    <meta property="og:description" content="{!! substr($web_config['about']->value,0,100) !!}">
+    <meta property="og:description" content="{!! substr(strip_tags($web_config['about']->value), 0, 100) !!}">
 
     <meta property="twitter:card" content="{{asset('storage/company')}}/{{$web_config['web_logo']->value}}"/>
     <meta property="twitter:title" content="{{$web_config['name']->value}}"/>
     <meta property="twitter:url" content="{{env('APP_URL')}}">
-    <meta property="twitter:description" content="{!! substr($web_config['about']->value,0,100) !!}">
+    <meta property="twitter:description" content="{!! substr(strip_tags($web_config['about']->value),0,100) !!}">
     <link href="https://fonts.maateen.me/solaiman-lipi/font.css" rel="stylesheet">
     <link rel="stylesheet" href="{{asset('assets/front-end')}}/css/shop-cart.css"/>
     <style>
@@ -131,6 +131,39 @@
                 phoneFeedback.textContent = 'Phone number is required';
             } else if (!regex.test(phoneInput)) {
                 phoneFeedback.textContent = 'Please enter a valid Bangladeshi phone number (e.g. 0171XXXXXXX)';
+            }
+        });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            let typingTimer;
+            let doneTypingInterval = 1000; // Time in milliseconds (1 second)
+
+            $(".auto-save").on("input", function() {
+                clearTimeout(typingTimer);
+                typingTimer = setTimeout(saveUserData, doneTypingInterval);
+            });
+
+            function saveUserData() {
+                let formData = $("#userInfoForm").serialize();
+
+                $.ajax({
+                    url: "{{ route('save.user.info') }}",
+                    type: "POST",
+                    data: formData,
+                    dataType: "json",
+                    success: function(response) {
+                        if (response.success) {
+                            console.log("Data auto-saved successfully!");
+                        } else {
+                            console.log("Failed to save data.");
+                        }
+                    },
+                    error: function(xhr) {
+                        console.log("Error: ", xhr.responseText);
+                    }
+                });
             }
         });
     </script>

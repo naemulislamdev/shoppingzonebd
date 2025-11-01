@@ -8,9 +8,14 @@ use Illuminate\Support\Str;
 
 class ImageManager
 {
-    public static function upload(string $dir, string $format, $image = null)
+    public static function upload(string $dir, string $format, $image = null, $alt_text = null)
     {
         if ($image != null) {
+            if ($alt_text) {
+                $imageName = Str::slug($alt_text) . "." . $format;
+            } else {
+                $imageName = Carbon::now()->toDateString() . "-" . uniqid() . "." . $format;
+            }
             $imageName = Carbon::now()->toDateString() . "-" . uniqid() . "." . $format;
             if (!Storage::disk('public')->exists($dir)) {
                 Storage::disk('public')->makeDirectory($dir);
@@ -24,12 +29,12 @@ class ImageManager
         return $imageName;
     }
 
-    public static function update(string $dir, $old_image, string $format, $image = null)
+    public static function update(string $dir, $old_image, string $format, $image = null, $alt_text = null)
     {
         if (Storage::disk('public')->exists($dir . $old_image)) {
             Storage::disk('public')->delete($dir . $old_image);
         }
-        $imageName = ImageManager::upload($dir, $format, $image);
+        $imageName = ImageManager::upload($dir, $format, $image, $alt_text);
         return $imageName;
     }
 

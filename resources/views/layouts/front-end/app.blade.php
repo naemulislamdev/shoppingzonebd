@@ -122,11 +122,14 @@
             margin-top: .625rem;
             font-size: 1.0625rem;
             font-weight: 600;
-            bottom: .375rem;
+            bottom: 0px;
             position: absolute;
             left: 0rem;
             right: 0rem;
             width: 100%;
+        }
+        .product-box{
+            box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
         }
 
         .product-box-col-2 {
@@ -156,6 +159,9 @@
         .product-image2-col-2 {
             height: 16.875rem
         }
+        .product-box .title {
+    text-align: left;
+}
     </style>
     @php
         $request = request()->route()->getName();
@@ -456,6 +462,7 @@
         </script>
     @endif
     @if (Session::has('warning'))
+        3B413D
         <script>
             toastr.warning("{{ Session::get('warning') }}")
         </script>
@@ -808,6 +815,8 @@
                                 icon: 'info',
                                 title: 'Cart',
                                 text: "Product already added in cart"
+                            }).then(() => {
+                                window.location.href = "{{ route('shop-cart') }}";
                             });
                             return false;
                         } else if (data.data == 0) {

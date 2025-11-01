@@ -86,6 +86,8 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::post('business-overview', 'business_overview')->name('business-overview');
         });
         Route::get('/complain/list', [ComplainAdminController::class,'list'])->name('complain.list');
+        Route::get('/complain/view/{id}', [ComplainAdminController::class,'view'])->name('complain.view');
+        Route::post('/complain/delete/', [ComplainAdminController::class,'delete'])->name('complain.delete');
         //system routes
         Route::get('search-function', [SystemController::class, 'search_function'])->name('search-function');
         Route::get('maintenance-mode', [SystemController::class, 'maintenance_mode'])->name('maintenance-mode');
@@ -392,6 +394,7 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('edit/{id}', 'edit')->name('edit');
             Route::post('update/{id}', 'update')->name('update');
             Route::post('featured-status', 'featured_status')->name('featured-status');
+            Route::post('arrival-status', 'arrival_status')->name('arrival-status');
             Route::get('approve-status', 'approve_status')->name('approve-status');
             Route::post('deny', 'deny')->name('deny');
             Route::post('sku-combination', 'sku_combination')->name('sku-combination');
@@ -411,7 +414,7 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('CampaingDelete/{id}', 'CampaingDelete')->name('CampaingDelete');
             Route::get('productsearch', 'productsearch')->name('productsearch');
         });
-        
+
         Route::controller(DiscountManageController::class)->prefix('/discount')->as('discount.')->middleware('module:product_management')->group(function () {
             // Product Discount Management
             Route::get('flat', 'discountFlat')->name('flat');
@@ -607,6 +610,9 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::post('ordersPrice/{id}', 'ordersPrice')->name('ordersPrice');
             Route::get('detailsProduct/{product_id}', 'detailsProduct')->name('detailsProduct');
             Route::get('details/{id}', 'details')->name('details');
+            Route::get('edit/{id}', 'edit')->name('edit');
+            Route::post('update/{id}', 'orderUpdate')->name('update');
+            Route::get('products/search/', 'productSearch')->name('products.search');
             Route::post('status', 'status')->name('status');
             Route::post('payment-status', 'payment_status')->name('payment-status');
             Route::post('advance-payment/{id}', 'advance_payment')->name('advance-payment');
@@ -620,6 +626,7 @@ Route::prefix('/admin')->as('admin.')->group(function () {
 
             Route::get('export-order-data/{status}', 'bulk_export_data')->name('order-bulk-export');
         });
+
 
         //pos management
         Route::controller(POSController::class)->prefix('/pos')->as('pos.')->middleware('module:pos_management')->group(function () {
@@ -674,6 +681,19 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('view/{id}', 'view')->name('view');
             Route::post('update/{id}', 'update')->name('update');
             Route::post('send-mail/{id}', 'send_mail')->name('send-mail');
+
+        });
+        Route::controller(ContactController::class)->prefix('/leads')->as('leads.')->middleware('module:support_section')->group(function () {
+            Route::get('list', 'leadsList')->name('list');
+            Route::post('delete', 'leadDestroy')->name('delete');
+            Route::get('view/{id}', 'leadView')->name('view');
+            Route::get('bulk-export', 'bulk_export_data')->name('bulk-export');
+        });
+        Route::controller(ContactController::class)->prefix('/user-info')->as('user-info.')->middleware('module:support_section')->group(function () {
+            Route::get('list', 'userInfoList')->name('list');
+            Route::post('delete', 'userInfoDestroy')->name('delete');
+            Route::get('view/{id}', 'userInfoView')->name('view');
+            Route::get('bulk-export', 'bulk_export_dataUserInfo')->name('bulk-export');
         });
 
         Route::controller(DeliveryManController::class)->prefix('/delivery-man')->as('delivery-man.')->group(function () {

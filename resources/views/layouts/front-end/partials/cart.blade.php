@@ -4,8 +4,12 @@
     @foreach (session('cart') as $keyId => $cartItem)
         <div class="header-cart-product d-flex mb-3">
             <div class="img">
-                <img src="{{ \App\CPU\ProductManager::product_image_path('thumbnail') }}/{{ $cartItem['thumbnail'] }}"
-                    alt="">
+                @if ($cartItem['color_image'])
+                    <img src="{{ $cartItem['color_image'] }}" alt="Product image">
+                @else
+                    <img src="{{ \App\CPU\ProductManager::product_image_path('thumbnail') }}/{{ $cartItem['thumbnail'] }}"
+                        alt="">
+                @endif
             </div>
             <div class="header-cart-p-details">
                 <h5>{{ Str::limit($cartItem['name'], 30) }}</h5>

@@ -6,9 +6,13 @@ use App\CPU\Helpers;
 use App\Http\Controllers\Controller;
 use App\Model\BusinessSetting;
 use App\Model\Contact;
+use App\Models\Lead;
+use App\Models\UserInfo;
 use Brian2694\Toastr\Facades\Toastr;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Rap2hpoutre\FastExcel\FastExcel;
 
 class ContactController extends Controller
 {
@@ -39,8 +43,7 @@ class ContactController extends Controller
     {
         $query_param = [];
         $search = $request['search'];
-        if ($request->has('search'))
-        {
+        if ($request->has('search')) {
             $key = explode(' ', $request['search']);
             $contacts = Contact::where(function ($q) use ($key) {
                 foreach ($key as $value) {
@@ -50,12 +53,11 @@ class ContactController extends Controller
                 }
             });
             $query_param = ['search' => $request['search']];
-        }else{
+        } else {
             $contacts = new Contact();
         }
         $contacts = $contacts->latest()->paginate(Helpers::pagination_limit())->appends($query_param);
-        return view('admin-views.contacts.list', compact('contacts','search'));
-
+        return view('admin-views.contacts.list', compact('contacts', 'search'));
     }
 
     public function view($id)
@@ -100,5 +102,114 @@ class ContactController extends Controller
 
         Toastr::success('Mail sent successfully!');
         return back();
+    }
+
+    //---Leads Management ---//
+    public function leadsList(Request $request)
+    {
+        $query_param = [];
+        $search = $request['search'];
+        if ($request->has('search')) {
+            $key = explode(' ', $request['search']);
+            $leads = Lead::where(function ($q) use ($key) {
+                foreach ($key as $value) {
+                    $q->orWhere('name', 'like', "%{$value}%")
+                        ->orWhere('phone', 'like', "%{$value}%");
+                }
+            });
+            $query_param = ['search' => $request['search']];
+        } else {
+            $leads = new Lead();
+        }
+        $leads = $leads->latest()->paginate(Helpers::pagination_limit())->appends($query_param);
+        return view('admin-views.leads.list', compact('leads', 'search'));
+    }
+
+    public function leadView($id)
+    {
+        $lead = Lead::findOrFail($id);
+        $lead->update(['status' => 0]);
+        return view('admin-views.leads.view', compact('lead'));
+    }
+    public function leadDestroy(Request $request)
+    {
+        $lead = Lead::find($request->id);
+        $lead->delete();
+
+        return response()->json();
+    }
+    public function bulk_export_data()
+    {
+        $leads = Lead::latest()->get();
+        //export from leads
+        $data = [];
+        foreach ($leads as $item) {
+            $data[] = [
+                'Date' => Carbon::parse($item->created_at)->format('d M Y'),
+                'name' => $item->name,
+                'phone' => $item->phone,
+                'address' => $item->address,
+                'division' => $item->division ,
+                'district' => $item->district,
+                'upazila' => $item->upazila,
+                'Showroom Size' => $item->showroom_size,
+                'Showroom Location' => $item->showroom_location,
+                'status' => $item->status == 1 ? 'Unseen' : 'Seen',
+
+            ];
+        }
+        return (new FastExcel($data))->download('leads_info.xlsx');
+    }
+
+    //--- User Information Management ---//
+    public function userInfoList(Request $request)
+    {
+        $query_param = [];
+        $search = $request['search'];
+        if ($request->has('search')) {
+            $key = explode(' ', $request['search']);
+            $userInfos = UserInfo::where(function ($q) use ($key) {
+                foreach ($key as $value) {
+                    $q->orWhere('name', 'like', "%{$value}%")
+                        ->orWhere('phone', 'like', "%{$value}%");
+                }
+            });
+            $query_param = ['search' => $request['search']];
+        } else {
+            $userInfos = new UserInfo();
+        }
+        $userInfos = $userInfos->latest()->paginate(Helpers::pagination_limit())->appends($query_param);
+        return view('admin-views.user-info.list', compact('userInfos', 'search'));
+    }
+
+    public function userInfoView($id)
+    {
+        $userInfo = UserInfo::findOrFail($id);
+        $userInfo->update(['status' => 1]);
+        return view('admin-views.user-info.view', compact('userInfo'));
+    }
+    public function userInfoDestroy(Request $request)
+    {
+        $lead = UserInfo::find($request->id);
+        $lead->delete();
+
+        return response()->json();
+    }
+    public function bulk_export_dataUserInfo()
+    {
+        $userInfos = UserInfo::latest()->get();
+        //export from userInfos
+        $data = [];
+        foreach ($userInfos as $item) {
+            $data[] = [
+                'Date' => Carbon::parse($item->created_at)->format('d M Y'),
+                'name' => $item->name,
+                'phone' => $item->phone,
+                'address' => $item->address,
+                'status' => $item->status == 0 ? 'Unseen' : 'Seen',
+
+            ];
+        }
+        return (new FastExcel($data))->download('user_info.xlsx');
     }
 }

@@ -14,69 +14,71 @@ use App\Model\Seller;
 use App\Model\ShippingMethod;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\ImageManager;
+use Intervention\Image\Encoders\WebpEncoder;
 
 class Helpers
 {
     //Start image upload manager
-    public static function uploadWithCompress(string $dir, string $format, int $targetSizeKB, $image = null)
+    public static function uploadWithCompress(string $dir, int $targetSizeKB, $image = null, $alt_text = null)
     {
         if ($image !== null) {
-            //dd($image);
-            $fileSize = $image->getSize();
-            $finalSize = number_format($fileSize / 1024, 2);
 
-            $imageName = now()->toDateString() . '-' . uniqid() . '.' . $format;
+            // Generate image name
+            $imageName = $alt_text
+                ? Str::slug($alt_text) . '.' . 'webp'
+                : Carbon::now()->toDateString() . '-' . uniqid() . '.' . 'webp';
 
+            // Ensure directory exists
             if (!Storage::disk('public')->exists($dir)) {
                 Storage::disk('public')->makeDirectory($dir);
             }
-            $tempPath = null;
-            $finalContents = null;
-             if ($finalSize > $targetSizeKB) {
-                  dd($finalSize);
-                $manager = new ImageManager(\Intervention\Image\Drivers\Gd\Driver::class);
-               
-                $img = $manager->read($image->getPathname());
-                 
 
-                $quality = 90;
-                $tempPath = storage_path('app/temp_' . uniqid() . '.' . $format);
-                $targetSize = $targetSizeKB * 1024;
-               
+            // Initialize Intervention Image (use GD or Imagick)
+            $manager = new ImageManager(new \Intervention\Image\Drivers\Gd\Driver());
 
-                do {
-                    $img->toJpeg($quality)->save($tempPath);
-                    $currentSize = filesize($tempPath);
-                    $quality -= 5;
-                } while ($currentSize > $targetSize && $quality > 10);
+            // Read the uploaded image
+            $img = $manager->read($image->getRealPath());
 
-                $finalContents = file_get_contents($tempPath);
-            } else {
-                $finalContents = file_get_contents($image);
-            }
+            // Resize (optional but helps reduce big file sizes)
+            $img->resize(1200, null, function ($constraint) {
+                $constraint->aspectRatio();
+                $constraint->upsize();
+            });
 
+            // Compress and encode as WebP
+            $quality = 80; // start high quality
+            $temp = tempnam(sys_get_temp_dir(), 'img_');
 
-            Storage::disk('public')->put($dir . $imageName, $finalContents);
-            if ($tempPath) {
-                unlink($tempPath);
-            }
+            do {
+                $encoded = $img->encode(new WebpEncoder(quality: $quality));
+                file_put_contents($temp, (string) $encoded);
+                $currentSize = filesize($temp);
+                $quality -= 5;
+            } while ($currentSize > ($targetSizeKB * 1024) && $quality > 20);
+
+            // Save final optimized file to public storage
+            Storage::disk('public')->put($dir . $imageName, file_get_contents($temp));
+
+            // Clean up temp file
+            @unlink($temp);
 
             return $imageName;
         }
 
         return null;
     }
-    public static function updateWithCompress(string $dir, $old_image, string $format, $image = null)
+    public static function updateWithCompress(string $dir, $old_image, $image = null, $alt_text = null)
     {
         if (Storage::disk('public')->exists($dir . $old_image)) {
             Storage::disk('public')->delete($dir . $old_image);
         }
-        $imageName = Helpers::uploadWithCompress($dir, $format, $image, 300);
+        $imageName = Helpers::uploadWithCompress($dir, (int) 300, $image,  $alt_text);
         return $imageName;
     }
     public static function delete($full_path)

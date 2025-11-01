@@ -60,6 +60,7 @@ class CartController extends Controller
 
     public function addToCartOnSession(Request $request)
     {
+        //dd($request->all());
         $product = Product::find($request->id);
         $data = array();
         $data['id'] = $product->id;
@@ -80,6 +81,21 @@ class CartController extends Controller
             //dd($str);
             $variations['color'] = $str;
         }
+        $color_image_path = null;
+        if ($request->has('color')) {
+            $color_image = json_decode($product->color_variant, true);
+            $selected_color_code = $request->color;
+
+            // Find matching color
+            $matched = collect($color_image)->firstWhere('code', $selected_color_code);
+
+            if ($matched) {
+                $color_image_path = $matched['image'];
+            } else {
+                dd('No matching color found');
+            }
+        }
+
         //Gets all the choice values of customer choice option and generate a string like Black-S-Cotton
         foreach (json_decode(Product::find($request->id)->choice_options) as $key => $choice) {
             $data[$choice->name] = $request[$choice->name];
@@ -133,6 +149,7 @@ class CartController extends Controller
         $data['discount'] = Helpers::get_product_discount($product, $price);
         $data['shipping_cost'] = $shipping_cost;
         $data['thumbnail'] = $product->thumbnail;
+        $data['color_image'] = $color_image_path;
 
         if ($request->session()->has('cart')) {
             $cart = $request->session()->get('cart', collect([]));
@@ -233,7 +250,8 @@ class CartController extends Controller
 
         return view('layouts.front-end.partials.cart_details');
     }
-    public function totalCartCount(){
+    public function totalCartCount()
+    {
         $data = session()->has('cart') ? count(session()->get('cart')) : 0;
         return $data;
     }

@@ -246,6 +246,10 @@
                                                 name="colors_active">
                                             <span class="slider round"></span>
                                         </label>
+                                        <a href="javascript:;" class="btn btn-sm btn-primary my-2" data-toggle="modal"
+                                            data-target="#colorAddModal">
+                                            Add New color
+                                        </a>
                                         <select class="js-example-basic-multiple form-control color-var-select"
                                             name="colors[]" multiple="multiple" id="colors-selector" disabled>
                                             @foreach (\App\Model\Color::orderBy('name', 'asc')->get() as $key => $color)
@@ -469,6 +473,15 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-8 mb-4">
+                                    <label class="control-label">ALT Text</label>
+                                    <input type="text" name="alt_text"
+                                        placeholder="Product ALT Text"
+                                        class="form-control">
+                                    @error('alt_text')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="col-md-8 mb-4">
                                     <label class="control-label">{{ \App\CPU\translate('Youtube video link') }}</label>
                                     <small class="badge badge-soft-danger"> (
                                         {{ \App\CPU\translate('optional, please provide embed link not direct link') }}.
@@ -536,6 +549,43 @@
                     </div>
                 </form>
             </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="colorAddModal" tabindex="-1" data-backdrop="static" role="dialog"
+        aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <form action="{{ route('admin.product.add.color') }}" method="POST">
+                @csrf
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Add New Color</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Color Name <span class="text-danger">*</span></label>
+                            <input type="text" name="color_name" class="form-control" placeholder="Enter color name">
+                            @error('color_name')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <div class="form-group">
+                            <label>Color code <span class="text-danger">*</span></label>
+                            <input type="text" name="color_code" class="form-control" placeholder="Ex: #21365e">
+                            @error('color_code')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 @endsection

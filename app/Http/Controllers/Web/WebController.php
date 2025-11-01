@@ -45,6 +45,8 @@ use Gregwar\Captcha\CaptchaBuilder;
 use App\CPU\CustomerManager;
 use App\CPU\Convert;
 use App\Model\Branch;
+use App\Models\Lead;
+use App\Models\UserInfo;
 use App\ProductLandingPage;
 use Carbon\Carbon;
 
@@ -78,6 +80,13 @@ class WebController extends Controller
         //feature products finding based on selling
         $featured_products = Product::with(['reviews'])->active()
             ->where('featured', 1)
+            ->withCount(['order_details'])->orderBy('order_details_count', 'DESC')
+            ->take(12)
+            ->get();
+        //end
+        //Arrival products finding based on selling
+        $arrival_products = Product::with(['reviews'])->active()
+            ->where('arrival', 1)
             ->withCount(['order_details'])->orderBy('order_details_count', 'DESC')
             ->take(12)
             ->get();
@@ -136,7 +145,7 @@ class WebController extends Controller
         }
 
 
-        return view('web-views.home', compact('featured_products', 'topRated', 'bestSellProduct', 'latest_products', 'categories', 'brands', 'deal_of_the_day', 'top_sellers', 'home_categories', 'productCounts'));
+        return view('web-views.home', compact('featured_products','arrival_products', 'topRated', 'bestSellProduct', 'latest_products', 'categories', 'brands', 'deal_of_the_day', 'top_sellers', 'home_categories', 'productCounts'));
     }
     //Products Search on ajax
     public function searchProducts(Request $request)
@@ -692,6 +701,10 @@ class WebController extends Controller
     public function products(Request $request)
     {
         //dd($request->all());
+        if($request->get('data_from')==null){
+
+            return redirect()->route('home');
+        }
         $sort_by = $request->get('sort_by') ?? 'latest';
         $porduct_data = Product::active()->with(['reviews']);
         if ($request['data_from'] == 'category') {
@@ -1243,5 +1256,47 @@ class WebController extends Controller
             'productReview' => view('web-views.partials.product-reviews', compact('productReviews'))->render(),
             'not_empty' => $productReviews->count()
         ]);
+    }
+    public function leads()
+    {
+        return view('web-views.leads');
+    }
+
+    public function leadsStore(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'phone' => 'required|regex:/^(01[3-9]\d{8})$/',
+            'address' => 'required|string',
+            'upazila' => 'required|string|max:100',
+            'district' => 'required|string|max:100',
+            'division' => 'required|string|max:100',
+            'showroom_size' => 'required|string|max:100',
+            'showroom_location' => 'required|string|max:255',
+        ]);
+
+        Lead::create($request->all());
+
+        return back()->with('success', 'Lead submitted successfully!');
+    }
+
+    public function saveUserInfo(Request $request)
+    {
+        //Save user info based on session ID for guest users
+        $sessionId = Session::getId();
+        $identifier = ['session_id' => $sessionId];
+
+
+        $userInfo = UserInfo::updateOrCreate(
+            $identifier, // Search by authenticated user ID
+            [
+                'name' => $request->name,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'address' => $request->address,
+            ]
+        );
+
+        return response()->json(['success' => true]);
     }
 }

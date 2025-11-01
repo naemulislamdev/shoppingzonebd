@@ -15,11 +15,11 @@
         }
 
         .table {
-    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-    border-radius: 10px;
-    margin-top: 15px;
-    border: 2px solid #f26d21;
-}
+            box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border: 2px solid #f26d21;
+        }
     </style>
 @endpush
 
@@ -69,10 +69,18 @@
                                                 <div class="row mb-2">
                                                     <div class="col-md-12 d-flex">
                                                         <div class="col-4 for-tab-img">
-                                                            <img class="d-block mr-2"
-                                                                onerror="this.src='{{ asset('assets/front-end/img/image-place-holder.png') }}'"
-                                                                src="{{ \App\CPU\ProductManager::product_image_path('thumbnail') }}/{{ $product['thumbnail'] }}"
-                                                                alt="VR Collection" width="60">
+                                                            @if ($detail['color_image'])
+                                                                <img class="d-block mr-2"
+                                                                    onerror="this.src='{{ asset('assets/front-end/img/image-place-holder.png') }}'"
+                                                                    src="{{ $detail['color_image'] }}" alt="VR Collection"
+                                                                    width="60">
+                                                            @else
+                                                                <img class="d-block mr-2"
+                                                                    onerror="this.src='{{ asset('assets/front-end/img/image-place-holder.png') }}'"
+                                                                    src="{{ \App\CPU\ProductManager::product_image_path('thumbnail') }}/{{ $product['thumbnail'] }}"
+                                                                    alt="VR Collection" width="60">
+                                                            @endif
+
                                                         </div>
                                                         <div class="col-8 for-glaxy-name" style="vertical-align:middle;">
 
@@ -80,8 +88,8 @@
                                                                 {{ isset($product['name']) ? Str::limit($product['name'], 40) : '' }}
                                                             </a><br>
                                                             @if ($detail->variant)
-                                                            <span>{{ \App\CPU\translate('variant') }} : </span>
-                                                            {{ $detail->variant }}
+                                                                <span>{{ \App\CPU\translate('variant') }} : </span>
+                                                                {{ $detail->variant }}
                                                             @endif
                                                         </div>
                                                     </div>
@@ -269,84 +277,72 @@
     </div>
 @endsection
 @push('scripts')
-<script>
-    ttq.identify({
-	"email": "<hashed_email_address>", // string. The email of the customer if available. It must be hashed with SHA-256 on the client side.
-	"phone_number": "<hashed_phone_number>", // string. The phone number of the customer if available. It must be hashed with SHA-256 on the client side.
-	"external_id": "<hashed_external_id>" // string. Any unique identifier, such as loyalty membership IDs, user IDs, and external cookie IDs.It must be hashed with SHA-256 on the client side.
-});
+    <script>
+        ttq.identify({
+            "email": "<hashed_email_address>", // string. The email of the customer if available. It must be hashed with SHA-256 on the client side.
+            "phone_number": "<hashed_phone_number>", // string. The phone number of the customer if available. It must be hashed with SHA-256 on the client side.
+            "external_id": "<hashed_external_id>" // string. Any unique identifier, such as loyalty membership IDs, user IDs, and external cookie IDs.It must be hashed with SHA-256 on the client side.
+        });
 
-ttq.track('ViewContent', {
-	"contents": [
-		{
-			"content_id": "<content_identifier>", // string. ID of the product. Example: "1077218".
-			"content_type": "<content_type>", // string. Either product or product_group.
-			"content_name": "<content_name>" // string. The name of the page or product. Example: "shirt".
-		}
-	],
-	"value": "<content_value>", // number. Value of the order or items sold. Example: 100.
-	"currency": "<content_currency>" // string. The 4217 currency code. Example: "USD".
-});
+        ttq.track('ViewContent', {
+            "contents": [{
+                "content_id": "<content_identifier>", // string. ID of the product. Example: "1077218".
+                "content_type": "<content_type>", // string. Either product or product_group.
+                "content_name": "<content_name>" // string. The name of the page or product. Example: "shirt".
+            }],
+            "value": "<content_value>", // number. Value of the order or items sold. Example: 100.
+            "currency": "<content_currency>" // string. The 4217 currency code. Example: "USD".
+        });
 
-ttq.track('Search', {
-	"contents": [
-		{
-			"content_id": "<content_identifier>", // string. ID of the product. Example: "1077218".
-			"content_type": "<content_type>", // string. Either product or product_group.
-			"content_name": "<content_name>" // string. The name of the page or product. Example: "shirt".
-		}
-	],
-	"value": "<content_value>", // number. Value of the order or items sold. Example: 100.
-	"currency": "<content_currency>", // string. The 4217 currency code. Example: "USD".
-	"search_string": "<search_keywords>" // string. The word or phrase used to search. Example: "SAVE10COUPON".
-});
+        ttq.track('Search', {
+            "contents": [{
+                "content_id": "<content_identifier>", // string. ID of the product. Example: "1077218".
+                "content_type": "<content_type>", // string. Either product or product_group.
+                "content_name": "<content_name>" // string. The name of the page or product. Example: "shirt".
+            }],
+            "value": "<content_value>", // number. Value of the order or items sold. Example: 100.
+            "currency": "<content_currency>", // string. The 4217 currency code. Example: "USD".
+            "search_string": "<search_keywords>" // string. The word or phrase used to search. Example: "SAVE10COUPON".
+        });
 
-ttq.track('ClickButton', {
-	"contents": [
-		{
-			"content_id": "<content_identifier>", // string. ID of the product. Example: "1077218".
-			"content_type": "<content_type>", // string. Either product or product_group.
-			"content_name": "<content_name>" // string. The name of the page or product. Example: "shirt".
-		}
-	],
-	"value": "<content_value>", // number. Value of the order or items sold. Example: 100.
-	"currency": "<content_currency>" // string. The 4217 currency code. Example: "USD".
-});
+        ttq.track('ClickButton', {
+            "contents": [{
+                "content_id": "<content_identifier>", // string. ID of the product. Example: "1077218".
+                "content_type": "<content_type>", // string. Either product or product_group.
+                "content_name": "<content_name>" // string. The name of the page or product. Example: "shirt".
+            }],
+            "value": "<content_value>", // number. Value of the order or items sold. Example: 100.
+            "currency": "<content_currency>" // string. The 4217 currency code. Example: "USD".
+        });
 
-ttq.track('AddToWishlist', {
-	"contents": [
-		{
-			"content_id": "<content_identifier>", // string. ID of the product. Example: "1077218".
-			"content_type": "<content_type>", // string. Either product or product_group.
-			"content_name": "<content_name>" // string. The name of the page or product. Example: "shirt".
-		}
-	],
-	"value": "<content_value>", // number. Value of the order or items sold. Example: 100.
-	"currency": "<content_currency>" // string. The 4217 currency code. Example: "USD".
-});
+        ttq.track('AddToWishlist', {
+            "contents": [{
+                "content_id": "<content_identifier>", // string. ID of the product. Example: "1077218".
+                "content_type": "<content_type>", // string. Either product or product_group.
+                "content_name": "<content_name>" // string. The name of the page or product. Example: "shirt".
+            }],
+            "value": "<content_value>", // number. Value of the order or items sold. Example: 100.
+            "currency": "<content_currency>" // string. The 4217 currency code. Example: "USD".
+        });
 
-ttq.track('Subscribe', {
-	"contents": [
-		{
-			"content_id": "<content_identifier>", // string. ID of the product. Example: "1077218".
-			"content_type": "<content_type>", // string. Either product or product_group.
-			"content_name": "<content_name>" // string. The name of the page or product. Example: "shirt".
-		}
-	],
-	"value": "<content_value>", // number. Value of the order or items sold. Example: 100.
-	"currency": "<content_currency>" // string. The 4217 currency code. Example: "USD".
-});
+        ttq.track('Subscribe', {
+            "contents": [{
+                "content_id": "<content_identifier>", // string. ID of the product. Example: "1077218".
+                "content_type": "<content_type>", // string. Either product or product_group.
+                "content_name": "<content_name>" // string. The name of the page or product. Example: "shirt".
+            }],
+            "value": "<content_value>", // number. Value of the order or items sold. Example: 100.
+            "currency": "<content_currency>" // string. The 4217 currency code. Example: "USD".
+        });
 
-ttq.track('CompleteRegistration', {
-	"contents": [
-		{
-			"content_id": "<content_identifier>", // string. ID of the product. Example: "1077218".
-			"content_type": "<content_type>", // string. Either product or product_group.
-			"content_name": "<content_name>" // string. The name of the page or product. Example: "shirt".
-		}
-	],
-	"value": "<content_value>", // number. Value of the order or items sold. Example: 100.
-	"currency": "<content_currency>" // string. The 4217 currency code. Example: "USD".
-});
-</script>
+        ttq.track('CompleteRegistration', {
+            "contents": [{
+                "content_id": "<content_identifier>", // string. ID of the product. Example: "1077218".
+                "content_type": "<content_type>", // string. Either product or product_group.
+                "content_name": "<content_name>" // string. The name of the page or product. Example: "shirt".
+            }],
+            "value": "<content_value>", // number. Value of the order or items sold. Example: 100.
+            "currency": "<content_currency>" // string. The 4217 currency code. Example: "USD".
+        });
+    </script>
 @endpush

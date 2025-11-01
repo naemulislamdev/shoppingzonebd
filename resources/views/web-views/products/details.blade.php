@@ -130,6 +130,33 @@
             font-size: 15px;
             font-weight: 600;
         }
+
+        .xzoom-gallery,
+        .xzoom-gallery2,
+        .xzoom-gallery3,
+        .xzoom-gallery4,
+        .xzoom-gallery5 {
+            border: 0px solid #cecece;
+            margin-left: 0px;
+            margin-bottom: 0px;
+        }
+        #main-image {
+    transition: opacity 0.3s ease;
+}
+/* .color-label {
+    cursor: pointer;
+    margin-right: 8px;
+    border-radius: 6px;
+    overflow: hidden;
+}
+.color-label img {
+    border: 2px solid transparent;
+    transition: border 0.3s;
+}
+input[name="color"]:checked + .color-label img {
+    border: 2px solid #007bff;
+} */
+
     </style>
     <?php
     $overallRating = \App\CPU\ProductManager::get_overall_rating($product->reviews);
@@ -177,8 +204,7 @@
             } elseif (strpos($videoUrl, '/embed/') !== false) {
                 // YouTube Embed URL
                 $embedUrl = $videoUrl;
-            }
-            elseif (strpos($videoUrl, 'shorts') !== false) {
+            } elseif (strpos($videoUrl, 'shorts') !== false) {
                 // YouTube Shorts URL
                 //https://www.youtube.com/shorts/zIDDpjTJRjU?feature=share
                 $videoId = explode('/', $videoUrl)[4];
@@ -251,7 +277,7 @@
 
                                 <div>
                                     <span class="product-price"><span>
-                                        ৳</span> {{ \App\CPU\Helpers::get_price_range($product) }}</span>
+                                            ৳</span> {{ \App\CPU\Helpers::get_price_range($product) }}</span>
                                 </div>
 
                                 @if ($product->discount > 0)
@@ -260,7 +286,7 @@
                                         @if ($product->discount_type == 'percent')
                                             {{ round($product->discount, $decimal_point_settings) }}%
                                         @elseif($product->discount_type == 'flat')
-                                           {{ \App\CPU\Helpers::currency_converter($product->discount) }}
+                                            {{ \App\CPU\Helpers::currency_converter($product->discount) }}
                                         @endif
                                     </span>
                                 @endif
@@ -274,7 +300,7 @@
                                     <input type="hidden" name="id" value="{{ $product->id }}">
 
                                     @if (count(json_decode($product->colors)) > 0)
-                                        <div class="row">
+                                        <div class="row mb-4">
                                             <div class="col-12 mb-3">
                                                 <h4 style="font-size: 18px;">Color</h4>
                                             </div>
@@ -285,15 +311,15 @@
                                                             <div class="v-color-box">
                                                                 <input type="radio"
                                                                     id="{{ $product->id }}-color-{{ $key }}"
-                                                                    name="color" value="{{ $color->color }}"
+                                                                    name="color" value="{{ $color->code }}"
                                                                     @if ($key == 0) checked @endif>
                                                                 <label for="{{ $product->id }}-color-{{ $key }}"
                                                                     class="color-label"
-                                                                    style="background-color: {{ $color->color }}">
+                                                                    style="background-color: {{ $color->code }}">
                                                                     <img src="{{ asset($color->image) }}"
                                                                         data-image="{{ asset($color->image) }}"
                                                                         alt="{{ $color->color }}"
-                                                                        style="width:100%; height:100%;border-radius: 10px;">
+                                                                        style="width:100%; height:60px;">
                                                                 </label>
                                                             </div>
                                                         @endforeach
@@ -366,7 +392,8 @@
                                     <div class="row mb-3">
                                         <div class="col-md-6 mb-3">
                                             <button type="button" onclick="buy_now('form-{{ $product->id }}')"
-                                                href="javascript:void(0);" class="w-100 common-btn border-0">অর্ডার করুন</button>
+                                                href="javascript:void(0);" class="w-100 common-btn border-0">অর্ডার
+                                                করুন</button>
                                         </div>
                                         <div class="col-md-6">
                                             <button type="button" class="btn btn-dark d-block w-100"
@@ -784,7 +811,7 @@
                     @foreach ($relatedProducts as $key => $product)
                         <div class="col-md-2 col-sm-6 product-column" data-category="category3">
                             <div class="product-box product-box-col-2" data-category="category3">
-                                <div class="product-image2 product-image2-col-2" data-category="category3">
+                                <div class="product-image2 product-image2-col-2" data-category="category1">
                                     @if ($product->discount > 0)
                                         <div class="discount-box float-end">
                                             <span>
@@ -799,25 +826,24 @@
                                     <a href="{{ route('product', $product->slug) }}">
                                         <img class="pic-1"
                                             src="{{ \App\CPU\ProductManager::product_image_path('thumbnail') }}/{{ $product['thumbnail'] }}"
-                                            alt="{{ $product->name }}">
+                                            alt="{{ $product['name'] }}">
                                         <img class="pic-2"
                                             src="{{ \App\CPU\ProductManager::product_image_path('thumbnail') }}/{{ $product['thumbnail'] }}"
-                                            alt="{{ $product->name }}">
+                                            alt="{{ $product['name'] }}">
                                     </a>
                                     <ul class="social">
                                         <li><a href="{{ route('product', $product->slug) }}" data-tip="Quick View"><i
                                                     class="fa fa-eye"></i></a></li>
-                                        <li><a href="javascript:void(0);" data-toggle="modal"
+
+                                        <li><a style="cursor: pointer" data-toggle="modal"
                                                 data-target="#addToCartModal_{{ $product->id }}"
                                                 data-tip="Add to Cart"><i class="fa fa-shopping-cart"></i></a>
                                         </li>
                                     </ul>
-                                    <button type="button" style="cursor: pointer;" class="buy-now"
-                                        onclick="buy_now('form-{{ $product->id }}')">Buy Now</button>
                                 </div>
                                 <div class="product-content">
                                     <h3 class="title"><a
-                                            href="{{ route('product', $product->slug) }}">{{ Str::limit($product['name'], 23) }}</a>
+                                            href="{{ route('product', $product->slug) }}">{{ Str::limit($product['name'], 50) }}</a>
                                     </h3>
                                     <div class="price d-flex justify-content-center align-content-center">
                                         @if ($product->discount > 0)
@@ -830,19 +856,8 @@
                                             <span>{{ \App\CPU\Helpers::currency_converter($product->unit_price) }}</span>
                                         @endif
                                     </div>
-                                </div>
-                                @php($overallRating = \App\CPU\ProductManager::get_overall_rating($product->reviews))
-                                <div class="rating-show justify-content-between text-center">
-                                    <span class="d-inline-block font-size-sm text-body">
-                                        @for ($inc = 0; $inc < 5; $inc++)
-                                            @if ($inc < $overallRating[0])
-                                                <i class="fa fa-star" style="color:#fea569 !important"></i>
-                                            @else
-                                                <i class="fa fa-star-o" style="color:#fea569 !important"></i>
-                                            @endif
-                                        @endfor
-                                        <label class="badge-style">( {{ $product->reviews_count }} )</label>
-                                    </span>
+                                    <button type="button" style="cursor: pointer;" class="btn btn-primary"
+                                        onclick="buy_now('form-{{ $product->id }}')">অর্ডার করুন</button>
                                 </div>
                             </div>
                         </div>
@@ -867,7 +882,7 @@
                                                         alt="{{ $product->name }}" style="width: 80px;">
                                                 </div>
                                                 <div class="p-name">
-                                                    <h5 class="title">{{ Str::limit($product['name'], 23) }}</h5>
+                                                    <h5 class="title">{{ Str::limit($product['name'], 50) }}</h5>
                                                     <span
                                                         class="mr-2">{{ \App\CPU\Helpers::currency_converter(
                                                             $product->unit_price - \App\CPU\Helpers::get_product_discount($product, $product->unit_price),
@@ -1106,6 +1121,42 @@
             }
 
             loadProduct();
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const mainImage = document.getElementById('main-image');
+            const colorInputs = document.querySelectorAll('input[name="color"]');
+
+            if (!mainImage || colorInputs.length === 0) return;
+
+            // 1️⃣ Set default main image from the first color
+            const firstColorLabel = colorInputs[0].nextElementSibling;
+            const firstImageSrc = firstColorLabel.querySelector('img').getAttribute('data-image');
+            if (firstImageSrc) {
+                mainImage.src = firstImageSrc;
+            }
+
+            // 2️⃣ Add click listener to each color image
+            colorInputs.forEach(input => {
+                const label = input.nextElementSibling;
+                const img = label.querySelector('img');
+                if (img) {
+                    img.addEventListener('click', function() {
+                        const newSrc = img.getAttribute('data-image');
+
+                        // Add transition effect
+                        mainImage.style.transition = 'opacity 0.3s ease';
+                        mainImage.style.opacity = '1';
+
+                        // After fade out, change image
+                        setTimeout(() => {
+                            mainImage.src = newSrc;
+                            mainImage.style.opacity = '1';
+                        }, 300);
+                    });
+                }
+            });
         });
     </script>
 @endpush

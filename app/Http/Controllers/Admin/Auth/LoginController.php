@@ -42,6 +42,7 @@ class LoginController extends Controller
 
     public function login()
     {
+       // dd("ok");
         return view('admin-views.auth.login');
     }
 

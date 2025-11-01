@@ -22,8 +22,12 @@
                                         <td class="product-col">
                                             <div class="checkout-product">
                                                 <a href="{{ route('product', $cartItem['slug']) }}">
-                                                    <img src="{{ \App\CPU\ProductManager::product_image_path('thumbnail') }}/{{ $cartItem['thumbnail'] }}"
-                                                        alt="Product image">
+                                                    @if ($cartItem['color_image'])
+                                                        <img src="{{ $cartItem['color_image'] }}" alt="Product image">
+                                                    @else
+                                                        <img src="{{ \App\CPU\ProductManager::product_image_path('thumbnail') }}/{{ $cartItem['thumbnail'] }}"
+                                                            alt="Product image">
+                                                    @endif
                                                 </a>
                                             </div>
                                         </td>
@@ -52,8 +56,8 @@
                                             {{ \App\CPU\Helpers::currency_converter(($cartItem['price'] - $cartItem['discount']) * $cartItem['quantity']) }}
                                         </td>
                                         <td class="remove-col"><a href="javascript:voide(0);"
-                                                onclick="removeFromCart({{ $key }})"
-                                                class="btn-remove"><i class="fa fa-trash-o"></i></a></td>
+                                                onclick="removeFromCart({{ $key }})" class="btn-remove"><i
+                                                    class="fa fa-trash-o"></i></a></td>
                                     </tr>
                                 @endforeach
                             @else
@@ -71,7 +75,7 @@
                         <h2 class="address-title">আপনার ঠিকানা</h2>
                     </div>
                     <div class="card-body">
-<form action="{{ route('customer.product.checkout.order') }}" method="POST">
+                        <form action="{{ route('customer.product.checkout.order') }}" method="POST" id="userInfoForm">
                             @csrf
                             <div class="row">
                                 <div class="col-md-12">
@@ -111,7 +115,7 @@
                                 <div class="col-md-6 mb-3">
                                     <div class="form-group">
                                         <label>নাম <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" placeholder="আপনার নাম লিখুন"
+                                        <input type="text" class="form-control auto-save" placeholder="আপনার নাম লিখুন"
                                             name="name" value="{{ old('name') }}">
                                         @error('name')
                                             <span class="text-danger">{{ $message }}</span>
@@ -121,7 +125,7 @@
                                 <div class="col-md-6 mb-3">
                                     <div class="form-group">
                                         <label for="phone">ফোন নম্বর <span class="text-danger">*</span></label>
-                                        <input type="number" class="form-control" id="phone" name="phone"
+                                        <input type="number" class="form-control auto-save" id="phone" name="phone"
                                             placeholder="ফোন নম্বর লিখুন" required value="{{ old('phone') }}">
                                         <span id="phoneFeedback" class="small text-danger"></span>
                                         @error('phone')
@@ -135,7 +139,7 @@
                                 <div class="col-md-12 mb-3">
                                     <div class="form-group">
                                         <label>আপনার ঠিকানা <span class="text-danger">*</span></label>
-                                        <textarea class="form-control" placeholder="আপনার শিপিং ঠিকানা লিখুন" name="address">{{ old('address') }}</textarea>
+                                        <textarea class="form-control auto-save" placeholder="আপনার শিপিং ঠিকানা লিখুন" name="address">{{ old('address') }}</textarea>
                                         @error('address')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
@@ -159,29 +163,28 @@
 
 
 <script>
-
     function set_shipping_id(id) {
-        @foreach(session()->get('cart') as $key => $item)
-        let key = '{{$key}}';
-        @break
+        @foreach (session()->get('cart') as $key => $item)
+            let key = '{{ $key }}';
+            @break
         @endforeach
         $.get({
-            url: '{{url('/')}}/customer/set-shipping-method',
+            url: '{{ url('/') }}/customer/set-shipping-method',
             dataType: 'json',
             data: {
                 id: id,
                 key: key
             },
-            beforeSend: function () {
+            beforeSend: function() {
                 $('#loading').show();
             },
-            success: function (data) {
+            success: function(data) {
                 if (data.status == 1) {
                     toastr.success('Shipping method selected', {
                         CloseButton: true,
                         ProgressBar: true
                     });
-                    setInterval(function () {
+                    setInterval(function() {
                         location.reload();
                     }, 2000);
                 } else {
@@ -191,7 +194,7 @@
                     });
                 }
             },
-            complete: function () {
+            complete: function() {
                 $('#loading').hide();
             },
         });

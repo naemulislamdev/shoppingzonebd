@@ -35,7 +35,6 @@
                         </div>
                     </div>
                 </form>
-
             </div>
         </div>
     </div>
@@ -43,13 +42,12 @@
 @endsection
 
 @push('script')
-    {{--ck editor--}}
-    <script src="{{asset('/')}}vendor/ckeditor/ckeditor/ckeditor.js"></script>
-    <script src="{{asset('/')}}vendor/ckeditor/ckeditor/adapters/jquery.js"></script>
+   <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+
     <script>
-        $('#editor').ckeditor({
-            contentsLangDirection : '{{Session::get('direction')}}',
+        $(document).ready(function() {
+            $('#editor').summernote();
         });
     </script>
-    {{--ck editor--}}
 @endpush
