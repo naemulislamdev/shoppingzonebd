@@ -470,14 +470,14 @@
     {{-- owl carosel  --}}
     <script>
         $(document).ready(function() {
-            $('.owl-carousel').each(function() {
-                const delay = $(this).data('delay') || 3000;
+            $('.new-arrivals-section .owl-carousel').each(function() {
+
                 $(this).owlCarousel({
                     loop: true,
                     margin: 10,
                     autoplay: true,
-                    autoplayTimeout: delay,
-                    smartSpeed: 600,
+                    autoplayTimeout: 2000,
+                    smartSpeed: 500,
                     nav: true,
                     navText: [
                         '<i class="fa fa-chevron-left text-white"></i>',
@@ -498,6 +498,40 @@
             });
         });
     </script>
+    <script>
+        $(document).ready(function() {
+            $('.owl-carousel.category-carosel').each(function() {
+
+                $(this).owlCarousel({
+                    loop: true,
+                    margin: 20,
+                    autoplay: true,
+                    autoplayTimeout: 2000,
+                    smartSpeed: 500,
+                    nav: true,
+                    dots: false,
+                    responsiveRefreshRate: 0,
+                    navText: [
+                        '<i title="Prev" class="fa fa-chevron-left text-white"></i>',
+                        '<i title="Next" class="fa fa-chevron-right text-white"></i>'
+                    ],
+                    responsive: {
+                        0: {
+                            margin: 10,
+                            items: 3
+                        },
+                        768: {
+                            items: 3
+                        },
+                        992: {
+                            items: 6
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+
     <script>
         $(document).ready(function() {
             /*mobile menu*/

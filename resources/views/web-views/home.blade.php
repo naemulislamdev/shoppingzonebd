@@ -1,4 +1,82 @@
 @extends('layouts.front-end.app')
+<style>
+    section.category .owl-nav,
+    .new-arrivals-section .owl-nav {
+        display: block !important;
+    }
+
+    .owl-nav button {
+        position: absolute;
+        top: 45%;
+        transform: translateY(-50%);
+        background: rgba(255, 94, 0, 0.862) !important;
+        color: #fff;
+        border: none;
+        outline: none;
+        border-radius: 5px;
+        width: 40px;
+        height: 50px;
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.3s;
+
+    }
+
+    .owl-nav button:hover {
+        background-color: #ff5d00 !important;
+        color: #fff;
+    }
+
+    .owl-nav button:focus {
+        border: none !important;
+        outline: none !important;
+        outline: none !important;
+    }
+
+    section.category .owl-nav .owl-prev,
+    .new-arrivals-section .owl-nav .owl-prev {
+        left: 93%;
+        top: 0 !important;
+    }
+
+    section.category .owl-nav .owl-next,
+    .new-arrivals-section .owl-nav .owl-next {
+        right: 0;
+        top: 0;
+    }
+
+    section.category .owl-nav button,
+    .new-arrivals-section .owl-nav button {
+        height: 40px;
+    }
+
+    .category .card {
+        border-radius: 12px;
+    }
+
+    .category .card-body {
+        padding: 5px 0;
+    }
+
+    .category .card img {
+        border-radius: 12px 12px 0 0;
+
+    }
+
+    section.category .card-title {
+        font-family: jost;
+        font-size: 20px;
+        font-weight: 600;
+    }
+
+    section.category .card-text {
+        font-family: jost;
+        font-size: 14px;
+        margin-top: 5px;
+    }
+</style>
 @section('title', \App\CPU\translate('Welcome To') . ' ' . $web_config['name']->value)
 
 @push('css_or_js')
@@ -17,49 +95,6 @@
     @include('layouts.front-end.partials._modals')
     <!------start  header main slider-->
     @include('layouts.front-end.partials.slider')
-    <section class="category-section my-4">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-11 mx-auto">
-                    <div class="row mb-3">
-                        <div class="col">
-                            <div class="category-title-box">
-                                <div class="category-title">
-                                    <h5>Product Collection</h5>
-                                    <h1>Discover our products</h1>
-                                </div>
-                                <div class="tp-right-btn">
-                                    <a href="{{ route('shop') }}">Shop all products <i class="fa fa-arrow-right"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="homeCategories owl-carousel owl-theme">
-                        @foreach ($categories as $category)
-                            @php
-                                $productCount = $productCounts[$category->id] ?? 0;
-                            @endphp
-                            <div class="item">
-                                <div class="tp-category-item-3 p-relative text-center">
-                                    <div class="tp-category-thumb-3">
-                                        <img src="{{ asset("storage/category/$category->icon") }}"
-                                            alt="{{ $category->name }}">
-                                    </div>
-                                    <div class="tp-category-content-3">
-                                        <h3 class="tp-category-title-3">
-                                            <a
-                                                href="{{ route('products', ['id' => $category['id'], 'data_from' => 'category', 'page' => 1]) }}">{{ $category['name'] }}</a>
-                                        </h3>
-                                        <span class="tp-categroy-ammount-3">{{ $productCount }} products</span>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
     {{-- New Arrivals Section Start --}}
     <section class="new-arrivals-section my-2 my-lg-4">
         <div class="container">
@@ -68,8 +103,10 @@
                     <div class="section-heading-title position-relative z-30">
                         <h3>NEW ARRIVALS</h3>
                         <div class="heading-border"></div>
-                        <div class="d-flex justify-content-end">
-                            <a href="" class="btn btn-outline-warning  text-end  d-none d-lg-block">Shop More</a>
+                        <div class="d-flex justify-content-start">
+                            <a href="{{ route('shop') }}"
+                                class="btn btn-outline-warning  text-start  d-none d-lg-block">Shop
+                                More</a>
                         </div>
                     </div>
                 </div>
@@ -170,7 +207,7 @@
                                 <div class="price d-flex justify-content-center align-content-center">
 
                                     <span class="mr-2">2999</span>
-                                    <del>2500</del>
+                                    <del>200</del>
                                 </div>
                                 <button type="button" style="cursor: pointer;" class="btn btn-primary">অর্ডার
                                     করুন</button>
@@ -186,968 +223,84 @@
             </div>
     </section>
     {{-- New Arrivals Section End --}}
-    {{-- Women's Section Start --}}
-    <section class="womens-collection mt-4 mb-2 my-lg-4">
+    {{-- <section class="category-section my-4">
         <div class="container">
-            <div class="row mb-3">
+            <div class="row">
+                <div class="col-md-11 ">
+                    <div class="row mb-3">
+                        <div class="col">
+                            <div class="category-title-box">
+                                <div class="category-title">
+                                    <h5>Product Collection</h5>
+                                    <h1>Discover our products</h1>
+                                </div>
+                                <div class="tp-right-btn">
+                                    <a href="{{ route('shop') }}">Shop all products <i class="fa fa-arrow-right"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="homeCategories owl-carousel owl-theme ">
+                        @foreach ($categories as $category)
+                            @php
+                                $productCount = $productCounts[$category->id] ?? 0;
+                            @endphp
+                            <div class="item">
+                                <div class="tp-category-item-3 p-relative text-center">
+                                    <div class="tp-category-thumb-3">
+                                        <img src="{{ asset("storage/category/$category->icon") }}"
+                                            alt="{{ $category->name }}">
+                                    </div>
+                                    <div class="tp-category-content-3">
+                                        <h3 class="tp-category-title-3">
+                                            <a
+                                                href="{{ route('products', ['id' => $category['id'], 'data_from' => 'category', 'page' => 1]) }}">{{ $category['name'] }}</a>
+                                        </h3>
+                                        <span class="tp-categroy-ammount-3">{{ $productCount }} products</span>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section> --}}
+
+    {{-- Category Section Start --}}
+    <section class="category my-5">
+        <div class="container px-0">
+            <div class="row mb-5">
                 <div class="col text-center">
-                    <div class="section-heading-title">
-                        <h3>Women's Collection</h3>
+                    <div class="section-heading-title position-relative z-30">
+                        <h3>Shop By Category</h3>
                         <div class="heading-border"></div>
-                        <div class="d-flex justify-content-end">
-                            <a href="" class="btn btn-outline-warning  text-end  d-none d-lg-block">Shop More</a>
-                        </div>
+
                     </div>
                 </div>
             </div>
-            <div class="owl-carousel related-products product-carosel mt-4 mt-lg-5" data-delay="2000">
-                <div class="item">
-                    <div class="product-column">
-                        <div class="product-box product-box-col-2">
-                            <input type="hidden" name="quantity" value="" min="" max="100">
-                            <div class="product-image2 product-image2-col-2">
-
-                                <div class="discount-box float-end">
-                                    <span>
-                                        -10%
-                                    </span>
-                                </div>
-
-                                <a href="">
-                                    <img class="pic-1"
-                                        src="{{ asset('assets') }}/front-end/images/product/WEB_0755914d-db9e-4f19-a526-dd9d7b8e59f7.webp">
-                                    <img class="pic-2"
-                                        src="{{ asset('assets') }}/front-end/images/product/WEB_0755914d-db9e-4f19-a526-dd9d7b8e59f7.webp">
-                                </a>
-                                <ul class="social">
-                                    <li><a href="" data-tip="Quick View"><i class="fa fa-eye"></i></a></li>
-                                    <li>
-                                        <a style="cursor: pointer" data-toggle="modal"
-                                            data-target="#addToCartModal_{{ 2 }}" data-tip="Add to Cart">
-                                            <i class="fa fa-shopping-cart"></i>
-                                        </a>
-                                    </li>
-                                </ul>
+            <div class="owl-carousel category-carosel mt-4 mt-lg-4 pt-5">
+                @foreach ($categories as $category)
+                    @php
+                        $productCount = $productCounts[$category->id] ?? 0;
+                    @endphp
+                    <div style="background: #f26d21" class="category-item card">
+                        <a href="{{ route('products', ['id' => $category['id'], 'data_from' => 'category', 'page' => 1]) }}"
+                            class="">
+                            <img src='{{ asset("storage/category/$category->icon") }}' alt="{{ $category->name }}">
+                            <div class="card-body text-center">
+                                <h5 class="card-title text-white mb-0">{{ $category['name'] }}</h5>
+                                <p class="card-text text-white p-0 m-0">{{ $productCount }} Products</p>
                             </div>
-                            <div class="product-content">
-                                <h3 class="title"><a href="">product name Lorem ipsum dolor sit amet.</a>
-                                </h3>
-                                <div class="price d-flex justify-content-center align-content-center">
-
-                                    <span class="mr-2">2999</span>
-                                    <del>2500</del>
-                                </div>
-                                <button type="button" style="cursor: pointer;" class="btn btn-primary">অর্ডার
-                                    করুন</button>
-                            </div>
-
-                        </div>
+                        </a>
                     </div>
-                </div>
-                <div class="item">
-                    <div class="product-column">
-                        <div class="product-box product-box-col-2">
-                            <input type="hidden" name="quantity" value="" min="" max="100">
-                            <div class="product-image2 product-image2-col-2">
-
-                                <div class="discount-box float-end">
-                                    <span>
-                                        -10%
-                                    </span>
-                                </div>
-
-                                <a href="">
-                                    <img class="pic-1"
-                                        src="{{ asset('assets') }}/front-end/images/product/WEB_0755914d-db9e-4f19-a526-dd9d7b8e59f7.webp">
-                                    <img class="pic-2"
-                                        src="{{ asset('assets') }}/front-end/images/product/WEB_0755914d-db9e-4f19-a526-dd9d7b8e59f7.webp">
-                                </a>
-                                <ul class="social">
-                                    <li><a href="" data-tip="Quick View"><i class="fa fa-eye"></i></a></li>
-                                    <li>
-                                        <a style="cursor: pointer" data-toggle="modal"
-                                            data-target="#addToCartModal_{{ 2 }}" data-tip="Add to Cart">
-                                            <i class="fa fa-shopping-cart"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="product-content">
-                                <h3 class="title"><a href="">product name Lorem ipsum dolor sit amet.</a>
-                                </h3>
-                                <div class="price d-flex justify-content-center align-content-center">
-
-                                    <span class="mr-2">2999</span>
-                                    <del>2500</del>
-                                </div>
-                                <button type="button" style="cursor: pointer;" class="btn btn-primary">অর্ডার
-                                    করুন</button>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="item">
-                    <div class="product-column">
-                        <div class="product-box product-box-col-2">
-                            <input type="hidden" name="quantity" value="" min="" max="100">
-                            <div class="product-image2 product-image2-col-2">
-
-                                <div class="discount-box float-end">
-                                    <span>
-                                        -10%
-                                    </span>
-                                </div>
-
-                                <a href="">
-                                    <img class="pic-1"
-                                        src="{{ asset('assets') }}/front-end/images/product/WEB_0755914d-db9e-4f19-a526-dd9d7b8e59f7.webp">
-                                    <img class="pic-2"
-                                        src="{{ asset('assets') }}/front-end/images/product/WEB_0755914d-db9e-4f19-a526-dd9d7b8e59f7.webp">
-                                </a>
-                                <ul class="social">
-                                    <li><a href="" data-tip="Quick View"><i class="fa fa-eye"></i></a></li>
-                                    <li>
-                                        <a style="cursor: pointer" data-toggle="modal"
-                                            data-target="#addToCartModal_{{ 2 }}" data-tip="Add to Cart">
-                                            <i class="fa fa-shopping-cart"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="product-content">
-                                <h3 class="title"><a href="">product name Lorem ipsum dolor sit amet.</a>
-                                </h3>
-                                <div class="price d-flex justify-content-center align-content-center">
-
-                                    <span class="mr-2">2999</span>
-                                    <del>2500</del>
-                                </div>
-                                <button type="button" style="cursor: pointer;" class="btn btn-primary">অর্ডার
-                                    করুন</button>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="item">
-                    <div class="product-column">
-                        <div class="product-box product-box-col-2">
-                            <input type="hidden" name="quantity" value="" min="" max="100">
-                            <div class="product-image2 product-image2-col-2">
-
-                                <div class="discount-box float-end">
-                                    <span>
-                                        -10%
-                                    </span>
-                                </div>
-
-                                <a href="">
-                                    <img class="pic-1"
-                                        src="{{ asset('assets') }}/front-end/images/product/WEB_0755914d-db9e-4f19-a526-dd9d7b8e59f7.webp">
-                                    <img class="pic-2"
-                                        src="{{ asset('assets') }}/front-end/images/product/WEB_0755914d-db9e-4f19-a526-dd9d7b8e59f7.webp">
-                                </a>
-                                <ul class="social">
-                                    <li><a href="" data-tip="Quick View"><i class="fa fa-eye"></i></a></li>
-                                    <li>
-                                        <a style="cursor: pointer" data-toggle="modal"
-                                            data-target="#addToCartModal_{{ 2 }}" data-tip="Add to Cart">
-                                            <i class="fa fa-shopping-cart"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="product-content">
-                                <h3 class="title"><a href="">product name Lorem ipsum dolor sit amet.</a>
-                                </h3>
-                                <div class="price d-flex justify-content-center align-content-center">
-
-                                    <span class="mr-2">2999</span>
-                                    <del>2500</del>
-                                </div>
-                                <button type="button" style="cursor: pointer;" class="btn btn-primary">অর্ডার
-                                    করুন</button>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="item">
-                    <div class="product-column">
-                        <div class="product-box product-box-col-2">
-                            <input type="hidden" name="quantity" value="" min="" max="100">
-                            <div class="product-image2 product-image2-col-2">
-
-                                <div class="discount-box float-end">
-                                    <span>
-                                        -10%
-                                    </span>
-                                </div>
-
-                                <a href="">
-                                    <img class="pic-1"
-                                        src="{{ asset('assets') }}/front-end/images/product/WEB_0755914d-db9e-4f19-a526-dd9d7b8e59f7.webp">
-                                    <img class="pic-2"
-                                        src="{{ asset('assets') }}/front-end/images/product/WEB_0755914d-db9e-4f19-a526-dd9d7b8e59f7.webp">
-                                </a>
-                                <ul class="social">
-                                    <li><a href="" data-tip="Quick View"><i class="fa fa-eye"></i></a></li>
-                                    <li>
-                                        <a style="cursor: pointer" data-toggle="modal"
-                                            data-target="#addToCartModal_{{ 2 }}" data-tip="Add to Cart">
-                                            <i class="fa fa-shopping-cart"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="product-content">
-                                <h3 class="title"><a href="">product name Lorem ipsum dolor sit amet.</a>
-                                </h3>
-                                <div class="price d-flex justify-content-center align-content-center">
-
-                                    <span class="mr-2">2999</span>
-                                    <del>2500</del>
-                                </div>
-                                <button type="button" style="cursor: pointer;" class="btn btn-primary">অর্ডার
-                                    করুন</button>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="item">
-                    <div class="product-column">
-                        <div class="product-box product-box-col-2">
-                            <input type="hidden" name="quantity" value="" min="" max="100">
-                            <div class="product-image2 product-image2-col-2">
-
-                                <div class="discount-box float-end">
-                                    <span>
-                                        -10%
-                                    </span>
-                                </div>
-
-                                <a href="">
-                                    <img class="pic-1"
-                                        src="{{ asset('assets') }}/front-end/images/product/WEB_0755914d-db9e-4f19-a526-dd9d7b8e59f7.webp">
-                                    <img class="pic-2"
-                                        src="{{ asset('assets') }}/front-end/images/product/WEB_0755914d-db9e-4f19-a526-dd9d7b8e59f7.webp">
-                                </a>
-                                <ul class="social">
-                                    <li><a href="" data-tip="Quick View"><i class="fa fa-eye"></i></a></li>
-                                    <li>
-                                        <a style="cursor: pointer" data-toggle="modal"
-                                            data-target="#addToCartModal_{{ 2 }}" data-tip="Add to Cart">
-                                            <i class="fa fa-shopping-cart"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="product-content">
-                                <h3 class="title"><a href="">product name Lorem ipsum dolor sit amet.</a>
-                                </h3>
-                                <div class="price d-flex justify-content-center align-content-center">
-
-                                    <span class="mr-2">2999</span>
-                                    <del>2500</del>
-                                </div>
-                                <button type="button" style="cursor: pointer;" class="btn btn-primary">অর্ডার
-                                    করুন</button>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="item">
-                    <div class="product-column">
-                        <div class="product-box product-box-col-2">
-                            <input type="hidden" name="quantity" value="" min="" max="100">
-                            <div class="product-image2 product-image2-col-2">
-
-                                <div class="discount-box float-end">
-                                    <span>
-                                        -10%
-                                    </span>
-                                </div>
-
-                                <a href="">
-                                    <img class="pic-1"
-                                        src="{{ asset('assets') }}/front-end/images/product/WEB_0755914d-db9e-4f19-a526-dd9d7b8e59f7.webp">
-                                    <img class="pic-2"
-                                        src="{{ asset('assets') }}/front-end/images/product/WEB_0755914d-db9e-4f19-a526-dd9d7b8e59f7.webp">
-                                </a>
-                                <ul class="social">
-                                    <li><a href="" data-tip="Quick View"><i class="fa fa-eye"></i></a></li>
-                                    <li>
-                                        <a style="cursor: pointer" data-toggle="modal"
-                                            data-target="#addToCartModal_{{ 2 }}" data-tip="Add to Cart">
-                                            <i class="fa fa-shopping-cart"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="product-content">
-                                <h3 class="title"><a href="">product name Lorem ipsum dolor sit amet.</a>
-                                </h3>
-                                <div class="price d-flex justify-content-center align-content-center">
-
-                                    <span class="mr-2">2999</span>
-                                    <del>2500</del>
-                                </div>
-                                <button type="button" style="cursor: pointer;" class="btn btn-primary">অর্ডার
-                                    করুন</button>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
+                @endforeach
 
             </div>
-            <div class="d-flex justify-content-center">
-                <a href="" class="btn btn-outline-warning  text-center  d-block d-lg-none">Shop More</a>
-            </div>
+        </div>
     </section>
-    {{-- Women's Section End --}}
-    {{-- men's Section Start --}}
-    <section class="mens-collection mt-4 mb-2 my-lg-4">
-        <div class="container">
-            <div class="row mb-3">
-                <div class="col text-center">
-                    <div class="section-heading-title">
-                        <h3>Men's Collection</h3>
-                        <div class="heading-border"></div>
-                        <div class="d-flex justify-content-end">
-                            <a href="" class="btn btn-outline-warning  text-end  d-none d-lg-block">Shop More</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="owl-carousel related-products product-carosel mt-4 mt-lg-5" data-delay="3000">
-                <div class="item">
-                    <div class="product-column">
-                        <div class="product-box product-box-col-2">
-                            <input type="hidden" name="quantity" value="" min="" max="100">
-                            <div class="product-image2 product-image2-col-2">
-
-                                <div class="discount-box float-end">
-                                    <span>
-                                        -10%
-                                    </span>
-                                </div>
-
-                                <a href="">
-                                    <img class="pic-1"
-                                        src="{{ asset('assets') }}/front-end/images/product/9658BLUE_1.webp">
-                                    <img class="pic-2"
-                                        src="{{ asset('assets') }}/front-end/images/product/9658BLUE_1.webp">
-                                </a>
-                                <ul class="social">
-                                    <li><a href="" data-tip="Quick View"><i class="fa fa-eye"></i></a></li>
-                                    <li>
-                                        <a style="cursor: pointer" data-toggle="modal"
-                                            data-target="#addToCartModal_{{ 2 }}" data-tip="Add to Cart">
-                                            <i class="fa fa-shopping-cart"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="product-content">
-                                <h3 class="title"><a href="">product name Lorem ipsum dolor sit amet.</a>
-                                </h3>
-                                <div class="price d-flex justify-content-center align-content-center">
-
-                                    <span class="mr-2">2999</span>
-                                    <del>2500</del>
-                                </div>
-                                <button type="button" style="cursor: pointer;" class="btn btn-primary">অর্ডার
-                                    করুন</button>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="item">
-                    <div class="product-column">
-                        <div class="product-box product-box-col-2">
-                            <input type="hidden" name="quantity" value="" min="" max="100">
-                            <div class="product-image2 product-image2-col-2">
-
-                                <div class="discount-box float-end">
-                                    <span>
-                                        -10%
-                                    </span>
-                                </div>
-
-                                <a href="">
-                                    <img class="pic-1" src="{{ asset('assets') }}/front-end/images/product/p5.png">
-                                    <img class="pic-2" src="{{ asset('assets') }}/front-end/images/product/p5.png">
-                                </a>
-                                <ul class="social">
-                                    <li><a href="" data-tip="Quick View"><i class="fa fa-eye"></i></a></li>
-                                    <li>
-                                        <a style="cursor: pointer" data-toggle="modal"
-                                            data-target="#addToCartModal_{{ 2 }}" data-tip="Add to Cart">
-                                            <i class="fa fa-shopping-cart"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="product-content">
-                                <h3 class="title"><a href="">product name Lorem ipsum dolor sit amet.</a>
-                                </h3>
-                                <div class="price d-flex justify-content-center align-content-center">
-
-                                    <span class="mr-2">2999</span>
-                                    <del>2500</del>
-                                </div>
-                                <button type="button" style="cursor: pointer;" class="btn btn-primary">অর্ডার
-                                    করুন</button>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="item">
-                    <div class="product-column">
-                        <div class="product-box product-box-col-2">
-                            <input type="hidden" name="quantity" value="" min="" max="100">
-                            <div class="product-image2 product-image2-col-2">
-
-                                <div class="discount-box float-end">
-                                    <span>
-                                        -10%
-                                    </span>
-                                </div>
-
-                                <a href="">
-                                    <img class="pic-1"
-                                        src="{{ asset('assets') }}/front-end/images/product/9658BLUE_1.webp">
-                                    <img class="pic-2"
-                                        src="{{ asset('assets') }}/front-end/images/product/9658BLUE_1.webp">
-                                </a>
-                                <ul class="social">
-                                    <li><a href="" data-tip="Quick View"><i class="fa fa-eye"></i></a></li>
-                                    <li>
-                                        <a style="cursor: pointer" data-toggle="modal"
-                                            data-target="#addToCartModal_{{ 2 }}" data-tip="Add to Cart">
-                                            <i class="fa fa-shopping-cart"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="product-content">
-                                <h3 class="title"><a href="">product name Lorem ipsum dolor sit amet.</a>
-                                </h3>
-                                <div class="price d-flex justify-content-center align-content-center">
-
-                                    <span class="mr-2">2999</span>
-                                    <del>2500</del>
-                                </div>
-                                <button type="button" style="cursor: pointer;" class="btn btn-primary">অর্ডার
-                                    করুন</button>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="item">
-                    <div class="product-column">
-                        <div class="product-box product-box-col-2">
-                            <input type="hidden" name="quantity" value="" min="" max="100">
-                            <div class="product-image2 product-image2-col-2">
-
-                                <div class="discount-box float-end">
-                                    <span>
-                                        -10%
-                                    </span>
-                                </div>
-
-                                <a href="">
-                                    <img class="pic-1" src="{{ asset('assets') }}/front-end/images/product/p5.png">
-                                    <img class="pic-2" src="{{ asset('assets') }}/front-end/images/product/p5.png">
-                                </a>
-                                <ul class="social">
-                                    <li><a href="" data-tip="Quick View"><i class="fa fa-eye"></i></a></li>
-                                    <li>
-                                        <a style="cursor: pointer" data-toggle="modal"
-                                            data-target="#addToCartModal_{{ 2 }}" data-tip="Add to Cart">
-                                            <i class="fa fa-shopping-cart"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="product-content">
-                                <h3 class="title"><a href="">product name Lorem ipsum dolor sit amet.</a>
-                                </h3>
-                                <div class="price d-flex justify-content-center align-content-center">
-
-                                    <span class="mr-2">2999</span>
-                                    <del>2500</del>
-                                </div>
-                                <button type="button" style="cursor: pointer;" class="btn btn-primary">অর্ডার
-                                    করুন</button>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="item">
-                    <div class="product-column">
-                        <div class="product-box product-box-col-2">
-                            <input type="hidden" name="quantity" value="" min="" max="100">
-                            <div class="product-image2 product-image2-col-2">
-
-                                <div class="discount-box float-end">
-                                    <span>
-                                        -10%
-                                    </span>
-                                </div>
-
-                                <a href="">
-                                    <img class="pic-1"
-                                        src="{{ asset('assets') }}/front-end/images/product/9658BLUE_1.webp">
-                                    <img class="pic-2"
-                                        src="{{ asset('assets') }}/front-end/images/product/9658BLUE_1.webp">
-                                </a>
-                                <ul class="social">
-                                    <li><a href="" data-tip="Quick View"><i class="fa fa-eye"></i></a></li>
-                                    <li>
-                                        <a style="cursor: pointer" data-toggle="modal"
-                                            data-target="#addToCartModal_{{ 2 }}" data-tip="Add to Cart">
-                                            <i class="fa fa-shopping-cart"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="product-content">
-                                <h3 class="title"><a href="">product name Lorem ipsum dolor sit amet.</a>
-                                </h3>
-                                <div class="price d-flex justify-content-center align-content-center">
-
-                                    <span class="mr-2">2999</span>
-                                    <del>2500</del>
-                                </div>
-                                <button type="button" style="cursor: pointer;" class="btn btn-primary">অর্ডার
-                                    করুন</button>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="item">
-                    <div class="product-column">
-                        <div class="product-box product-box-col-2">
-                            <input type="hidden" name="quantity" value="" min="" max="100">
-                            <div class="product-image2 product-image2-col-2">
-
-                                <div class="discount-box float-end">
-                                    <span>
-                                        -10%
-                                    </span>
-                                </div>
-
-                                <a href="">
-                                    <img class="pic-1" src="{{ asset('assets') }}/front-end/images/product/p5.png">
-                                    <img class="pic-2" src="{{ asset('assets') }}/front-end/images/product/p5.png">
-                                </a>
-                                <ul class="social">
-                                    <li><a href="" data-tip="Quick View"><i class="fa fa-eye"></i></a></li>
-                                    <li>
-                                        <a style="cursor: pointer" data-toggle="modal"
-                                            data-target="#addToCartModal_{{ 2 }}" data-tip="Add to Cart">
-                                            <i class="fa fa-shopping-cart"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="product-content">
-                                <h3 class="title"><a href="">product name Lorem ipsum dolor sit amet.</a>
-                                </h3>
-                                <div class="price d-flex justify-content-center align-content-center">
-
-                                    <span class="mr-2">2999</span>
-                                    <del>2500</del>
-                                </div>
-                                <button type="button" style="cursor: pointer;" class="btn btn-primary">অর্ডার
-                                    করুন</button>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="item">
-                    <div class="product-column">
-                        <div class="product-box product-box-col-2">
-                            <input type="hidden" name="quantity" value="" min="" max="100">
-                            <div class="product-image2 product-image2-col-2">
-
-                                <div class="discount-box float-end">
-                                    <span>
-                                        -10%
-                                    </span>
-                                </div>
-
-                                <a href="">
-                                    <img class="pic-1"
-                                        src="{{ asset('assets') }}/front-end/images/product/9658BLUE_1.webp">
-                                    <img class="pic-2"
-                                        src="{{ asset('assets') }}/front-end/images/product/9658BLUE_1.webp">
-                                </a>
-                                <ul class="social">
-                                    <li><a href="" data-tip="Quick View"><i class="fa fa-eye"></i></a></li>
-                                    <li>
-                                        <a style="cursor: pointer" data-toggle="modal"
-                                            data-target="#addToCartModal_{{ 2 }}" data-tip="Add to Cart">
-                                            <i class="fa fa-shopping-cart"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="product-content">
-                                <h3 class="title"><a href="">product name Lorem ipsum dolor sit amet.</a>
-                                </h3>
-                                <div class="price d-flex justify-content-center align-content-center">
-
-                                    <span class="mr-2">2999</span>
-                                    <del>2500</del>
-                                </div>
-                                <button type="button" style="cursor: pointer;" class="btn btn-primary">অর্ডার
-                                    করুন</button>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="item">
-                    <div class="product-column">
-                        <div class="product-box product-box-col-2">
-                            <input type="hidden" name="quantity" value="" min="" max="100">
-                            <div class="product-image2 product-image2-col-2">
-
-                                <div class="discount-box float-end">
-                                    <span>
-                                        -10%
-                                    </span>
-                                </div>
-
-                                <a href="">
-                                    <img class="pic-1" src="{{ asset('assets') }}/front-end/images/product/p5.png">
-                                    <img class="pic-2" src="{{ asset('assets') }}/front-end/images/product/p5.png">
-                                </a>
-                                <ul class="social">
-                                    <li><a href="" data-tip="Quick View"><i class="fa fa-eye"></i></a></li>
-                                    <li>
-                                        <a style="cursor: pointer" data-toggle="modal"
-                                            data-target="#addToCartModal_{{ 2 }}" data-tip="Add to Cart">
-                                            <i class="fa fa-shopping-cart"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="product-content">
-                                <h3 class="title"><a href="">product name Lorem ipsum dolor sit amet.</a>
-                                </h3>
-                                <div class="price d-flex justify-content-center align-content-center">
-
-                                    <span class="mr-2">2999</span>
-                                    <del>2500</del>
-                                </div>
-                                <button type="button" style="cursor: pointer;" class="btn btn-primary">অর্ডার
-                                    করুন</button>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-            <div class="d-flex justify-content-center">
-                <a href="" class="btn btn-outline-warning  text-center  d-block d-lg-none">Shop More</a>
-            </div>
-    </section>
-    {{-- men's Section End --}}
-    {{-- Kids Section Start --}}
-    <section class="kids-collection mt-4 mb-2 my-lg-4">
-        <div class="container">
-            <div class="row mb-3">
-                <div class="col text-center">
-                    <div class="section-heading-title">
-                        <h3>Kids Collection</h3>
-                        <div class="heading-border"></div>
-                        <div class="d-flex justify-content-end">
-                            <a href="" class="btn btn-outline-warning  text-end  d-none d-lg-block">Shop More</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="owl-carousel related-products product-carosel mt-4 mt-lg-5" data-delay="2000">
-                <div class="item">
-                    <div class="product-column">
-                        <div class="product-box product-box-col-2">
-                            <input type="hidden" name="quantity" value="" min="" max="100">
-                            <div class="product-image2 product-image2-col-2">
-
-                                <div class="discount-box float-end">
-                                    <span>
-                                        -10%
-                                    </span>
-                                </div>
-
-                                <a href="">
-                                    <img class="pic-1"
-                                        src="{{ asset('assets') }}/front-end/images/product/istockphoto-674315022-612x612.jpg">
-                                    <img class="pic-2"
-                                        src="{{ asset('assets') }}/front-end/images/product/istockphoto-674315022-612x612.jpg">
-                                </a>
-                                <ul class="social">
-                                    <li><a href="" data-tip="Quick View"><i class="fa fa-eye"></i></a></li>
-                                    <li>
-                                        <a style="cursor: pointer" data-toggle="modal"
-                                            data-target="#addToCartModal_{{ 2 }}" data-tip="Add to Cart">
-                                            <i class="fa fa-shopping-cart"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="product-content">
-                                <h3 class="title"><a href="">product name Lorem ipsum dolor sit amet.</a>
-                                </h3>
-                                <div class="price d-flex justify-content-center align-content-center">
-
-                                    <span class="mr-2">2999</span>
-                                    <del>2500</del>
-                                </div>
-                                <button type="button" style="cursor: pointer;" class="btn btn-primary">অর্ডার
-                                    করুন</button>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="item">
-                    <div class="product-column">
-                        <div class="product-box product-box-col-2">
-                            <input type="hidden" name="quantity" value="" min="" max="100">
-                            <div class="product-image2 product-image2-col-2">
-
-                                <div class="discount-box float-end">
-                                    <span>
-                                        -10%
-                                    </span>
-                                </div>
-
-                                <a href="">
-                                    <img class="pic-1"
-                                        src="{{ asset('assets') }}/front-end/images/product/product-jpeg-500x500.webp">
-                                    <img class="pic-2"
-                                        src="{{ asset('assets') }}/front-end/images/product/product-jpeg-500x500.webp">
-                                </a>
-                                <ul class="social">
-                                    <li><a href="" data-tip="Quick View"><i class="fa fa-eye"></i></a></li>
-                                    <li>
-                                        <a style="cursor: pointer" data-toggle="modal"
-                                            data-target="#addToCartModal_{{ 2 }}" data-tip="Add to Cart">
-                                            <i class="fa fa-shopping-cart"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="product-content">
-                                <h3 class="title"><a href="">product name Lorem ipsum dolor sit amet.</a>
-                                </h3>
-                                <div class="price d-flex justify-content-center align-content-center">
-
-                                    <span class="mr-2">2999</span>
-                                    <del>2500</del>
-                                </div>
-                                <button type="button" style="cursor: pointer;" class="btn btn-primary">অর্ডার
-                                    করুন</button>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="item">
-                    <div class="product-column">
-                        <div class="product-box product-box-col-2">
-                            <input type="hidden" name="quantity" value="" min="" max="100">
-                            <div class="product-image2 product-image2-col-2">
-
-                                <div class="discount-box float-end">
-                                    <span>
-                                        -10%
-                                    </span>
-                                </div>
-
-                                <a href="">
-                                    <img class="pic-1"
-                                        src="{{ asset('assets') }}/front-end/images/product/product-jpeg-500x500.webp">
-                                    <img class="pic-2"
-                                        src="{{ asset('assets') }}/front-end/images/product/product-jpeg-500x500.webp">
-                                </a>
-                                <ul class="social">
-                                    <li><a href="" data-tip="Quick View"><i class="fa fa-eye"></i></a></li>
-                                    <li>
-                                        <a style="cursor: pointer" data-toggle="modal"
-                                            data-target="#addToCartModal_{{ 2 }}" data-tip="Add to Cart">
-                                            <i class="fa fa-shopping-cart"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="product-content">
-                                <h3 class="title"><a href="">product name Lorem ipsum dolor sit amet.</a>
-                                </h3>
-                                <div class="price d-flex justify-content-center align-content-center">
-
-                                    <span class="mr-2">2999</span>
-                                    <del>2500</del>
-                                </div>
-                                <button type="button" style="cursor: pointer;" class="btn btn-primary">অর্ডার
-                                    করুন</button>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="item">
-                    <div class="product-column">
-                        <div class="product-box product-box-col-2">
-                            <input type="hidden" name="quantity" value="" min="" max="100">
-                            <div class="product-image2 product-image2-col-2">
-
-                                <div class="discount-box float-end">
-                                    <span>
-                                        -10%
-                                    </span>
-                                </div>
-
-                                <a href="">
-                                    <img class="pic-1"
-                                        src="{{ asset('assets') }}/front-end/images/product/product-jpeg-500x500.webp">
-                                    <img class="pic-2"
-                                        src="{{ asset('assets') }}/front-end/images/product/product-jpeg-500x500.webp">
-                                </a>
-                                <ul class="social">
-                                    <li><a href="" data-tip="Quick View"><i class="fa fa-eye"></i></a></li>
-                                    <li>
-                                        <a style="cursor: pointer" data-toggle="modal"
-                                            data-target="#addToCartModal_{{ 2 }}" data-tip="Add to Cart">
-                                            <i class="fa fa-shopping-cart"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="product-content">
-                                <h3 class="title"><a href="">product name Lorem ipsum dolor sit amet.</a>
-                                </h3>
-                                <div class="price d-flex justify-content-center align-content-center">
-
-                                    <span class="mr-2">2999</span>
-                                    <del>2500</del>
-                                </div>
-                                <button type="button" style="cursor: pointer;" class="btn btn-primary">অর্ডার
-                                    করুন</button>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="item">
-                    <div class="product-column">
-                        <div class="product-box product-box-col-2">
-                            <input type="hidden" name="quantity" value="" min="" max="100">
-                            <div class="product-image2 product-image2-col-2">
-
-                                <div class="discount-box float-end">
-                                    <span>
-                                        -10%
-                                    </span>
-                                </div>
-
-                                <a href="">
-                                    <img class="pic-1"
-                                        src="{{ asset('assets') }}/front-end/images/product/product-jpeg-500x500.webp">
-                                    <img class="pic-2"
-                                        src="{{ asset('assets') }}/front-end/images/product/product-jpeg-500x500.webp">
-                                </a>
-                                <ul class="social">
-                                    <li><a href="" data-tip="Quick View"><i class="fa fa-eye"></i></a></li>
-                                    <li>
-                                        <a style="cursor: pointer" data-toggle="modal"
-                                            data-target="#addToCartModal_{{ 2 }}" data-tip="Add to Cart">
-                                            <i class="fa fa-shopping-cart"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="product-content">
-                                <h3 class="title"><a href="">product name Lorem ipsum dolor sit amet.</a>
-                                </h3>
-                                <div class="price d-flex justify-content-center align-content-center">
-
-                                    <span class="mr-2">2999</span>
-                                    <del>2500</del>
-                                </div>
-                                <button type="button" style="cursor: pointer;" class="btn btn-primary">অর্ডার
-                                    করুন</button>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="item">
-                    <div class="product-column">
-                        <div class="product-box product-box-col-2">
-                            <input type="hidden" name="quantity" value="" min="" max="100">
-                            <div class="product-image2 product-image2-col-2">
-
-                                <div class="discount-box float-end">
-                                    <span>
-                                        -10%
-                                    </span>
-                                </div>
-
-                                <a href="">
-                                    <img class="pic-1"
-                                        src="{{ asset('assets') }}/front-end/images/product/product-jpeg-500x500.webp">
-                                    <img class="pic-2"
-                                        src="{{ asset('assets') }}/front-end/images/product/product-jpeg-500x500.webp">
-                                </a>
-                                <ul class="social">
-                                    <li><a href="" data-tip="Quick View"><i class="fa fa-eye"></i></a></li>
-                                    <li>
-                                        <a style="cursor: pointer" data-toggle="modal"
-                                            data-target="#addToCartModal_{{ 2 }}" data-tip="Add to Cart">
-                                            <i class="fa fa-shopping-cart"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="product-content">
-                                <h3 class="title"><a href="">product name Lorem ipsum dolor sit amet.</a>
-                                </h3>
-                                <div class="price d-flex justify-content-center align-content-center">
-
-                                    <span class="mr-2">2999</span>
-                                    <del>2500</del>
-                                </div>
-                                <button type="button" style="cursor: pointer;" class="btn btn-primary">অর্ডার
-                                    করুন</button>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-
-
-            </div>
-            <div class="d-flex justify-content-center">
-                <a href="" class="btn btn-outline-warning  text-center  d-block d-lg-none">Shop More</a>
-            </div>
-    </section>
-    {{-- Kids Section End --}}
+    {{-- Category Section End --}}
     <!------Start Product section----->
     <section class="py-3">
         <div class="container">
@@ -1423,10 +576,8 @@
                     <!-- Your product columns go here -->
                     @foreach ($category['products'] as $key => $product)
                         @if ($key < 12)
-                            <div class="col-md-2 col-sm-6 product-column"
-                                data-category="category_{{ $category->id }}">
-                                <div class="product-box product-box-col-2"
-                                    data-category="category_{{ $category->id }}">
+                            <div class="col-md-2 col-sm-6 product-column" data-category="category_{{ $category->id }}">
+                                <div class="product-box product-box-col-2" data-category="category_{{ $category->id }}">
                                     <div class="product-image2 product-image2-col-2"
                                         data-category="category_{{ $category->id }}">
                                         @if ($product->discount > 0)
@@ -1449,8 +600,8 @@
                                                 alt="{{ $product['name'] }}">
                                         </a>
                                         <ul class="social">
-                                            <li><a href="{{ route('product', $product->slug) }}"
-                                                    data-tip="Quick View"><i class="fa fa-eye"></i></a></li>
+                                            <li><a href="{{ route('product', $product->slug) }}" data-tip="Quick View"><i
+                                                        class="fa fa-eye"></i></a></li>
 
                                             <li><a style="cursor: pointer" data-toggle="modal"
                                                     data-target="#addToCartModal_{{ $product->id }}"

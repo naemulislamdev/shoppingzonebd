@@ -238,6 +238,7 @@ input[name="color"]:checked + .color-label img {
                                 </div>
                             </div>
                         @else
+                            {{-- product zoomer --}}
                             <div class="row mb-2">
                                 <div class="col-md-11 mx-auto">
                                     <div class="main-image mb-3 float-right" id="img-zoom">
