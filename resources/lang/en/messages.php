@@ -1944,7 +1944,6 @@
   'Job Status' => 'Job Status',
   'Aply Status' => 'Aply Status',
   'Apply Status' => 'Apply Status',
-=======
   'New Arrival' => 'New Arrival',
   'Arrival status updated successfully' => 'Arrival status updated successfully',
   'leads List' => 'Leads List',
@@ -1970,4 +1969,5 @@
   'Complain List' => 'Complain List',
   'data_deleted_successfully' => 'Data deleted successfully',
   'Order Process' => 'Order Process',
+  'Product Price' => 'Product Price',
 );

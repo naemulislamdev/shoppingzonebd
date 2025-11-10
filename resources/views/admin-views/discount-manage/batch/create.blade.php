@@ -35,7 +35,7 @@
                             <div class="form-group">
                                 <div class="row">
 
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Title <span class="text-danger">*</span></label>
                                             <input type="text" name="title" class="form-control">
@@ -44,35 +44,15 @@
                                             @enderror
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>Discount Amount <span class="text-danger">*</span></label>
-                                            <input type="text" name="discount_amount" class="form-control">
-                                            @error('discount_amount')
-                                                <span class="text-danger">{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>Discount Type <span class="text-danger">*</span></label>
-                                            <select name="discount_type" class="form-control">
-                                                <option value="flat">Flat</option>
-                                                <option value="percentage">Percentage</option>
-                                            </select>
-                                            <small class="text-muted">Flat: 100, Percentage: 10%</small>
-                                            @error('discount_type')
-                                                <span class="text-danger">{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                    </div>
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label>Product <span class="text-danger">*</span></label>
-                                            <select name="product_ids[]" id="example-getting-started"
-                                        class="js-example-responsive form-control" multiple>
+                                            <select name="product_ids[]" id="productSelect"
+                                                class="js-example-responsive form-control" multiple>
                                                 @foreach ($products as $product)
-                                                    <option value="{{ $product->id }}">{{ $product->name }} || {{ $product->code }}</option>
+                                                    <option value="{{ $product->id }}" data-name="{{ $product->name }}"
+                                                        data-code="{{ $product->code }}" data-price="{{\App\CPU\BackEndHelper::usd_to_currency($product['unit_price'])}}"> {{ $product->code }}
+                                                    </option>
                                                 @endforeach
                                             </select>
                                             @error('product_ids.*')
@@ -81,6 +61,22 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="table">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>{{ \App\CPU\translate('SL') }}</th>
+                                            <th>{{ \App\CPU\translate('Product Name') }}</th>
+                                            <th>{{ \App\CPU\translate('Product Code') }}</th>
+                                            <th>{{ \App\CPU\translate('Product Price') }}</th>
+                                            <th>{{ \App\CPU\translate('Discount') }}</th>
+                                            <th>{{ \App\CPU\translate('Discount Type') }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="product-table-body"></tbody>
+                                    </tbody>
+                                </table>
                             </div>
                             <div class=" pl-0">
                                 <button type="submit"
@@ -95,11 +91,6 @@
 @endsection
 
 @push('script')
-    <!-- Page level plugins -->
-    <script src="{{ asset('assets/back-end') }}/vendor/datatables/jquery.dataTables.min.js"></script>
-    <script src="{{ asset('assets/back-end') }}/vendor/datatables/dataTables.bootstrap4.min.js"></script>
-    <!-- Page level custom scripts -->
-    <script src="{{ asset('assets/back-end/js/spartan-multi-image-picker.js') }}"></script>
 
     <script src="{{ asset('assets/back-end') }}/js/select2.min.js"></script>
     <script>
@@ -115,32 +106,52 @@
         $(document).ready(function() {
             $('#dataTable').DataTable();
         });
+    </script>
+    <script>
+        $(document).ready(function() {
+            const $select = $("#productSelect");
+            const $tableBody = $("#product-table-body");
 
-
-
-        $(document).on('change', '.status', function() {
-            var id = $(this).attr("id");
-            if ($(this).prop("checked") == true) {
-                var status = 1;
-            } else if ($(this).prop("checked") == false) {
-                var status = 0;
-            }
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
-                }
+            // Initialize Select2
+            $select.select2({
+                width: "resolve",
+                placeholder: "Select products",
             });
-            $.ajax({
-                url: "{{ route('admin.landingpages.status-update') }}",
-                method: 'POST',
-                data: {
-                    id: id,
-                    status: status
-                },
-                success: function() {
-                    toastr.success('{{ \App\CPU\translate('Status updated successfully') }}');
-                    location.reload();
-                }
+
+            // When selection changes
+            $select.on("change", function() {
+                const selectedOptions = $(this).find("option:selected");
+                const selectedIds = selectedOptions.map((_, opt) => $(opt).val()).get();
+
+                // Clear current table rows
+                $tableBody.empty();
+
+                // Add rows for selected products
+                selectedOptions.each(function(index) {
+                    const id = $(this).val();
+                    const name = $(this).data("name");
+                    const code = $(this).data("code");
+                    const price = $(this).data("price");
+
+                    const row = `
+                <tr data-id="${id}">
+                    <td>${index + 1}</td>
+                    <td>${name}</td>
+                    <td>${code}</td>
+                    <td>${price}</td>
+                    <td>
+                        <input type="number" name="discount_amounts[${id}]" class="form-control" placeholder="Enter amount">
+                    </td>
+                    <td>
+                        <select name="discount_types[${id}]" class="form-control">
+                            <option value="flat">Flat</option>
+                            <option value="percent">Percentage</option>
+                        </select>
+                    </td>
+                </tr>
+            `;
+                    $tableBody.append(row);
+                });
             });
         });
     </script>

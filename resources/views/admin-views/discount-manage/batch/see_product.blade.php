@@ -44,6 +44,7 @@
                                         <th>{{ \App\CPU\translate('Product Code') }}</th>
                                         <th>{{ \App\CPU\translate('Price') }}</th>
                                         <th>{{ \App\CPU\translate('Discount') }}</th>
+                                        <th>{{ \App\CPU\translate('Discount Type') }}</th>
                                         <th>{{ \App\CPU\translate('Remove') }}</th>
                                     </tr>
                                 </thead>
@@ -58,6 +59,9 @@
                                             <td>{{\App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($product['unit_price']))}}</td>
                                             <td>
                                                 {{ $product->discount }}
+                                            </td>
+                                            <td>
+                                                {{ $product->discount_type }}
                                             </td>
                                             <td>
                                                <a class="btn btn-danger btn-sm"
