@@ -216,10 +216,10 @@ class SystemController extends Controller
             'payment_method' => 'required|in:cash_on_delivery,online_payment'
         ]);
         // Check if user is authenticated
-     
+
         $authUser = Helpers::get_customer_check($request);
         if ($authUser) {
-            if($authUser->is_active == 0){
+            if ($authUser->is_active == 0) {
                 Toastr::error('Your account is inactive. Please contact support.');
                 return redirect()->back();
             }
@@ -328,16 +328,15 @@ class SystemController extends Controller
             session()->forget('payment_method');
             session()->forget('customer_info');
             session()->forget('shipping_method_id');
-            $order = Order::find($order_id);
 
-            return view('web-views.checkout-complete', compact('order'));
+            return redirect()->route('customer.checkout_page', ['id' => $order_id]);
         } else {
             return "something went wrong please try again";
         }
     }
     public function singlepCheckout(Request $request)
     {
-         //$request->dd();
+        //$request->dd();
         $this->validate($request, [
             'name' => 'required|string|max:150',
             'email' => 'nullable|email',
@@ -489,11 +488,16 @@ class SystemController extends Controller
             session()->forget('payment_method');
             session()->forget('customer_info');
             session()->forget('shipping_method_id');
-            $order = Order::find($order_id);
 
-            return view('web-views.checkout-complete', compact('order'));
+            //return view('web-views.checkout-complete', compact('order'));
+            return redirect()->route('customer.checkout_page', ['id' => $order_id]);
         } else {
             return "something went wrong please try again";
         }
+    }
+    public function checkoutPage($id)
+    {
+        $order = Order::find($id);
+        return view('web-views.checkout-complete', compact('order'));
     }
 }

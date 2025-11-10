@@ -1,6 +1,6 @@
+
 <?php
 
-namespace App\Http\Controllers;
 
 use App\CPU\CartManager;
 use App\CPU\Helpers;
@@ -31,8 +31,11 @@ use PayPal\Auth\OAuthTokenCredential;
 use PayPal\Common\PayPalModel;
 use PayPal\Rest\ApiContext;
 
+namespace App\Http\Controllers;
+
 class PaypalPaymentController extends Controller
 {
+    /*
     public function __construct()
     {
         $paypal_conf = Config::get('paypal');
@@ -101,7 +104,7 @@ class PaypalPaymentController extends Controller
                 }
             }
 
-            /** add payment ID to session **/
+            //  add payment ID to session
             Session::put('paypal_payment_id', $payment->getId());
             if (isset($redirect_url)) {
                 return Redirect::away($redirect_url);
@@ -129,7 +132,7 @@ class PaypalPaymentController extends Controller
         $execution = new PaymentExecution();
         $execution->setPayerId($request['PayerID']);
 
-        /**Execute the payment **/
+        //Execute the payment
         $result = $payment->execute($execution, $this->_api_context);
         if ($result->getState() == 'approved') {
             $unique_id = OrderManager::gen_unique_id();
@@ -167,4 +170,5 @@ class PaypalPaymentController extends Controller
             return back();
         }
     }
+        */
 }

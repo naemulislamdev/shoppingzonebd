@@ -171,7 +171,8 @@ $route = request()->route()->getName();
                                             </span>
                                         </a>
                                     </li>
-                                    <li class="nav-item {{ Request::is('admin/pos/exchange-orders*') ? 'active' : '' }}">
+                                    <li
+                                        class="nav-item {{ Request::is('admin/pos/exchange-orders*') ? 'active' : '' }}">
                                         <a class="nav-link " href="{{ route('admin.pos.exchange-orders') }}"
                                             title="Exchange {{ \App\CPU\translate('orders') }}">
                                             <span class="tio-circle nav-indicator-icon"></span>
@@ -200,6 +201,53 @@ $route = request()->route()->getName();
                         <!-- End POS -->
 
 
+                        @if (\App\CPU\Helpers::module_permission_check('career_management'))
+                            <li class="nav-item {{ Request::is('admin/career*') ? 'scroll-here' : '' }}">
+                                <small class="nav-subtitle"
+                                    title="">{{ \App\CPU\translate('career_management') }}</small>
+                                <small class="tio-more-horizontal nav-subtitle-replacer"></small>
+                            </li>
+                            <!-- career -->
+                            <li
+                                class="navbar-vertical-aside-has-menu {{ Request::is('admin/career*') ? 'active' : '' }}">
+                                <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle"
+                                    href="javascript:">
+                                    <i class="fa-solid fa-briefcase nav-icon"></i>
+                                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">
+                                        {{ \App\CPU\translate('Careers') }}
+                                    </span>
+                                </a>
+                                <ul class="js-navbar-vertical-aside-submenu nav nav-sub"
+                                    style="display: {{ Request::is('admin/career*') ? 'block' : 'none' }}">
+                                    <li class="nav-item {{ Request::is('admin/career/view') ? 'active' : '' }}">
+                                        <a class="nav-link" href="{{ route('admin.career.view') }}" title="">
+                                            <span class="tio-circle nav-indicator-icon"></span>
+                                            <span class="text-truncate">
+                                                {{ \App\CPU\translate('Jobs') }}
+                                                <span class="badge badge-info badge-pill ml-1">
+                                                    {{ \App\Models\Career::all()->count() }}
+                                                </span>
+                                            </span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item {{ Request::is('admin/application/view') ? 'active' : '' }}">
+                                        <a class="nav-link" href="{{ route('admin.application.view') }}"
+                                            title="">
+                                            <span class="tio-circle nav-indicator-icon"></span>
+                                            <span class="text-truncate">
+                                                {{ \App\CPU\translate('Job Applications') }}
+                                                <span class="badge badge-info badge-pill ml-1">
+                                                    {{ \App\Models\JobApplication::all()->count() }}
+                                                </span>
+                                            </span>
+                                        </a>
+                                    </li>
+
+                                </ul>
+                            </li>
+                        @endif
+                        <!--Career Management ends-->
+
                         @if (\App\CPU\Helpers::module_permission_check('order_management'))
                             <li class="nav-item {{ Request::is('admin/orders*') ? 'scroll-here' : '' }}">
                                 <small class="nav-subtitle"
@@ -207,7 +255,8 @@ $route = request()->route()->getName();
                                 <small class="tio-more-horizontal nav-subtitle-replacer"></small>
                             </li>
                             <!-- Order -->
-                            <li class="navbar-vertical-aside-has-menu {{ Request::is('admin/orders*') ? 'active' : '' }}">
+                            <li
+                                class="navbar-vertical-aside-has-menu {{ Request::is('admin/orders*') ? 'active' : '' }}">
                                 <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle"
                                     href="javascript:">
                                     <i class="tio-shopping-cart-outlined nav-icon"></i>
@@ -241,7 +290,8 @@ $route = request()->route()->getName();
                                             </span>
                                         </a>
                                     </li>
-                                    <li class="nav-item {{ Request::is('admin/orders/list/pending') ? 'active' : '' }}">
+                                    <li
+                                        class="nav-item {{ Request::is('admin/orders/list/pending') ? 'active' : '' }}">
                                         <a class="nav-link " href="{{ route('admin.orders.list', ['pending']) }}"
                                             title="">
                                             <span class="tio-circle nav-indicator-icon"></span>
@@ -253,7 +303,8 @@ $route = request()->route()->getName();
                                             </span>
                                         </a>
                                     </li>
-                                    <li class="nav-item {{ Request::is('admin/orders/list/confirmed') ? 'active' : '' }}">
+                                    <li
+                                        class="nav-item {{ Request::is('admin/orders/list/confirmed') ? 'active' : '' }}">
                                         <a class="nav-link " href="{{ route('admin.orders.list', ['confirmed']) }}"
                                             title="">
                                             <span class="tio-circle nav-indicator-icon"></span>
@@ -292,7 +343,8 @@ $route = request()->route()->getName();
                                             </span>
                                         </a>
                                     </li>
-                                    <li class="nav-item {{ Request::is('admin/orders/list/delivered') ? 'active' : '' }}">
+                                    <li
+                                        class="nav-item {{ Request::is('admin/orders/list/delivered') ? 'active' : '' }}">
                                         <a class="nav-link " href="{{ route('admin.orders.list', ['delivered']) }}"
                                             title="">
                                             <span class="tio-circle nav-indicator-icon"></span>
@@ -304,7 +356,8 @@ $route = request()->route()->getName();
                                             </span>
                                         </a>
                                     </li>
-                                    <li class="nav-item {{ Request::is('admin/orders/list/returned') ? 'active' : '' }}">
+                                    <li
+                                        class="nav-item {{ Request::is('admin/orders/list/returned') ? 'active' : '' }}">
                                         <a class="nav-link " href="{{ route('admin.orders.list', ['returned']) }}"
                                             title="">
                                             <span class="tio-circle nav-indicator-icon"></span>
@@ -316,7 +369,8 @@ $route = request()->route()->getName();
                                             </span>
                                         </a>
                                     </li>
-                                    <li class="nav-item {{ Request::is('admin/orders/list/failed') ? 'active' : '' }}">
+                                    <li
+                                        class="nav-item {{ Request::is('admin/orders/list/failed') ? 'active' : '' }}">
                                         <a class="nav-link " href="{{ route('admin.orders.list', ['failed']) }}"
                                             title="">
                                             <span class="tio-circle nav-indicator-icon"></span>
@@ -329,7 +383,8 @@ $route = request()->route()->getName();
                                         </a>
                                     </li>
 
-                                    <li class="nav-item {{ Request::is('admin/orders/list/canceled') ? 'active' : '' }}">
+                                    <li
+                                        class="nav-item {{ Request::is('admin/orders/list/canceled') ? 'active' : '' }}">
                                         <a class="nav-link " href="{{ route('admin.orders.list', ['canceled']) }}"
                                             title="">
                                             <span class="tio-circle nav-indicator-icon"></span>
@@ -365,7 +420,8 @@ $route = request()->route()->getName();
                                 </a>
                                 <ul class="js-navbar-vertical-aside-submenu nav nav-sub"
                                     style="display: {{ Request::is('admin/product/list/in_house') || Request::is('admin/product/stock-limit-list/in_house') || Request::is('admin/product/bulk-import') ? 'block' : '' }}">
-                                    <li class="nav-item {{ Request::is('admin/product/list/in_house') ? 'active' : '' }}">
+                                    <li
+                                        class="nav-item {{ Request::is('admin/product/list/in_house') ? 'active' : '' }}">
                                         <a class="nav-link "
                                             href="{{ route('admin.product.list', ['in_house', '']) }}">
                                             <span class="tio-circle nav-indicator-icon"></span>
@@ -385,16 +441,20 @@ $route = request()->route()->getName();
                                             </span>
                                         </a>
                                     </li>
-                                    <li class="nav-item {{ Request::is('admin/product/bulk-import') ? 'active' : '' }}">
+                                    <li
+                                        class="nav-item {{ Request::is('admin/product/bulk-import') ? 'active' : '' }}">
                                         <a class="nav-link " href="{{ route('admin.product.bulk-import') }}">
                                             <span class="tio-circle nav-indicator-icon"></span>
-                                            <span class="text-truncate">{{ \App\CPU\translate('bulk_import') }}</span>
+                                            <span
+                                                class="text-truncate">{{ \App\CPU\translate('bulk_import') }}</span>
                                         </a>
                                     </li>
-                                    <li class="nav-item {{ Request::is('admin/product/bulk-export') ? 'active' : '' }}">
+                                    <li
+                                        class="nav-item {{ Request::is('admin/product/bulk-export') ? 'active' : '' }}">
                                         <a class="nav-link " href="{{ route('admin.product.bulk-export') }}">
                                             <span class="tio-circle nav-indicator-icon"></span>
-                                            <span class="text-truncate">{{ \App\CPU\translate('bulk_export') }}</span>
+                                            <span
+                                                class="text-truncate">{{ \App\CPU\translate('bulk_export') }}</span>
                                         </a>
                                     </li>
                                 </ul>
@@ -470,7 +530,8 @@ $route = request()->route()->getName();
                                         </a>
 
                                     </li>
-                                    <li class="nav-item {{ Request::is('admin/sub-category/view') ? 'active' : '' }}">
+                                    <li
+                                        class="nav-item {{ Request::is('admin/sub-category/view') ? 'active' : '' }}">
                                         <a class="nav-link " href="{{ route('admin.sub-category.view') }}">
                                             <span class="tio-circle nav-indicator-icon"></span>
                                             <span
@@ -509,7 +570,8 @@ $route = request()->route()->getName();
                                 {{ \App\CPU\translate('Analysis') }}</small>
                             <small class="tio-more-horizontal nav-subtitle-replacer"></small>
                         </li>
-                        <li class="navbar-vertical-aside-has-menu {{ Request::is('admin/customer/*') ? 'active' : '' }}">
+                        <li
+                            class="navbar-vertical-aside-has-menu {{ Request::is('admin/customer/*') ? 'active' : '' }}">
                             <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle" href="javascript:">
                                 <i class="tio-filter-outlined nav-icon"></i>
                                 <span
@@ -546,26 +608,25 @@ $route = request()->route()->getName();
                             <small class="tio-more-horizontal nav-subtitle-replacer"></small>
                         </li>
                         <li
-                                class="navbar-vertical-aside-has-menu {{ Request::is('admin/analysis/*') ? 'active' : '' }} show">
-                                <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle"
-                                    href="javascript:">
-                                    <i class="tio-filter-outlined nav-icon"></i>
-                                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Product
-                                        Analysis</span>
-                                </a>
-                                <ul class="js-navbar-vertical-aside-submenu nav nav-sub"
-                                    style="display: {{ Request::is('admin/analysis/*') ? 'block' : 'none' }}">
+                            class="navbar-vertical-aside-has-menu {{ Request::is('admin/analysis/*') ? 'active' : '' }} show">
+                            <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle" href="javascript:">
+                                <i class="tio-filter-outlined nav-icon"></i>
+                                <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Product
+                                    Analysis</span>
+                            </a>
+                            <ul class="js-navbar-vertical-aside-submenu nav nav-sub"
+                                style="display: {{ Request::is('admin/analysis/*') ? 'block' : 'none' }}">
 
-                                    <li class="nav-item {{ Request::is('admin/analysis/*') ? 'active' : '' }}">
-                                        <a class="nav-link " href="{{ route('admin.analysis.report') }}"
-                                            title="{{ \App\CPU\translate('Report Analysis') }}">
-                                            <span class="tio-circle nav-indicator-icon"></span>
-                                            <span class="text-truncate">{{ 'View All Reports' }}
-                                            </span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
+                                <li class="nav-item {{ Request::is('admin/analysis/*') ? 'active' : '' }}">
+                                    <a class="nav-link " href="{{ route('admin.analysis.report') }}"
+                                        title="{{ \App\CPU\translate('Report Analysis') }}">
+                                        <span class="tio-circle nav-indicator-icon"></span>
+                                        <span class="text-truncate">{{ 'View All Reports' }}
+                                        </span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
                         <!-- End POS -->
 
                         @if (\App\CPU\Helpers::module_permission_check('marketing_section'))
@@ -577,32 +638,35 @@ $route = request()->route()->getName();
                             </li>
 
                             <li
-                            class="navbar-vertical-aside-has-menu {{ Request::is('admin/discount/*') ? 'active' : '' }} show">
-                            <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle" href="javascript:">
-                                <i class="tio-filter-outlined nav-icon"></i>
-                                <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Discount Manage</span>
-                            </a>
-                            <ul class="js-navbar-vertical-aside-submenu nav nav-sub"
-                                style="display: {{ Request::is('admin/discount/*') ? 'block' : 'none' }}">
+                                class="navbar-vertical-aside-has-menu {{ Request::is('admin/discount/*') ? 'active' : '' }} show">
+                                <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle"
+                                    href="javascript:">
+                                    <i class="tio-filter-outlined nav-icon"></i>
+                                    <span
+                                        class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Discount
+                                        Manage</span>
+                                </a>
+                                <ul class="js-navbar-vertical-aside-submenu nav nav-sub"
+                                    style="display: {{ Request::is('admin/discount/*') ? 'block' : 'none' }}">
 
-                                <li class="nav-item {{ Request::is('admin/discount/*') ? 'active' : '' }}">
-                                    <a class="nav-link " href="{{ route('admin.discount.flat') }}"
-                                        title="{{ \App\CPU\translate('Flat Discount') }}">
-                                        <span class="tio-circle nav-indicator-icon"></span>
-                                        <span class="text-truncate">{{ 'Flat Discount' }}
-                                        </span>
-                                    </a>
-                                </li>
-                                <li class="nav-item {{ Request::is('admin/discount/*') ? 'active' : '' }}">
-                                    <a class="nav-link " href="{{ route('admin.discount.batch') }}"
-                                        title="{{ \App\CPU\translate('Batch Discount') }}">
-                                        <span class="tio-circle nav-indicator-icon"></span>
-                                        <span class="text-truncate">{{ 'Batch Discount' }}
-                                        </span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
+                                    <li class="nav-item {{ Request::is('admin/discount/*') ? 'active' : '' }}">
+                                        <a class="nav-link " href="{{ route('admin.discount.flat') }}"
+                                            title="{{ \App\CPU\translate('Flat Discount') }}">
+                                            <span class="tio-circle nav-indicator-icon"></span>
+                                            <span class="text-truncate">{{ 'Flat Discount' }}
+                                            </span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item {{ Request::is('admin/discount/*') ? 'active' : '' }}">
+                                        <a class="nav-link " href="{{ route('admin.discount.batch') }}"
+                                            title="{{ \App\CPU\translate('Batch Discount') }}">
+                                            <span class="tio-circle nav-indicator-icon"></span>
+                                            <span class="text-truncate">{{ 'Batch Discount' }}
+                                            </span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
                             <li
                                 class="navbar-vertical-aside-has-menu {{ Request::is('admin/banner*') ? 'active' : '' }}">
                                 <a class="js-navbar-vertical-aside-menu-link nav-link"
@@ -752,7 +816,8 @@ $route = request()->route()->getName();
                                 </a>
                                 <ul class="js-navbar-vertical-aside-submenu nav nav-sub"
                                     style="display: {{ Request::is('admin/seller*') ? 'block' : 'none' }}">
-                                    <li class="nav-item {{ Request::is('admin/sellers/seller-add') ? 'active' : '' }}">
+                                    <li
+                                        class="nav-item {{ Request::is('admin/sellers/seller-add') ? 'active' : '' }}">
                                         <a class="nav-link" href="{{ route('admin.sellers.seller-add') }}">
                                             <span class="tio-circle nav-indicator-icon"></span>
                                             <span class="text-truncate">
@@ -760,7 +825,8 @@ $route = request()->route()->getName();
                                             </span>
                                         </a>
                                     </li>
-                                    <li class="nav-item {{ Request::is('admin/sellers/seller-list') ? 'active' : '' }}">
+                                    <li
+                                        class="nav-item {{ Request::is('admin/sellers/seller-list') ? 'active' : '' }}">
                                         <a class="nav-link" href="{{ route('admin.sellers.seller-list') }}">
                                             <span class="tio-circle nav-indicator-icon"></span>
                                             <span class="text-truncate">
@@ -854,7 +920,8 @@ $route = request()->route()->getName();
                                 </a>
                                 <ul class="js-navbar-vertical-aside-submenu nav nav-sub"
                                     style="display: {{ Request::is('admin/social-page*') ? 'block' : 'none' }}">
-                                    <li class="nav-item {{ Request::is('admin/social-page/create') ? 'active' : '' }}">
+                                    <li
+                                        class="nav-item {{ Request::is('admin/social-page/create') ? 'active' : '' }}">
                                         <a class="nav-link" href="{{ route('admin.social-page.create') }}">
                                             <span class="tio-circle nav-indicator-icon"></span>
                                             <span class="text-truncate">
@@ -863,7 +930,8 @@ $route = request()->route()->getName();
                                             </span>
                                         </a>
                                     </li>
-                                    <li class="nav-item {{ Request::is('admin/social-page/create') ? 'active' : '' }}">
+                                    <li
+                                        class="nav-item {{ Request::is('admin/social-page/create') ? 'active' : '' }}">
                                         <a class="nav-link"
                                             href="{{ route('admin.social-page.social-page-list') }}">
                                             <span class="tio-circle nav-indicator-icon"></span>
@@ -941,7 +1009,8 @@ $route = request()->route()->getName();
                                 </ul>
                             </li>
 
-                            <li class="nav-item {{ Request::is('admin/customer/customer-settings') ? 'active' : '' }}">
+                            <li
+                                class="nav-item {{ Request::is('admin/customer/customer-settings') ? 'active' : '' }}">
                                 <a class="nav-link " href="{{ route('admin.customer.customer-settings') }}">
                                     <span class="tio-settings nav-icon"></span>
                                     <span class="text-truncate">{{ \App\CPU\translate('customers_settings') }}
@@ -1203,7 +1272,8 @@ $route = request()->route()->getName();
                                 </a>
                                 <ul class="js-navbar-vertical-aside-submenu nav nav-sub"
                                     style="display: {{ Request::is('admin/landingpages/landing*') ? 'block' : 'none' }}">
-                                    <li class="nav-item {{ Request::is('admin/landingpages/landing') ? 'active' : '' }}">
+                                    <li
+                                        class="nav-item {{ Request::is('admin/landingpages/landing') ? 'active' : '' }}">
                                         <a class="nav-link" href="{{ route('admin.landingpages.landing') }}">
                                             <span class="tio-circle nav-indicator-icon"></span>
                                             <span class="text-truncate">
@@ -1211,7 +1281,8 @@ $route = request()->route()->getName();
                                             </span>
                                         </a>
                                     </li>
-                                    <li class="nav-item {{ Request::is('admin/landingpages/index') ? 'active' : '' }}">
+                                    <li
+                                        class="nav-item {{ Request::is('admin/landingpages/index') ? 'active' : '' }}">
                                         <a class="nav-link" href="{{ route('admin.landingpages.index') }}">
                                             <span class="tio-circle nav-indicator-icon"></span>
                                             <span class="text-truncate">
@@ -1540,7 +1611,8 @@ $route = request()->route()->getName();
                                             <span class="text-truncate">{{ \App\CPU\translate('add_new') }}</span>
                                         </a>
                                     </li>
-                                    <li class="nav-item {{ Request::is('admin/delivery-man/list') ? 'active' : '' }}">
+                                    <li
+                                        class="nav-item {{ Request::is('admin/delivery-man/list') ? 'active' : '' }}">
                                         <a class="nav-link" href="{{ route('admin.delivery-man.list') }}">
                                             <span class="tio-circle nav-indicator-icon"></span>
                                             <span class="text-truncate">{{ \App\CPU\translate('List') }}</span>

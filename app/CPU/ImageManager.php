@@ -8,6 +8,22 @@ use Illuminate\Support\Str;
 
 class ImageManager
 {
+
+    public static function uploadFile(string $dir, $file = null)
+    {
+        if ($file != null) {
+            $fileName = Carbon::now()->toDateString() . "-" . uniqid() . "." . $file->getClientOriginalExtension();
+            if (!Storage::disk('public')->exists($dir)) {
+                Storage::disk('public')->makeDirectory($dir);
+            }
+
+            $file->storeAs($dir, $fileName, 'public');
+        } else {
+            $fileName = null;
+        }
+
+        return $fileName;
+    }
     public static function upload(string $dir, string $format, $image = null)
     {
         if ($image != null) {

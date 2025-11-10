@@ -37,17 +37,17 @@ class Helpers
             }
             $tempPath = null;
             $finalContents = null;
-             if ($finalSize > $targetSizeKB) {
-                  dd($finalSize);
+            if ($finalSize > $targetSizeKB) {
+                dd($finalSize);
                 $manager = new ImageManager(\Intervention\Image\Drivers\Gd\Driver::class);
-               
+
                 $img = $manager->read($image->getPathname());
-                 
+
 
                 $quality = 90;
                 $tempPath = storage_path('app/temp_' . uniqid() . '.' . $format);
                 $targetSize = $targetSizeKB * 1024;
-               
+
 
                 do {
                     $img->toJpeg($quality)->save($tempPath);

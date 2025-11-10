@@ -14,7 +14,6 @@
                                 <th>অ্যাকশন</th>
                             </tr>
                         </thead>
-
                         <tbody>
                             @if (session()->has('cart') && count(session()->get('cart')) > 0)
                                 @foreach (session()->get('cart') as $key => $cartItem)
@@ -52,8 +51,8 @@
                                             {{ \App\CPU\Helpers::currency_converter(($cartItem['price'] - $cartItem['discount']) * $cartItem['quantity']) }}
                                         </td>
                                         <td class="remove-col"><a href="javascript:voide(0);"
-                                                onclick="removeFromCart({{ $key }})"
-                                                class="btn-remove"><i class="fa fa-trash-o"></i></a></td>
+                                                onclick="removeFromCart({{ $key }})" class="btn-remove"><i
+                                                    class="fa fa-trash-o"></i></a></td>
                                     </tr>
                                 @endforeach
                             @else
@@ -71,7 +70,7 @@
                         <h2 class="address-title">আপনার ঠিকানা</h2>
                     </div>
                     <div class="card-body">
-<form action="{{ route('customer.product.checkout.order') }}" method="POST">
+                        <form action="{{ route('customer.product.checkout.order') }}" method="POST">
                             @csrf
                             <div class="row">
                                 <div class="col-md-12">
@@ -159,29 +158,28 @@
 
 
 <script>
-
     function set_shipping_id(id) {
-        @foreach(session()->get('cart') as $key => $item)
-        let key = '{{$key}}';
-        @break
+        @foreach (session()->get('cart') as $key => $item)
+            let key = '{{ $key }}';
+            @break
         @endforeach
         $.get({
-            url: '{{url('/')}}/customer/set-shipping-method',
+            url: '{{ url('/') }}/customer/set-shipping-method',
             dataType: 'json',
             data: {
                 id: id,
                 key: key
             },
-            beforeSend: function () {
+            beforeSend: function() {
                 $('#loading').show();
             },
-            success: function (data) {
+            success: function(data) {
                 if (data.status == 1) {
                     toastr.success('Shipping method selected', {
                         CloseButton: true,
                         ProgressBar: true
                     });
-                    setInterval(function () {
+                    setInterval(function() {
                         location.reload();
                     }, 2000);
                 } else {
@@ -191,7 +189,7 @@
                     });
                 }
             },
-            complete: function () {
+            complete: function() {
                 $('#loading').hide();
             },
         });
