@@ -28,7 +28,7 @@
                                      alt="{{$product['name']}}" style="width: 80px;">
                              </div>
                              <div class="p-name">
-                                 <h5 class="title">{{ Str::limit($product['name'], 23) }}</h5>
+                                 <h5 class="title">{{ Str::limit($product['name'], 50) }}</h5>
                                  <span
                                      class="mr-2">{{ \App\CPU\Helpers::currency_converter(
                                          $product->unit_price - \App\CPU\Helpers::get_product_discount($product, $product->unit_price),

@@ -45,6 +45,14 @@ class ProductController extends BaseController
         $data = $request->status;
         return response()->json($data);
     }
+    public function arrival_status(Request $request)
+    {
+        $product = Product::find($request->id);
+        $product->arrival = ($product['arrival'] == 0 || $product['arrival'] == null) ? 1 : 0;
+        $product->save();
+        $data = $request->status;
+        return response()->json($data);
+    }
 
     public function approve_status(Request $request)
     {
@@ -236,18 +244,20 @@ class ProductController extends BaseController
             if ($request->file('images')) {
                 foreach ($request->file('images') as $img) {
                     //dd($img);
-                    $product_images[] = ImageManager::upload('product/', 'png', $img);
+                    //$product_images[] = ImageManager::upload('product/', 'png', $img);
+                    $product_images[] = Helpers::uploadWithCompress('product/' , 300, $img);
                 }
                 $p->images = json_encode($product_images);
             }
-            $p->thumbnail = ImageManager::upload('product/thumbnail/', 'png', $request->image);
+            // $p->thumbnail = ImageManager::upload('product/thumbnail/', 'webp', $request->image, $request->alt_text);
             //dd($request->image);
-            // $p->thumbnail = Helpers::uploadWithCompress('product/thumbnail/', 'png', 300, $request->image);
-            $p->size_chart = ImageManager::upload('product/thumbnail/', 'png', $request->size_chart);
+            $p->thumbnail = Helpers::uploadWithCompress('product/thumbnail/' , 300, $request->image, $request->alt_text);
+            //$p->size_chart = ImageManager::upload('product/thumbnail/', 'png', $request->size_chart);
+            $p->size_chart = Helpers::uploadWithCompress('product/thumbnail/' , 300, $request->size_chart);
 
             $p->meta_title = $request->meta_title;
             $p->meta_description = $request->meta_description;
-            $p->meta_image = ImageManager::upload('product/meta/', 'png', $request->meta_image);
+            $p->meta_image = Helpers::uploadWithCompress('product/meta/' , 300, $request->meta_image);
 
             $p->save();
 
@@ -533,7 +543,6 @@ class ProductController extends BaseController
         $product = Product::find($id);
 
         $product->name = $request->name;
-        //$product->slug = Str::slug($request->name[array_search('en', $request->lang)], '-') . '-' . Str::random(6);
 
         $category = [];
         if ($request->category_id != null) {
@@ -624,11 +633,12 @@ class ProductController extends BaseController
             }
             if($request->colors){
                 foreach ($request->colors as $key => $color) {
-                    $colorName = Color::where('code', $color)->first()->name;
+                    $colorName = Color::where('code', $color)->first();
                     $imageValu = $request->color_image[$key];
 
                     $ColorV = [];
-                    $ColorV['color'] = $colorName;
+                    $ColorV['color'] = $colorName->name;
+                    $ColorV['code'] = $colorName->code;
                     $ColorV['image'] = $imageValu;
                     array_push($colorVariations, $ColorV);
                 }
@@ -671,23 +681,24 @@ class ProductController extends BaseController
             if ($request->file('images')) {
                 foreach ($request->file('images') as $img) {
                     //$product_images[] = ImageManager::upload('product/', 'png', $img);
-                    $product_images[] = ImageManager::upload('product/', 'png', $img, 300);
+                    $product_images[] = Helpers::updateWithCompress('product/', $img);
                 }
                 $product->images = json_encode($product_images);
             }
 
             if ($request->file('image')) {
-                $product->thumbnail = ImageManager::update('product/thumbnail/', $product->thumbnail, 'png', $request->file('image'));
+                // $product->thumbnail = ImageManager::update('product/thumbnail/', $product->thumbnail, 'png', $request->file('image'), $request->alt_text);
+                $product->thumbnail = Helpers::updateWithCompress('product/thumbnail/', $product->thumbnail, $request->file('image'), $request->alt_text);
             }
 
             if ($request->file('size_chart')) {
-                $product->size_chart = ImageManager::update('product/thumbnail/', $product->size_chart, 'png', $request->file('size_chart'));
+                $product->size_chart = Helpers::updateWithCompress('product/thumbnail/', $product->size_chart, $request->file('size_chart'), $request->alt_text);
             }
 
             $product->meta_title = $request->meta_title;
             $product->meta_description = $request->meta_description;
             if ($request->file('meta_image')) {
-                $product->meta_image = ImageManager::update('product/meta/', $product->meta_image, 'png', $request->file('meta_image'));
+                $product->meta_image = Helpers::updateWithCompress('product/meta/', $product->meta_image, $request->file('meta_image'));
             }
 
             $product->save();
@@ -940,7 +951,8 @@ class ProductController extends BaseController
     public function productsearch(Request $request)
     {
         $pro = Product::where('name', $request->name)
-            ->orWhere('name', 'like', '%' . $request->name . '%')->get();
+            ->orWhere('name', 'like', '%' . $request->name . '%')
+            ->orWhere('code', 'like', '%' . $request->name . '%')->get();
 
         // dd($pro);
         return view('admin-views.product.searchlist', compact('pro'));

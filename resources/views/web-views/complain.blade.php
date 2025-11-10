@@ -55,8 +55,9 @@
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label>Phone <span class="text-danger">*</span></label>
-                                                    <input type="number" name="phone" class="form-control"
+                                                    <input type="number" name="phone" id="phone" class="form-control"
                                                         placeholder="Enter your phone">
+                                                        <span id="phoneFeedback" class="small text-danger"></span>
                                                     @error('phone')
                                                         <span class="text-danger">{{ $message }}</span>
                                                     @enderror
@@ -91,3 +92,36 @@
         </div>
     </section>
 @endsection
+@push('scripts')
+<script>
+        document.getElementById('phone').addEventListener('input', function() {
+            const phoneInput = this.value;
+            const phoneFeedback = document.getElementById('phoneFeedback');
+            const regex = /^(01[3-9]\d{8})$/;
+
+            if (phoneInput === '') {
+                phoneFeedback.textContent = '';
+            } else if (!regex.test(phoneInput)) {
+                phoneFeedback.classList.add('text-danger');
+                phoneFeedback.textContent = 'Please enter a valid Bangladeshi phone number (e.g. 0171XXXXXXX)';
+            } else {
+                phoneFeedback.textContent = 'Valid phone number!';
+                phoneFeedback.classList.remove('text-danger');
+                phoneFeedback.classList.add('text-success');
+            }
+        });
+
+        // Also validate when the field loses focus
+        document.getElementById('phone').addEventListener('blur', function() {
+            const phoneInput = this.value;
+            const phoneFeedback = document.getElementById('phoneFeedback');
+            const regex = /^(01[3-9]\d{8})$/;
+
+            if (phoneInput === '') {
+                phoneFeedback.textContent = 'Phone number is required';
+            } else if (!regex.test(phoneInput)) {
+                phoneFeedback.textContent = 'Please enter a valid Bangladeshi phone number (e.g. 0171XXXXXXX)';
+            }
+        });
+    </script>
+@endpush

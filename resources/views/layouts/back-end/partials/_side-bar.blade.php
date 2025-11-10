@@ -298,7 +298,9 @@ $route = request()->route()->getName();
                                             <span class="text-truncate">
                                                 {{ \App\CPU\translate('pending') }}
                                                 <span class="badge badge-soft-info badge-pill ml-1">
-                                                    {{ \App\Model\Order::where('order_type', 'default_type')->where(['order_status' => 'pending'])->count() }}
+                                                    {{ \App\Model\Order::where(function ($q) {
+                                                        $q->where('order_type', 'default_type')->orWhere('order_type', 'apps');
+                                                    })->where('order_status', 'pending')->count() }}
                                                 </span>
                                             </span>
                                         </a>
@@ -1136,6 +1138,26 @@ $route = request()->route()->getName();
                                     <i class="tio-messages nav-icon"></i>
                                     <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">
                                         {{ \App\CPU\translate('messages') }}
+                                    </span>
+                                </a>
+                            </li>
+                            <li
+                                class="navbar-vertical-aside-has-menu {{ Request::is('admin/leads*') ? 'active' : '' }}">
+                                <a class="js-navbar-vertical-aside-menu-link nav-link"
+                                    href="{{ route('admin.leads.list') }}">
+                                    <i class="tio-messages nav-icon"></i>
+                                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">
+                                        Leads Info
+                                    </span>
+                                </a>
+                            </li>
+                            <li
+                                class="navbar-vertical-aside-has-menu {{ Request::is('admin/user-info*') ? 'active' : '' }}">
+                                <a class="js-navbar-vertical-aside-menu-link nav-link"
+                                    href="{{ route('admin.user-info.list') }}">
+                                    <i class="tio-messages nav-icon"></i>
+                                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">
+                                        User Info
                                     </span>
                                 </a>
                             </li>

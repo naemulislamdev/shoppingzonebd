@@ -1,5 +1,5 @@
 @extends('layouts.back-end.app')
-@section('title', \App\CPU\translate('Complain List'))
+@section('title', \App\CPU\translate('leads List'))
 @push('css_or_js')
     <!-- Custom styles for this page -->
     <link href="{{asset('assets/back-end')}}/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
@@ -10,12 +10,12 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">{{\App\CPU\translate('Dashboard')}}</a></li>
-            <li class="breadcrumb-item" aria-current="page">{{\App\CPU\translate('Customer Complain')}}</li>
+            <li class="breadcrumb-item" aria-current="page">{{\App\CPU\translate('Customer Message')}}</li>
         </ol>
     </nav>
     <!-- Page Heading -->
     <div class="d-sm-flex align-items-center justify-content-between mb-2">
-        <h1 class="h3 mb-0 text-black-50">{{\App\CPU\translate('Customer')}} {{\App\CPU\translate('Complain')}} {{\App\CPU\translate('List')}}</h1>
+        <h1 class="h3 mb-0 text-black-50">User Information</h1>
     </div>
 
     <div class="row" style="margin-top: 20px">
@@ -25,8 +25,14 @@
 
                     <div class="row justify-content-between align-items-center flex-grow-1">
                         <div class="flex-start col-lg-3 mb-3 mb-lg-0">
-                            <h5>{{\App\CPU\translate('Customer')}} {{\App\CPU\translate('Complain')}} {{\App\CPU\translate('table')}} </h5>
-                            <h5 style="color: red; margin-{{Session::get('direction') === "rtl" ? 'right' : 'left'}}: 5px">({{ $complains->total() }})</h5>
+                            <h5>{{\App\CPU\translate('User')}} {{\App\CPU\translate('Information')}} {{\App\CPU\translate('table')}} </h5>
+                            <h5 style="color: red; margin-{{Session::get('direction') === "rtl" ? 'right' : 'left'}}: 5px">({{ $userInfos->total() }})</h5>
+                        </div>
+                        <div class="col-lg-2">
+                            Export :
+                            <a href="{{route('admin.user-info.bulk-export')}}" class="btn btn-success btn-sm">
+                                <i class="tio-file-text"></i> Excel
+                            </a>
                         </div>
                         <div class="col-lg-6">
                             <!-- Search -->
@@ -38,7 +44,7 @@
                                         </div>
                                     </div>
                                     <input id="datatableSearch_" type="search" name="search" class="form-control"
-                                        placeholder="{{\App\CPU\translate('Search_by_Name_or_Mobile_No_or_Email')}}" aria-label="Search orders" value="{{ $search }}" required>
+                                        placeholder="{{\App\CPU\translate('Search by Name or Phone')}}" aria-label="Search orders" value="{{ $search }}" required>
                                     <button type="submit" class="btn btn-primary">{{\App\CPU\translate('search')}}</button>
                                 </div>
                             </form>
@@ -54,34 +60,36 @@
                             <thead class="thead-light">
                             <tr>
                                 <th style="width: 5%">{{\App\CPU\translate('SL')}}#</th>
+                                <th style="width: 5%">{{\App\CPU\translate('Date')}}</th>
                                 <th style="width: 15%">{{\App\CPU\translate('Name')}}</th>
-                                <th style="width: 15%">{{\App\CPU\translate('mobile_no')}}</th>
-                                <th style="width: 40%">{{\App\CPU\translate('Reason')}}</th>
+                                <th style="width: 15%">{{\App\CPU\translate('Phone')}}</th>
+                                <th style="width: 15%">{{\App\CPU\translate('Address')}}</th>
+                                <th style="width: 40%">{{\App\CPU\translate('Status')}}</th>
                                 <th style="width: 10%">{{\App\CPU\translate('action')}}</th>
                             </tr>
                             </thead>
                             <tbody>
-                            @foreach($complains as $k=> $data)
+                            @foreach($userInfos as $k=> $lead)
                                 <tr>
-                                    <td style="width: 5%">{{$complains->firstItem()+$k}}</td>
-                                    <td style="width: 15%">{{$data['name']}}</td>
-                                    <td style="width: 15%">{{$data['phone']}}</td>
-                                    <td style="width: 15%">{{$data['reasons']}}</td>
+                                    <td style="width: 5%">{{$loop->iteration}}</td>
+                                    <td style="width: 5%">{{\Carbon\Carbon::parse($lead->created_at)->format('d M Y')}}</td>
+                                    <td style="width: 15%">{{$lead['name']}}</td>
+                                    <td style="width: 15%">{{$lead['phone']}}</td>
+                                    <td style="width: 15%">{{$lead['address']}}</td>
+                                    <td style="width: 10%;">{{$lead['status'] == 0 ? 'Unseen' : 'Seen'}}</td>
                                     <td style="width: 10%">
-
 
                                         <div class="d-flex justify-content-between">
                                             <a  title="{{\App\CPU\translate('View')}}"
-                                            class="btn btn-info btn-sm" style="cursor: pointer;"
-                                            href="{{route('admin.complain.view',$data->id)}}">
+                                            class="btn btn-info btn-sm mr-2 mb-2" style="cursor: pointer;"
+                                            href="{{route('admin.user-info.view',$lead->id)}}">
                                             <i class="tio-visible"></i>
                                         </a>
-                                            <a class="btn btn-danger btn-sm delete" style="cursor: pointer;"
-                                            id="{{$data['id']}}"
+                                        <a class="btn btn-danger btn-sm delete mb-2 mr-2" style="cursor: pointer;"
+                                            id="{{$lead['id']}}"
                                             title="{{ \App\CPU\translate('Delete')}}">
                                             <i class="tio-delete"></i>
                                         </a>
-
                                         </div>
 
                                     </td>
@@ -92,9 +100,9 @@
                     </div>
                 </div>
                 <div class="card-footer">
-                    {{$complains->links()}}
+                    {{$userInfos->links()}}
                 </div>
-                @if(count($complains)==0)
+                @if(count($userInfos)==0)
                     <div class="text-center p-4">
                         <img class="mb-3" src="{{asset('assets/back-end')}}/svg/illustrations/sorry.svg" alt="Image Description" style="width: 7rem;">
                         <p class="mb-0">{{\App\CPU\translate('No_data_to_show')}}</p>
@@ -135,11 +143,11 @@
                         }
                     });
                     $.ajax({
-                        url: "{{route('admin.complain.delete')}}",
+                        url: "{{route('admin.user-info.delete')}}",
                         method: 'POST',
                         data: {id: id},
                         success: function () {
-                            toastr.success('{{\App\CPU\translate('data_deleted_successfully')}}');
+                            toastr.success('{{\App\CPU\translate('User_deleted_successfully')}}');
                             location.reload();
                         }
                     });

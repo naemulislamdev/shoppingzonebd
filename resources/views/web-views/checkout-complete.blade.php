@@ -69,10 +69,18 @@
                                                 <div class="row mb-2">
                                                     <div class="col-md-12 d-flex">
                                                         <div class="col-4 for-tab-img">
-                                                            <img class="d-block mr-2"
-                                                                onerror="this.src='{{ asset('assets/front-end/img/image-place-holder.png') }}'"
-                                                                src="{{ \App\CPU\ProductManager::product_image_path('thumbnail') }}/{{ $product['thumbnail'] }}"
-                                                                alt="VR Collection" width="60">
+                                                            @if ($detail['color_image'])
+                                                                <img class="d-block mr-2"
+                                                                    onerror="this.src='{{ asset('assets/front-end/img/image-place-holder.png') }}'"
+                                                                    src="{{ $detail['color_image'] }}" alt="VR Collection"
+                                                                    width="60">
+                                                            @else
+                                                                <img class="d-block mr-2"
+                                                                    onerror="this.src='{{ asset('assets/front-end/img/image-place-holder.png') }}'"
+                                                                    src="{{ \App\CPU\ProductManager::product_image_path('thumbnail') }}/{{ $product['thumbnail'] }}"
+                                                                    alt="VR Collection" width="60">
+                                                            @endif
+
                                                         </div>
                                                         <div class="col-8 for-glaxy-name" style="vertical-align:middle;">
 

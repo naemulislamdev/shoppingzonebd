@@ -552,6 +552,15 @@
                     <div class="card mt-2 rest-part">
                         <div class="card-body">
                             <div class="row">
+                                 <div class="col-md-8 mb-4">
+                                    <label class="control-label">ALT Text</label>
+                                    <input type="text" name="alt_text"
+                                        placeholder="Product ALT Text"
+                                        class="form-control">
+                                    @error('alt_text')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
                                 <div class="col-md-8 mb-4">
                                     <label class="control-label">{{ \App\CPU\translate('Youtube video link') }}</label>
                                     <small class="badge badge-soft-danger"> (

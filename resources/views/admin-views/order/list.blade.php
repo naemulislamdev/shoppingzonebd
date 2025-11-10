@@ -397,6 +397,7 @@
                             </th>
                             <th>{{\App\CPU\translate('Order')}}</th>
                             <th>{{\App\CPU\translate('Date')}}</th>
+                            <th>{{\App\CPU\translate('Time')}}</th>
                             <th>{{\App\CPU\translate('customer_name')}}</th>
                             <th>{{\App\CPU\translate('phone')}}</th>
                             <th>{{\App\CPU\translate('Status')}}</th>
@@ -421,6 +422,7 @@
                                 <a href="{{route('admin.orders.details',['id'=>$order['id']])}}">{{$order['id']}}</a>
                             </td>
                             <td>{{date('d M Y',strtotime($order['created_at']))}}</td>
+                            <td>{{date('h:i A',strtotime($order['created_at']))}}</td>
                             <td>
                                 @if($order->customer)
                                     <a class="text-body text-capitalize"
@@ -513,15 +515,18 @@
                         </td>
                             <td>
 
-                                <a class="btn btn-primary btn-sm mr-1" title="{{\App\CPU\translate('view')}}"
+                                <a class="btn btn-primary btn-sm mr-1 mb-1" title="{{\App\CPU\translate('view')}}"
                                     href="{{route('admin.orders.details',['id'=>$order['id']])}}"><i
                                         class="tio-visible"></i> </a>
-                                <a class="btn btn-info btn-sm mr-1" target="_blank" title="{{\App\CPU\translate('invoice')}}"
+                                <a class="btn btn-primary btn-sm mr-1 mb-1" title="{{\App\CPU\translate('edit')}}"
+                                    href="{{route('admin.orders.edit',['id'=>$order['id']])}}"><i
+                                        class="tio-edit"></i> </a>
+                                <a class="btn btn-info btn-sm mr-1 mb-1" target="_blank" title="{{\App\CPU\translate('invoice')}}"
                                     href="{{route('admin.orders.generate-invoice',[$order['id']])}}"><i
                                         class="tio-download"></i> </a>
-                                        <a class="btn btn-warning btn-sm mr-1" title="Order Exchange"
-                                        href="{{route('admin.pos.exchange',['id'=>$order['id']])}}"><i
-                                            class="tio-repeat"></i></a>
+                                <a class="btn btn-warning btn-sm mr-1 mb-1" title="Order Exchange"
+                                    href="{{route('admin.pos.exchange',['id'=>$order['id']])}}"><i
+                                        class="tio-repeat"></i></a>
 
                             </td>
 

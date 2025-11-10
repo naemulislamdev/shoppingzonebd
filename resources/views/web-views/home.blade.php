@@ -180,12 +180,12 @@
     <meta property="og:image" content="{{ asset('storage/company') }}/{{ $web_config['web_logo']->value }}" />
     <meta property="og:title" content="Best Online Marketplace In Bangladesh {{ $web_config['name']->value }} Home" />
     <meta property="og:url" content="{{ env('APP_URL') }}">
-    <meta property="og:description" content="{!! substr($web_config['about']->value, 0, 100) !!}">
+    <meta property="og:description" content="{!! substr(strip_tags($web_config['about']->value), 0, 100) !!}">
 
     <meta property="twitter:card" content="{{ asset('storage/company') }}/{{ $web_config['web_logo']->value }}" />
     <meta property="twitter:title" content="Welcome To {{ $web_config['name']->value }} Home" />
     <meta property="twitter:url" content="{{ env('APP_URL') }}">
-    <meta property="twitter:description" content="{!! substr($web_config['about']->value, 0, 100) !!}">
+    <meta property="twitter:description" content="{!! substr(strip_tags($web_config['about']->value), 0, 100) !!}">
 @endpush
 @section('content')
 
@@ -207,8 +207,71 @@
                     </div>
                 </div>
             </div>
-            <div class="owl-carousel related-products product-carosel mt-4 mt-lg-4 pt-5">
-                <div class="item">
+            <div class="owl-carousel related-products product-carosel mt-4 mt-lg-4" data-delay="3000">
+                @php($decimal_point_settings = \App\CPU\Helpers::get_business_settings('decimal_point_settings'))
+                @if ($arrival_products->count() > 0)
+                    <!-- Your product columns go here -->
+                    @foreach ($arrival_products as $product)
+                        <div class="item">
+                            <div class="product-column">
+                                <div class="product-box product-box-col-2">
+                                    <input type="hidden" name="quantity" value="{{ $product->minimum_order_qty ?? 1 }}"
+                                        min="{{ $product->minimum_order_qty ?? 1 }}" max="100">
+                                    <div class="product-image2 product-image2-col-2">
+                                        @if ($product->discount > 0)
+                                            <div class="discount-box float-end">
+                                                <span>
+                                                    @if ($product->discount_type == 'percent')
+                                                        {{ round($product->discount, $decimal_point_settings) }}%
+                                                    @elseif($product->discount_type == 'flat')
+                                                        {{ \App\CPU\Helpers::currency_converter($product->discount) }}
+                                                    @endif
+                                                </span>
+                                            </div>
+                                        @endif
+                                        <a href="{{ route('product', $product->slug) }}">
+                                            <img class="pic-1"
+                                                src="{{ \App\CPU\ProductManager::product_image_path('thumbnail') }}/{{ $product['thumbnail'] }}"
+                                                alt="{{ $product['name'] }}">
+                                            <img class="pic-2"
+                                                src="{{ \App\CPU\ProductManager::product_image_path('thumbnail') }}/{{ $product['thumbnail'] }}"
+                                                alt="{{ $product['name'] }}">
+                                        </a>
+                                        <ul class="social">
+                                            <li><a href="{{ route('product', $product->slug) }}" data-tip="Quick View"><i
+                                                        class="fa fa-eye"></i></a></li>
+
+                                            <li><a style="cursor: pointer" data-toggle="modal"
+                                                    data-target="#addToCartModal_{{ $product->id }}"
+                                                    data-tip="Add to Cart"><i class="fa fa-shopping-cart"></i></a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="product-content">
+                                        <h3 class="title"><a
+                                                href="{{ route('product', $product->slug) }}">{{ Str::limit($product['name'], 50) }}</a>
+                                        </h3>
+                                        <div class="price d-flex justify-content-center align-content-center">
+                                            @if ($product->discount > 0)
+                                                <span
+                                                    class="mr-2">{{ \App\CPU\Helpers::currency_converter(
+                                                        $product->unit_price - \App\CPU\Helpers::get_product_discount($product, $product->unit_price),
+                                                    ) }}</span>
+                                                <del>{{ \App\CPU\Helpers::currency_converter($product->unit_price) }}</del>
+                                            @else
+                                                <span>{{ \App\CPU\Helpers::currency_converter($product->unit_price) }}</span>
+                                            @endif
+                                        </div>
+                                        <button type="button" style="cursor: pointer;" class="btn btn-primary"
+                                            onclick="buy_now('form-{{ $product->id }}')">অর্ডার করুন</button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                @endif
+                {{-- <div class="item">
                     <div class="product-column">
                         <div class="product-box product-box-col-2">
                             <input type="hidden" name="quantity" value="" min="" max="100">
@@ -242,258 +305,13 @@
                                     <span class="mr-2">2999</span>
                                     <del>200</del>
                                 </div>
-                                <button type="button" style="cursor: pointer;" class="btn btn-primary">অর্ডার করুন</button>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="item">
-                    <div class="product-column">
-                        <div class="product-box product-box-col-2">
-                            <input type="hidden" name="quantity" value="" min="" max="100">
-                            <div class="product-image2 product-image2-col-2">
-
-                                <div class="discount-box float-end">
-                                    <span>
-                                        -10%
-                                    </span>
-                                </div>
-
-                                <a href="">
-                                    <img class="pic-1" src="{{ asset('assets') }}/front-end/images/product/p-3.jpg">
-                                    <img class="pic-2" src="{{ asset('assets') }}/front-end/images/product/p-3.jpg">
-                                </a>
-                                <ul class="social">
-                                    <li><a href="" data-tip="Quick View"><i class="fa fa-eye"></i></a></li>
-                                    <li>
-                                        <a style="cursor: pointer" data-toggle="modal"
-                                            data-target="#addToCartModal_{{ 2 }}" data-tip="Add to Cart">
-                                            <i class="fa fa-shopping-cart"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="product-content">
-                                <h3 class="title"><a href="">product name Lorem ipsum dolor sit amet.</a>
-                                </h3>
-                                <div class="price d-flex justify-content-center align-content-center">
-
-                                    <span class="mr-2">2999</span>
-                                    <del>200</del>
-                                </div>
                                 <button type="button" style="cursor: pointer;" class="btn btn-primary">অর্ডার
                                     করুন</button>
                             </div>
 
                         </div>
                     </div>
-                </div>
-                <div class="item">
-                    <div class="product-column">
-                        <div class="product-box product-box-col-2">
-                            <input type="hidden" name="quantity" value="" min="" max="100">
-                            <div class="product-image2 product-image2-col-2">
-
-                                <div class="discount-box float-end">
-                                    <span>
-                                        -10%
-                                    </span>
-                                </div>
-
-                                <a href="">
-                                    <img class="pic-1" src="{{ asset('assets') }}/front-end/images/product/p-3.jpg">
-                                    <img class="pic-2" src="{{ asset('assets') }}/front-end/images/product/p-3.jpg">
-                                </a>
-                                <ul class="social">
-                                    <li><a href="" data-tip="Quick View"><i class="fa fa-eye"></i></a></li>
-                                    <li>
-                                        <a style="cursor: pointer" data-toggle="modal"
-                                            data-target="#addToCartModal_{{ 2 }}" data-tip="Add to Cart">
-                                            <i class="fa fa-shopping-cart"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="product-content">
-                                <h3 class="title"><a href="">product name Lorem ipsum dolor sit amet.</a>
-                                </h3>
-                                <div class="price d-flex justify-content-center align-content-center">
-
-                                    <span class="mr-2">2999</span>
-                                    <del>2500</del>
-                                </div>
-                                <button type="button" style="cursor: pointer;" class="btn btn-primary">অর্ডার
-                                    করুন</button>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="item">
-                    <div class="product-column">
-                        <div class="product-box product-box-col-2">
-                            <input type="hidden" name="quantity" value="" min="" max="100">
-                            <div class="product-image2 product-image2-col-2">
-
-                                <div class="discount-box float-end">
-                                    <span>
-                                        -10%
-                                    </span>
-                                </div>
-
-                                <a href="">
-                                    <img class="pic-1" src="{{ asset('assets') }}/front-end/images/product/p-3.jpg">
-                                    <img class="pic-2" src="{{ asset('assets') }}/front-end/images/product/p-3.jpg">
-                                </a>
-                                <ul class="social">
-                                    <li><a href="" data-tip="Quick View"><i class="fa fa-eye"></i></a></li>
-                                    <li>
-                                        <a style="cursor: pointer" data-toggle="modal"
-                                            data-target="#addToCartModal_{{ 2 }}" data-tip="Add to Cart">
-                                            <i class="fa fa-shopping-cart"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="product-content">
-                                <h3 class="title"><a href="">product name Lorem ipsum dolor sit amet.</a>
-                                </h3>
-                                <div class="price d-flex justify-content-center align-content-center">
-
-                                    <span class="mr-2">2999</span>
-                                    <del>2500</del>
-                                </div>
-                                <button type="button" style="cursor: pointer;" class="btn btn-primary">অর্ডার
-                                    করুন</button>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="item">
-                    <div class="product-column">
-                        <div class="product-box product-box-col-2">
-                            <input type="hidden" name="quantity" value="" min="" max="100">
-                            <div class="product-image2 product-image2-col-2">
-
-                                <div class="discount-box float-end">
-                                    <span>
-                                        -10%
-                                    </span>
-                                </div>
-
-                                <a href="">
-                                    <img class="pic-1" src="{{ asset('assets') }}/front-end/images/product/p-3.jpg">
-                                    <img class="pic-2" src="{{ asset('assets') }}/front-end/images/product/p-3.jpg">
-                                </a>
-                                <ul class="social">
-                                    <li><a href="" data-tip="Quick View"><i class="fa fa-eye"></i></a></li>
-                                    <li>
-                                        <a style="cursor: pointer" data-toggle="modal"
-                                            data-target="#addToCartModal_{{ 2 }}" data-tip="Add to Cart">
-                                            <i class="fa fa-shopping-cart"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="product-content">
-                                <h3 class="title"><a href="">product name Lorem ipsum dolor sit amet.</a>
-                                </h3>
-                                <div class="price d-flex justify-content-center align-content-center">
-
-                                    <span class="mr-2">2999</span>
-                                    <del>2500</del>
-                                </div>
-                                <button type="button" style="cursor: pointer;" class="btn btn-primary">অর্ডার
-                                    করুন</button>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="item">
-                    <div class="product-column">
-                        <div class="product-box product-box-col-2">
-                            <input type="hidden" name="quantity" value="" min="" max="100">
-                            <div class="product-image2 product-image2-col-2">
-
-                                <div class="discount-box float-end">
-                                    <span>
-                                        -10%
-                                    </span>
-                                </div>
-
-                                <a href="">
-                                    <img class="pic-1" src="{{ asset('assets') }}/front-end/images/product/p-3.jpg">
-                                    <img class="pic-2" src="{{ asset('assets') }}/front-end/images/product/p-3.jpg">
-                                </a>
-                                <ul class="social">
-                                    <li><a href="" data-tip="Quick View"><i class="fa fa-eye"></i></a></li>
-                                    <li>
-                                        <a style="cursor: pointer" data-toggle="modal"
-                                            data-target="#addToCartModal_{{ 2 }}" data-tip="Add to Cart">
-                                            <i class="fa fa-shopping-cart"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="product-content">
-                                <h3 class="title"><a href="">product name Lorem ipsum dolor sit amet.</a>
-                                </h3>
-                                <div class="price d-flex justify-content-center align-content-center">
-
-                                    <span class="mr-2">2999</span>
-                                    <del>2500</del>
-                                </div>
-                                <button type="button" style="cursor: pointer;" class="btn btn-primary">অর্ডার
-                                    করুন</button>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="item">
-                    <div class="product-column">
-                        <div class="product-box product-box-col-2">
-                            <input type="hidden" name="quantity" value="" min="" max="100">
-                            <div class="product-image2 product-image2-col-2">
-
-                                <div class="discount-box float-end">
-                                    <span>
-                                        -10%
-                                    </span>
-                                </div>
-
-                                <a href="">
-                                    <img class="pic-1" src="{{ asset('assets') }}/front-end/images/product/p-3.jpg">
-                                    <img class="pic-2" src="{{ asset('assets') }}/front-end/images/product/p-3.jpg">
-                                </a>
-                                <ul class="social">
-                                    <li><a href="" data-tip="Quick View"><i class="fa fa-eye"></i></a></li>
-                                    <li>
-                                        <a style="cursor: pointer" data-toggle="modal"
-                                            data-target="#addToCartModal_{{ 2 }}" data-tip="Add to Cart">
-                                            <i class="fa fa-shopping-cart"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="product-content">
-                                <h3 class="title"><a href="">product name Lorem ipsum dolor sit amet.</a>
-                                </h3>
-                                <div class="price d-flex justify-content-center align-content-center">
-
-                                    <span class="mr-2">2999</span>
-                                    <del>2500</del>
-                                </div>
-                                <button type="button" style="cursor: pointer;" class="btn btn-primary">অর্ডার
-                                    করুন</button>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
+                </div> --}}
 
             </div>
             <div class="d-flex justify-content-center">
@@ -729,7 +547,7 @@
                                 </div>
                                 <div class="product-content">
                                     <h3 class="title"><a
-                                            href="{{ route('product', $product->slug) }}">{{ $product['name'] }}</a>
+                                            href="{{ route('product', $product->slug) }}">{{ Str::limit($product['name'], 50) }}</a>
                                     </h3>
                                     <div class="price d-flex justify-content-center align-content-center">
                                         @if ($product->discount > 0)
@@ -769,7 +587,7 @@
                                                         alt="{{ $product['name'] }}" style="width: 80px;">
                                                 </div>
                                                 <div class="p-name">
-                                                    <h5 class="title">{{ Str::limit($product['name'], 23) }}</h5>
+                                                    <h5 class="title">{{ Str::limit($product['name'], 50) }}</h5>
                                                     <span
                                                         class="mr-2">{{ \App\CPU\Helpers::currency_converter(
                                                             $product->unit_price - \App\CPU\Helpers::get_product_discount($product, $product->unit_price),
@@ -953,7 +771,7 @@
                                     <div class="product-content">
                                         <h3 class="title">
                                             <a
-                                                href="{{ route('product', $product->slug) }}">{{ Str::limit($product['name'], 23) }}</a>
+                                                href="{{ route('product', $product->slug) }}">{{ Str::limit($product['name'], 50) }}</a>
                                         </h3>
                                         <div class="price d-flex justify-content-center align-content-center">
                                             @if ($product->discount > 0)
@@ -994,7 +812,7 @@
                                                             alt="" style="width: 80px;">
                                                     </div>
                                                     <div class="p-name">
-                                                        <h5 class="title">{{ Str::limit($product['name'], 23) }}</h5>
+                                                        <h5 class="title">{{ Str::limit($product['name'], 50) }}</h5>
                                                         <span
                                                             class="mr-2">{{ \App\CPU\Helpers::currency_converter(
                                                                 $product->unit_price - \App\CPU\Helpers::get_product_discount($product, $product->unit_price),

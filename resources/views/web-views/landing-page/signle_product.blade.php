@@ -5,12 +5,12 @@
     <meta property="og:image" content="{{ asset('storage/company') }}/{{ $web_config['web_logo']->value }}" />
     <meta property="og:title" content="Best Online Marketplace In Bangladesh {{ $web_config['name']->value }} Home" />
     <meta property="og:url" content="{{ env('APP_URL') }}">
-    <meta property="og:description" content="{!! substr($web_config['about']->value, 0, 100) !!}">
+    <meta property="og:description" content="{!! substr(strip_tags($web_config['about']->value), 0, 100) !!}">
 
     <meta property="twitter:card" content="{{ asset('storage/company') }}/{{ $web_config['web_logo']->value }}" />
     <meta property="twitter:title" content="Welcome To {{ $web_config['name']->value }} Home" />
     <meta property="twitter:url" content="{{ env('APP_URL') }}">
-    <meta property="twitter:description" content="{!! substr($web_config['about']->value, 0, 100) !!}">
+    <meta property="twitter:description" content="{!! substr(strip_tags($web_config['about']->value), 0, 100) !!}">
     {{-- <link rel="stylesheet" href="{{ asset('assets/front-end/css/bangla-font.css') }}"> --}}
     <link href="https://fonts.maateen.me/solaiman-lipi/font.css" rel="stylesheet">
     <style>
@@ -455,7 +455,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <form action="{{ route('customer.sproduct.checkout') }}" method="POST">
+                            <form action="{{ route('customer.sproduct.checkout') }}" method="POST" id="userInfoForm">
                                 @csrf
                                 <div class="row">
                                     <div class="col-md-6">
@@ -471,7 +471,7 @@
                                                     <div class="col-md-6 mb-3">
                                                         <div class="form-group">
                                                             <label>নাম <span class="text-danger">*</span></label>
-                                                            <input type="text" class="form-control"
+                                                            <input type="text" class="form-control auto-save"
                                                                 placeholder="আপনার নাম লিখুন" name="name"
                                                                 value="{{ old('name') }}">
                                                             @error('name')
@@ -483,7 +483,7 @@
                                                         <div class="form-group">
                                                             <label for="phone">ফোন নম্বর <span
                                                                     class="text-danger">*</span></label>
-                                                            <input type="number" class="form-control" id="phone"
+                                                            <input type="number" class="form-control auto-save" id="phone"
                                                                 name="phone" placeholder="আপনার ফোন নম্বর লিখুন" required
                                                                 value="{{ old('phone') }}">
                                                             <span id="phoneFeedback" class="small text-danger"></span>
@@ -508,7 +508,7 @@
                                                         <div class="form-group">
                                                             <label>আপনার ঠিকানা <span
                                                                     class="text-danger">*</span></label>
-                                                            <textarea class="form-control" placeholder="আপনার ঠিকানা লিখুন" name="address">{{ old('address') }}</textarea>
+                                                            <textarea class="form-control auto-save" placeholder="আপনার ঠিকানা লিখুন" name="address">{{ old('address') }}</textarea>
                                                             @error('address')
                                                                 <span class="text-danger">{{ $message }}</span>
                                                             @enderror
@@ -816,6 +816,38 @@
                 phoneFeedback.textContent = 'Phone number is required';
             } else if (!regex.test(phoneInput)) {
                 phoneFeedback.textContent = 'Please enter a valid Bangladeshi phone number (e.g. 0171XXXXXXX)';
+            }
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            let typingTimer;
+            let doneTypingInterval = 1000; // Time in milliseconds (1 second)
+
+            $(".auto-save").on("input", function() {
+                clearTimeout(typingTimer);
+                typingTimer = setTimeout(saveUserData, doneTypingInterval);
+            });
+
+            function saveUserData() {
+                let formData = $("#userInfoForm").serialize();
+
+                $.ajax({
+                    url: "{{ route('save.user.info') }}",
+                    type: "POST",
+                    data: formData,
+                    dataType: "json",
+                    success: function(response) {
+                        if (response.success) {
+                            console.log("Data auto-saved successfully!");
+                        } else {
+                            console.log("Failed to save data.");
+                        }
+                    },
+                    error: function(xhr) {
+                        console.log("Error: ", xhr.responseText);
+                    }
+                });
             }
         });
     </script>

@@ -37,6 +37,7 @@
                                                                 <li class="s-category"><a
                                                                         href="{{ route('products', ['id' => $subCategory['id'], 'data_from' => 'category', 'page' => 1]) }}">{{ $subCategory['name'] }}
                                                                     </a>
+                                                                    
                                                                     @if ($subCategory->childes->count() > 0)
                                                                         <div class="dropdown-menuc">
                                                                             <ul class="w-nav-list level_3 ml-3">

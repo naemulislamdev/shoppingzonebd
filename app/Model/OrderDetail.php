@@ -20,6 +20,7 @@ class OrderDetail extends Model
         'updated_at' => 'datetime',
         'refund_request'=>'integer',
     ];
+    protected $guarded = ['id'];
 
     public function product()
     {
