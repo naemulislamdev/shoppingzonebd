@@ -1,6 +1,7 @@
 <section class="header-slider-section mt-1 mt-lg-3">
     @php($main_banner = \App\Model\Banner::where('banner_type', 'Main Banner')->where('published', 1)->orderBy('id', 'desc')->get())
-    <div id="carouselExampleIndicators" class="carousel slide position-relative container " data-ride="carousel">
+    <div id="carouselExampleIndicators" class="carousel slide position-relative container " data-ride="carousel"
+        data-interval="3000">
         <ol class="carousel-indicators">
             @foreach ($main_banner as $key => $banner)
                 <li data-target="#carouselExampleIndicators" data-slide-to="{{ $key }}"

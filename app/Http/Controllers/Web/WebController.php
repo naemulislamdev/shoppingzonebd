@@ -45,12 +45,7 @@ use Gregwar\Captcha\CaptchaBuilder;
 use App\CPU\CustomerManager;
 use App\CPU\Convert;
 use App\Model\Branch;
-<<<<<<< HEAD
 use App\Models\Career;
-=======
-use App\Models\Lead;
-use App\Models\UserInfo;
->>>>>>> 21002221a8b5e137d6f78a621b4e036239cccd67
 use App\ProductLandingPage;
 use Carbon\Carbon;
 use PhpParser\Node\Expr\FuncCall;
@@ -99,6 +94,8 @@ class WebController extends Controller
 
         $latest_products = Product::with(['reviews'])->active()->orderBy('id', 'desc')->take(8)->get();
         $categories = Category::where('position', 0)->where('home_status', true)->priority()->take(11)->get();
+
+
         $brands = Brand::active()->take(15)->get();
         //best sell product
         $bestSellProduct = OrderDetail::with('product.reviews')
@@ -150,7 +147,8 @@ class WebController extends Controller
         }
 
 
-        return view('web-views.home', compact('featured_products','arrival_products', 'topRated', 'bestSellProduct', 'latest_products', 'categories', 'brands', 'deal_of_the_day', 'top_sellers', 'home_categories', 'productCounts'));
+
+        return view('web-views.home', compact('featured_products', 'arrival_products', 'topRated', 'bestSellProduct', 'latest_products', 'categories', 'brands', 'deal_of_the_day', 'top_sellers', 'home_categories', 'productCounts'));
     }
     //Products Search on ajax
     public function searchProducts(Request $request)
@@ -162,7 +160,7 @@ class WebController extends Controller
                     ->orWhere('code', 'LIKE', "%{$query}%");
             })
             ->get();
-        $categories = Category::where('position', 0)->where('name', 'LIKE', "%{$query}%")->priority()->get();
+        $categories  = Category::where('position', 0)->where('name', 'LIKE', "%{$query}%")->priority()->get();
 
         $output = '';
         if (count($products) > 0) {
@@ -188,7 +186,7 @@ class WebController extends Controller
         //categories loop
         $cates = '<div class="mb-2"><p class="text-center text-bold">Our popular categories</p></div>';
         if (count($categories) > 0) {
-            foreach ($categories as $category) {
+            foreach ($categories  as $category) {
                 $cates .= '
                 <div class="category-item">
                     <div>
@@ -200,7 +198,7 @@ class WebController extends Controller
                 ';
             }
         } else {
-            $cates .= '<p>No categories found</p>';
+            $cates .= '<p>No categories  found</p>';
         }
 
         return response()->json([
@@ -471,7 +469,7 @@ class WebController extends Controller
     }
     public function checkout_complete_wallet(Request $request = null)
     {
-        $cartTotal = CartManager::cart_grand_total();
+        $cartTotal = CartManager::cart_grand_total($request);
         $user = Helpers::get_customer($request);
         if ($cartTotal > $user->wallet_balance) {
             Toastr::warning(translate('inefficient balance in your wallet to pay for this order!!'));
@@ -702,7 +700,7 @@ class WebController extends Controller
     public function products(Request $request)
     {
         //dd($request->all());
-        if($request->get('data_from')==null){
+        if ($request->get('data_from') == null) {
 
             return redirect()->route('home');
         }

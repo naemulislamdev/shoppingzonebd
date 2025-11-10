@@ -1,7 +1,7 @@
 <header id="header">
     <div class="container">
-        <div class="row">
-            <div class="col-md-3">
+        <div class="row main_row">
+            <div class="col-md-3 d-none d-md-block">
                 <!-- <a class="navbar-brand" href="index.html">Shopping Zone BD</a> -->
                 <a href="{{ route('home') }}">
                     <img class="header-logo" src="{{ asset('storage/company') . '/' . $web_config['web_logo']->value }}"
@@ -37,7 +37,7 @@
                                                                 <li class="s-category"><a
                                                                         href="{{ route('products', ['id' => $subCategory['id'], 'data_from' => 'category', 'page' => 1]) }}">{{ $subCategory['name'] }}
                                                                     </a>
-                                                                    
+
                                                                     @if ($subCategory->childes->count() > 0)
                                                                         <div class="dropdown-menuc">
                                                                             <ul class="w-nav-list level_3 ml-3">

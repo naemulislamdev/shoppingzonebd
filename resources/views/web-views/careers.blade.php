@@ -8,6 +8,7 @@
 
     section.career .job-item {
         border: none;
+        border-radius: 8px;
         box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
         transition: all 0.3s ease-in-out;
     }
@@ -60,13 +61,17 @@
                                     <div class="card-body">
 
 
-                                        <div class="d-flex g-5 align-items-center text-dark">
+                                        <div class="d-flex g-5 align-items-center text-dark mb-2">
                                             <i class="fa fa-map-marker" style="font-size: 22px" aria-hidden="true"></i>
                                             <h6 class="mb-0 ml-2 ">{{ $career->location }}</h6>
                                         </div>
-                                        <div class="card-text text-dark">
-                                            {!! Str::limit(strip_tags($career->description), 500, '...') !!}
+                                        <div class="card-text text-dark "
+                                            style="height: 125px;  overflow: hidden; text-emphasis: wrap;">
+                                            {{-- {!! Str::limit(strip_tags($career->description), 500, '...') !!} --}}
+                                            {!! $career->description !!}
+
                                         </div>
+                                        <span class="text-dark">....</span>
                                         <div class="d-flex align-items-center text-dark mt-3">
                                             <p class="mb-0 mr-2"><strong>Deadline:</strong></p>
                                             <i class="fa fa-calendar" aria-hidden="true"></i>

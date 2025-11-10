@@ -422,6 +422,7 @@ header.scrolled {
     font-size: 50px;
     margin-bottom: 12px;
 }
+/* header slider section start */
 .header-slider-section {
     margin-top: 0px;
 }
@@ -510,6 +511,7 @@ header.scrolled {
     filter: invert(0);
     transition: filter 0.3s ease;
 }
+/* hero slide style end */
 /* Slider next and prev button style end */
 .swiper-button-next,
 .swiper-button-prev {

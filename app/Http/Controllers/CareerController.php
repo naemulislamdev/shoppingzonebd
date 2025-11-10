@@ -35,7 +35,7 @@ class CareerController extends Controller
         $request->validate([
             'position'     => 'required|string|max:255',
             'department'   => 'required|string|max:255',
-            'location'     => 'required|string|max:255',
+            'location'     => 'nullable|string|max:255',
             'description'  => 'required|string',
             'opening_date' => 'required|date',
             'deadline'     => 'required|date',
@@ -84,7 +84,7 @@ class CareerController extends Controller
         $request->validate([
             'position'     => 'required|string|max:255',
             'department'   => 'required|string|max:255',
-            'location'     => 'required|string|max:255',
+            'location'     => 'nullable|string|max:255',
             'description'  => 'required|string',
             'opening_date' => 'required|date',
             'deadline'     => 'required|date',

@@ -190,8 +190,7 @@
                                                                 {{-- Branch location --}}
                                                                 <div class="form-group" id="location">
                                                                     <label class="input-label" for="location">
-                                                                        {{ \App\CPU\translate('Branch location') }}<span
-                                                                            class="text-danger">*</span>
+                                                                        {{ \App\CPU\translate('Branch location') }}
                                                                     </label>
                                                                     <input required type="text" name="location"
                                                                         id="location" value="{{ $career->location }}"
@@ -237,6 +236,9 @@
                                                                             {{ $career->type == 'Part-time' ? 'checked' : '' }}
                                                                             value="Part-time">Part-time</option>
 
+                                                                        <option
+                                                                            {{ $career->type == 'Internship' ? 'checked' : '' }}
+                                                                            value="Remote">Remote</option>
                                                                         <option
                                                                             {{ $career->type == 'Internship' ? 'checked' : '' }}
                                                                             value="Internship">Internship</option>
@@ -501,7 +503,7 @@
                             {{-- Branch location --}}
                             <div class="form-group" id="location">
                                 <label class="input-label" for="location">
-                                    {{ \App\CPU\translate('Branch location') }}<span class="text-danger">*</span>
+                                    {{ \App\CPU\translate('Branch location') }}
                                 </label>
                                 <input required type="text" name="location" id="location"
                                     class="form-control @error('location') is-invalid @enderror"
@@ -533,6 +535,7 @@
                                     <option selected disabled value="">------</option>
                                     <option value="Full-time">Full-time</option>
                                     <option value="Part-time">Part-time</option>
+                                    <option value="Remote">Remote</option>
                                     <option value="Internship">Internship</option>
                                 </select>
                             </div>

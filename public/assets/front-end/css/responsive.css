@@ -107,6 +107,10 @@
     .main-slider {
         height: auto;
     }
+    header .main_row {
+        flex-wrap: nowrap !important;
+        align-items: center;
+    }
 }
 @media (max-width: 570px) {
     .grid-controls {
@@ -119,6 +123,10 @@
     }
     .carousel-item {
         height: 27vh;
+    }
+    header .main_row {
+        flex-wrap: nowrap !important;
+        align-items: center;
     }
 }
 
@@ -198,6 +206,10 @@
     }
     .category-filter-box {
         top: 18%;
+    }
+    header .main_row {
+        flex-wrap: wrap;
+        align-items: center;
     }
 }
 
