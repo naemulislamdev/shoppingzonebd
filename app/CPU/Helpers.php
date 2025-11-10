@@ -24,7 +24,6 @@ use Intervention\Image\Encoders\WebpEncoder;
 
 class Helpers
 {
-    //Start image upload manager
     public static function uploadWithCompress(string $dir, int $targetSizeKB, $image = null, $alt_text = null)
     {
         if ($image !== null) {
@@ -38,51 +37,34 @@ class Helpers
             if (!Storage::disk('public')->exists($dir)) {
                 Storage::disk('public')->makeDirectory($dir);
             }
-            $tempPath = null;
-            $finalContents = null;
-            if ($finalSize > $targetSizeKB) {
-                dd($finalSize);
-                $manager = new ImageManager(\Intervention\Image\Drivers\Gd\Driver::class);
 
-                $img = $manager->read($image->getPathname());
+            // Initialize Intervention Image (use GD or Imagick)
+            $manager = new ImageManager(new \Intervention\Image\Drivers\Gd\Driver());
 
+            // Read the uploaded image
+            $img = $manager->read($image->getRealPath());
 
-                $quality = 90;
-                $tempPath = storage_path('app/temp_' . uniqid() . '.' . $format);
-                $targetSize = $targetSizeKB * 1024;
+            // Compress and encode as WebP
+            $quality = 80; // start high quality
+            $temp = tempnam(sys_get_temp_dir(), 'img_');
 
+            do {
+                $encoded = $img->encode(new WebpEncoder(quality: $quality));
+                file_put_contents($temp, (string) $encoded);
+                $currentSize = filesize($temp);
+                $quality -= 5;
+            } while ($currentSize > ($targetSizeKB * 1024) && $quality > 20);
 
-                // Read the uploaded image
-                $img = $manager->read($image->getRealPath());
+            // Save final optimized file to public storage
+            Storage::disk('public')->put($dir . $imageName, file_get_contents($temp));
 
-                // Resize (optional but helps reduce big file sizes)
-                $img->resize(1200, null, function ($constraint) {
-                    $constraint->aspectRatio();
-                    $constraint->upsize();
-                });
+            // Clean up temp file
+            @unlink($temp);
 
-                // Compress and encode as WebP
-                $quality = 80; // start high quality
-                $temp = tempnam(sys_get_temp_dir(), 'img_');
-
-                do {
-                    $encoded = $img->encode(new WebpEncoder(quality: $quality));
-                    file_put_contents($temp, (string) $encoded);
-                    $currentSize = filesize($temp);
-                    $quality -= 5;
-                } while ($currentSize > ($targetSizeKB * 1024) && $quality > 20);
-
-                // Save final optimized file to public storage
-                Storage::disk('public')->put($dir . $imageName, file_get_contents($temp));
-
-                // Clean up temp file
-                @unlink($temp);
-
-                return $imageName;
-            }
-
-            return null;
+            return $imageName;
         }
+
+        return null;
     }
     public static function updateWithCompress(string $dir, $old_image, $image = null, $alt_text = null)
     {

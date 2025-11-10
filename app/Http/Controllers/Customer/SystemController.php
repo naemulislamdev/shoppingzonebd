@@ -11,6 +11,7 @@ use App\Model\Order;
 use App\Model\Product;
 use App\Model\ShippingAddress;
 use App\Model\ShippingMethod;
+use App\Models\UserInfo;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -206,10 +207,9 @@ class SystemController extends Controller
     }
     public function productCheckoutOrder(Request $request)
     {
-        // $request->dd();
-        if(session('cart')==null || count(session('cart'))==0){
+        if (session('cart') == null || count(session('cart')) == 0) {
             Toastr::error('Your cart is empty');
-            return redirect()->url('/');
+            return redirect()->route('home');
         }
         $this->validate($request, [
             'name' => 'required|string',
@@ -308,6 +308,31 @@ class SystemController extends Controller
                 DB::table('order_details')->insert($or_d);
             }
 
+            $userInfos = UserInfo::where('phone', $request->phone)
+                ->where('type', 'pending')
+                ->get();
+
+            if ($userInfos->isNotEmpty()) {
+                // Update all matching pending user info entries
+                foreach ($userInfos as $userInfo) {
+                    $userInfo->update([
+                        'type' => 'Main page',
+                        'order_process' => 'completed',
+                        'order_process' => json_encode(session('cart'))
+                    ]);
+                }
+            } else {
+                UserInfo::create([
+                    'name' => $request->name,
+                    'phone' => $request->phone,
+                    'email' => null,
+                    'address' => $request->address,
+                    'type' => 'Main page',
+                    'order_process' => 'completed',
+                    'product_details' => json_encode(session('cart')),
+                ]);
+            }
+
             try {
                 $fcm_token = User::where(['id' => auth('customer')->id()])->first()->cm_firebase_token;
                 $value = \App\CPU\Helpers::order_status_update_message('pending');
@@ -324,12 +349,6 @@ class SystemController extends Controller
                 Toastr::error('FCM token config issue.');
             }
 
-            try {
-                Mail::to(auth('customer')->user()->email)->send(new \App\Mail\OrderPlaced($order_id));
-            } catch (\Exception $mail_exception) {
-                Toastr::error('Invalid mail or configuration.');
-            }
-
             session()->forget('cart');
             session()->forget('coupon_code');
             session()->forget('coupon_discount');
@@ -337,21 +356,15 @@ class SystemController extends Controller
             session()->forget('customer_info');
             session()->forget('shipping_method_id');
 
-            return redirect()->route('customer.checkout_page', ['id' => $order_id]);
+            //return view('web-views.checkout-complete', compact('order'));
+            return redirect()->route('customer.checkout-complete', ['id' => $order_id]);
         } else {
             return "something went wrong please try again";
         }
     }
     public function singlepCheckout(Request $request)
     {
-<<<<<<< HEAD
-        //$request->dd();
-=======
-        if(session('cart')==null || count(session('cart'))==0){
-            Toastr::error('Your cart is empty');
-            return redirect()->url('/');
-        }
->>>>>>> 21002221a8b5e137d6f78a621b4e036239cccd67
+
         $this->validate($request, [
             'name' => 'required|string|max:150',
             'email' => 'nullable|email',
@@ -492,6 +505,30 @@ class SystemController extends Controller
 
             DB::table('order_details')->insert($or_d);
 
+            $userInfos = UserInfo::where('phone', $request->phone)
+                ->where('type', 'pending')
+                ->get();
+
+            if ($userInfos->isNotEmpty()) {
+                // Update all matching pending user info entries
+                foreach ($userInfos as $userInfo) {
+                    $userInfo->update([
+                        'type' => 'Landing page',
+                        'order_process' => 'completed',
+                    ]);
+                }
+            } else {
+                UserInfo::create([
+                    'name' => $request->name,
+                    'phone' => $request->phone,
+                    'email' => null,
+                    'address' => $request->address,
+                    'type' => 'Landing page',
+                    'order_process' => 'completed',
+                    'product_details' => json_encode($request->all()),
+                ]);
+            }
+
             try {
                 $fcm_token = User::where(['id' => auth('customer')->id()])->first()->cm_firebase_token;
                 $value = \App\CPU\Helpers::order_status_update_message('pending');
@@ -508,12 +545,6 @@ class SystemController extends Controller
                 Toastr::error('FCM token config issue.');
             }
 
-            try {
-                Mail::to(auth('customer')->user()->email)->send(new \App\Mail\OrderPlaced($order_id));
-            } catch (\Exception $mail_exception) {
-                Toastr::error('Invalid mail or configuration.');
-            }
-
             session()->forget('cart');
             session()->forget('coupon_code');
             session()->forget('coupon_discount');
@@ -522,14 +553,17 @@ class SystemController extends Controller
             session()->forget('shipping_method_id');
 
             //return view('web-views.checkout-complete', compact('order'));
-            return redirect()->route('customer.checkout_page', ['id' => $order_id]);
+            return redirect()->route('customer.checkout-complete', ['id' => $order_id]);
         } else {
             return "something went wrong please try again";
         }
     }
-    public function checkoutPage($id)
+    public function checkoutComplete($id)
     {
         $order = Order::find($id);
+        if (!$order) {
+            return redirect()->route('home');
+        }
         return view('web-views.checkout-complete', compact('order'));
     }
 }

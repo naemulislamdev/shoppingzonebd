@@ -140,23 +140,24 @@
             margin-left: 0px;
             margin-bottom: 0px;
         }
-        #main-image {
-    transition: opacity 0.3s ease;
-}
-/* .color-label {
-    cursor: pointer;
-    margin-right: 8px;
-    border-radius: 6px;
-    overflow: hidden;
-}
-.color-label img {
-    border: 2px solid transparent;
-    transition: border 0.3s;
-}
-input[name="color"]:checked + .color-label img {
-    border: 2px solid #007bff;
-} */
 
+        #main-image {
+            transition: opacity 0.3s ease;
+        }
+
+        /* .color-label {
+            cursor: pointer;
+            margin-right: 8px;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        .color-label img {
+            border: 2px solid transparent;
+            transition: border 0.3s;
+        }
+        input[name="color"]:checked + .color-label img {
+            border: 2px solid #007bff;
+        } */
     </style>
     <?php
     $overallRating = \App\CPU\ProductManager::get_overall_rating($product->reviews);
@@ -275,10 +276,22 @@ input[name="color"]:checked + .color-label img {
                         <div class="col-md-7 mb-3">
                             <div class="p-details">
                                 <h1 class="product-name mb-2">{{ $product->name }}</h1>
-
                                 <div>
-                                    <span class="product-price"><span>
-                                            ৳</span> {{ \App\CPU\Helpers::get_price_range($product) }}</span>
+                                    <span class="product-price">
+                                        @php
+                                            // Convert USD price to BDT as a numeric value
+                                            $converted = str_replace(',', '', \App\CPU\Helpers::currency_converter($product->unit_price));
+
+                                            // Subtract discount (already in BDT)
+                                            $discountPrice = $converted - $product->discount;
+                                        @endphp
+                                        <span>৳</span>
+                                        @if ($product->discount > 0 && $product->discount_type == 'flat')
+                                            {{ $discountPrice }}
+                                        @else
+                                            {{ \App\CPU\Helpers::get_price_range($product) }}
+                                        @endif
+                                    </span>
                                 </div>
 
                                 @if ($product->discount > 0)
@@ -287,7 +300,7 @@ input[name="color"]:checked + .color-label img {
                                         @if ($product->discount_type == 'percent')
                                             {{ round($product->discount, $decimal_point_settings) }}%
                                         @elseif($product->discount_type == 'flat')
-                                            {{ \App\CPU\Helpers::currency_converter($product->discount) }}
+                                            {{ $product->discount }}৳
                                         @endif
                                     </span>
                                 @endif

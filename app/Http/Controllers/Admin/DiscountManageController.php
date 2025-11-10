@@ -29,7 +29,7 @@ class DiscountManageController extends Controller
         $request->validate([
             'category' => 'required|string',
             'discount_amount' => 'required|numeric|min:0',
-            'discount_type' => 'required|in:flat,percentage',
+            'discount_type' => 'required|in:flat,percent',
         ]);
 
         $discountAmount = $request->discount_amount;
@@ -51,7 +51,7 @@ class DiscountManageController extends Controller
                 if ($discountType === 'flat') {
                     $product->discount = $discountAmount;
                     $product->discount_type = 'flat';
-                } elseif ($discountType === 'percentage') {
+                } elseif ($discountType === 'percent') {
                     $product->discount = $discountAmount;
                     $product->discount_type = 'percent';
                 }
@@ -172,22 +172,20 @@ class DiscountManageController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255',
-            'discount_amount' => 'required|string|max:255',
-            'discount_type' => 'required|string|in:flat,percentage',
+            'discount_amounts' => 'required|array',
+            'discount_types' => 'required|array',
             'product_ids' => 'required|array',
             'product_ids.*' => 'exists:products,id',
         ]);
         $products = $request->product_ids;
         foreach ($products as $productId) {
+            $amount = $request->discount_amounts[$productId] ?? 0;
+            $type = $request->discount_types[$productId] ?? 'flat';
+
             $product = Product::find($productId);
             if ($product) {
-                if ($request->discount_type === 'flat') {
-                    $product->discount = $request->discount_amount;
-                    $product->discount_type = 'flat';
-                } elseif ($request->discount_type === 'percentage') {
-                    $product->discount = $request->discount_amount;
-                    $product->discount_type = 'percent';
-                }
+                $product->discount = $amount;
+                $product->discount_type = $type;
                 $product->save();
             }
         }
@@ -196,8 +194,8 @@ class DiscountManageController extends Controller
         // Store the batch discount
         BatchDiscount::create([
             'title' => $request->title,
-            'discount_amount' => $request->discount_amount,
-            'discount_type' => $request->discount_type,
+            'discount_amount' => json_encode($request->discount_amounts),
+            'discount_type' => json_encode($request->discount_types),
             'product_ids' => json_encode($request->product_ids),
             'status' => true
         ]);
@@ -213,22 +211,20 @@ class DiscountManageController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255',
-            'discount_amount' => 'required|string|max:255',
-            'discount_type' => 'required|string|in:flat,percentage',
+            'discount_amounts' => 'required|array',
+            'discount_types' => 'required|array',
             'product_ids' => 'required|array',
             'product_ids.*' => 'exists:products,id',
         ]);
         $products = $request->product_ids;
         foreach ($products as $productId) {
+            $amount = $request->discount_amounts[$productId] ?? 0;
+            $type = $request->discount_types[$productId] ?? 'flat';
+
             $product = Product::find($productId);
             if ($product) {
-                if ($request->discount_type === 'flat') {
-                    $product->discount = $request->discount_amount;
-                    $product->discount_type = 'flat';
-                } elseif ($request->discount_type === 'percentage') {
-                    $product->discount = $request->discount_amount;
-                    $product->discount_type = 'percent';
-                }
+                $product->discount = $amount;
+                $product->discount_type = $type;
                 $product->save();
             }
         }
@@ -238,9 +234,9 @@ class DiscountManageController extends Controller
         $batchDiscount = BatchDiscount::findOrFail($id);
         $batchDiscount->update([
             'title' => $request->title,
-            'discount_amount' => $request->discount_amount,
-            'discount_type' => $request->discount_type,
-            'product_ids' => json_encode($request->product_ids)
+            'discount_amount' => json_encode($request->discount_amounts),
+            'discount_type' => json_encode($request->discount_types),
+            'product_ids' => json_encode($request->product_ids),
         ]);
         return redirect()->route('admin.discount.batch')->with('success', 'Batch discount updated successfully.');
     }
@@ -254,31 +250,58 @@ class DiscountManageController extends Controller
         $batchDiscount->delete();
         return redirect()->route('admin.discount.batch')->with('success', 'Batch discount deleted successfully.');
     }
-    public function discountBatchProduct($id){
-         $batchDiscount = BatchDiscount::findOrFail($id);
+    public function discountBatchProduct($id)
+    {
+        $batchDiscount = BatchDiscount::findOrFail($id);
 
         $productIds = json_decode($batchDiscount->product_ids, true);
         $products = Product::whereIn('id', $productIds)->get();
         return view('admin-views.discount-manage.batch.see_product', compact('products'));
-
     }
-    public function discountBatchRemoveProduct($id){
-         $product = Product::findOrFail($id);
-         $product->discount = 0;
-         $product->discount_type = null;
-         $product->save();
+    public function discountBatchRemoveProduct($id)
+    {
+        $product = Product::findOrFail($id);
+        $product->discount = 0;
+        $product->discount_type = null;
+        $product->save();
 
-         // Also remove the product from any batch discount it belongs to
-         $batchDiscounts = BatchDiscount::all();
-         foreach ($batchDiscounts as $batchDiscount) {
-             $productIds = json_decode($batchDiscount->product_ids, true);
-             if (in_array($id, $productIds)) {
-                 $updatedProductIds = array_diff($productIds, [$id]);
-                 $batchDiscount->product_ids = json_encode(array_values($updatedProductIds));
-                 $batchDiscount->save();
-             }
-         }
+        // Remove product from any batch discount
+        $batchDiscounts = BatchDiscount::all();
 
-         return back()->with('success', 'Product removed from batch discount successfully.');
+        foreach ($batchDiscounts as $batchDiscount) {
+            $productIds = json_decode($batchDiscount->product_ids, true) ?? [];
+            $discountAmounts = json_decode($batchDiscount->discount_amount, true) ?? [];
+            $discountTypes = json_decode($batchDiscount->discount_type, true) ?? [];
+
+            // If product exists in this batch
+            if (in_array($id, $productIds)) {
+                // Remove product ID
+                $updatedProductIds = array_diff($productIds, [$id]);
+                $batchDiscount->product_ids = json_encode(array_values($updatedProductIds));
+
+                // Remove discount amount & type
+                unset($discountAmounts[$id]);
+                unset($discountTypes[$id]);
+
+                $batchDiscount->discount_amount = json_encode($discountAmounts);
+                $batchDiscount->discount_type = json_encode($discountTypes);
+
+                $batchDiscount->save();
+            }
+        }
+
+        return back()->with('success', 'Product removed from batch discount successfully.');
+    }
+    public function discountBatchStatus(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:batch_discounts,id',
+        ]);
+
+        $batchDiscount = BatchDiscount::findOrFail($request->id);
+        $batchDiscount->status = !$batchDiscount->status;
+        $batchDiscount->save();
+
+        return response()->json(['success' => true, 'status' => $batchDiscount->status]);
     }
 }

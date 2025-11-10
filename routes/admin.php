@@ -80,7 +80,6 @@ Route::prefix('/admin')->as('admin.')->group(function () {
     /*authenticated*/
     Route::middleware('admin')->group(function () {
 
-
         //dashboard routes
         Route::get('/', [DashboardController::class, 'dashboard'])->name('dashboard'); //previous dashboard route
         Route::controller(DashboardController::class)->prefix('/dashboard')->as('dashboard.')->group(function () {
@@ -435,6 +434,7 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('batch/delete/{id}', 'discountBatchDelete')->name('batch.delete');
             Route::get('batch/product/{id}', 'discountBatchProduct')->name('batch.product');
             Route::get('batch/remove-product/{id}', 'discountBatchRemoveProduct')->name('batch.remove.product');
+            Route::post('batch/status/', 'discountBatchStatus')->name('batch.status');
         });
 
         Route::controller(TransactionController::class)->prefix('/transaction')->as('transaction.')->middleware('module:business_section')->group(function () {

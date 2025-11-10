@@ -46,9 +46,11 @@ use App\CPU\CustomerManager;
 use App\CPU\Convert;
 use App\Model\Branch;
 use App\Models\Career;
+use App\Model\Color;
+use App\Models\Lead;
+use App\Models\UserInfo;
 use App\ProductLandingPage;
 use Carbon\Carbon;
-use PhpParser\Node\Expr\FuncCall;
 
 class WebController extends Controller
 {
@@ -147,7 +149,6 @@ class WebController extends Controller
         }
 
 
-
         return view('web-views.home', compact('featured_products', 'arrival_products', 'topRated', 'bestSellProduct', 'latest_products', 'categories', 'brands', 'deal_of_the_day', 'top_sellers', 'home_categories', 'productCounts'));
     }
     //Products Search on ajax
@@ -231,7 +232,7 @@ class WebController extends Controller
     //shop function
     public function shop(Request $request)
     {
-        $allProducts = Product::with(['reviews'])->active();
+        $allProducts = Product::with(['reviews'])->latest()->active();
 
         $query = null;
         if ($request->get('min_price') !== null && $request->get('max_price') !== null) {
@@ -445,28 +446,7 @@ class WebController extends Controller
         return back();
     }
 
-    public function checkout_complete(Request $request)
-    {
-        $unique_id = OrderManager::gen_unique_id();
-        $order_ids = [];
-        foreach (CartManager::get_cart_group_ids() as $group_id) {
-            $data = [
-                'payment_method' => 'cash_on_delivery',
-                'order_status' => 'pending',
-                'payment_status' => 'unpaid',
-                'transaction_ref' => '',
-                'order_group_id' => $unique_id,
-                'cart_group_id' => $group_id
-            ];
-            $order_id = OrderManager::generate_order($data);
-            array_push($order_ids, $order_id);
-        }
 
-        CartManager::cart_clean();
-
-
-        return view('web-views.checkout-complete');
-    }
     public function checkout_complete_wallet(Request $request = null)
     {
         $cartTotal = CartManager::cart_grand_total($request);
@@ -1284,6 +1264,14 @@ class WebController extends Controller
         $sessionId = Session::getId();
         $identifier = ['session_id' => $sessionId];
 
+        $cart = session('cart', []);
+        $type = 'Main page';
+        if ($request->has('product_id')) {
+            // $product = Product::find($request->product_id);
+            $cart = $request->all();
+            $type = 'Landing page';
+        }
+
 
         $userInfo = UserInfo::updateOrCreate(
             $identifier, // Search by authenticated user ID
@@ -1292,6 +1280,9 @@ class WebController extends Controller
                 'email' => $request->email,
                 'phone' => $request->phone,
                 'address' => $request->address,
+                'type' => $type,
+                'order_process' => 'pending',
+                'product_details' => json_encode($cart),
             ]
         );
 

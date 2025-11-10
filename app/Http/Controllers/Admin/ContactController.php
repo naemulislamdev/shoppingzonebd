@@ -164,22 +164,22 @@ class ContactController extends Controller
     //--- User Information Management ---//
     public function userInfoList(Request $request)
     {
-        $query_param = [];
-        $search = $request['search'];
-        if ($request->has('search')) {
-            $key = explode(' ', $request['search']);
-            $userInfos = UserInfo::where(function ($q) use ($key) {
-                foreach ($key as $value) {
-                    $q->orWhere('name', 'like', "%{$value}%")
-                        ->orWhere('phone', 'like', "%{$value}%");
-                }
-            });
-            $query_param = ['search' => $request['search']];
-        } else {
-            $userInfos = new UserInfo();
-        }
-        $userInfos = $userInfos->latest()->paginate(Helpers::pagination_limit())->appends($query_param);
-        return view('admin-views.user-info.list', compact('userInfos', 'search'));
+        // $query_param = [];
+        // $search = $request['search'];
+        // if ($request->has('search')) {
+        //     $key = explode(' ', $request['search']);
+        //     $userInfos = UserInfo::where(function ($q) use ($key) {
+        //         foreach ($key as $value) {
+        //             $q->orWhere('name', 'like', "%{$value}%")
+        //                 ->orWhere('phone', 'like', "%{$value}%");
+        //         }
+        //     });
+        //     $query_param = ['search' => $request['search']];
+        // } else {
+        //     $userInfos = new UserInfo();
+        // }
+        $userInfos =  UserInfo::latest()->get();
+        return view('admin-views.user-info.list', compact('userInfos'));
     }
 
     public function userInfoView($id)

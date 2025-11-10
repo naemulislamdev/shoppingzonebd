@@ -3,8 +3,7 @@
 @section('title', \App\CPU\translate('Batch Discount'))
 
 @push('css_or_js')
-    <link href="{{ asset('assets/back-end/css/tags-input.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('assets/select2/css/select2.min.css') }}" rel="stylesheet">
+    <link href="https://cdn.datatables.net/2.3.3/css/dataTables.bootstrap4.css" rel="stylesheet">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 @endpush
 
@@ -38,15 +37,16 @@
                     </div>
                     <div class="card-body" style="padding: 0">
                         <div class="table-responsive">
-                            <table id="datatable"
-                                class="table table-hover table-borderless table-thead-bordered table-nowrap table-align-middle card-table"
+                            <table id="datatable" class="table table-hover table-borderless table-thead-bordered"
                                 style="width: 100%">
                                 <thead class="thead-light">
                                     <tr>
+                                        <th>{{ \App\CPU\translate('SL') }}</th>
                                         <th>{{ \App\CPU\translate('Title') }}</th>
                                         <th>{{ \App\CPU\translate('Discount Amount') }}</th>
                                         <th>{{ \App\CPU\translate('Discount Type') }}</th>
                                         <th>{{ \App\CPU\translate('Total Products') }}</th>
+                                        <th>{{ \App\CPU\translate('Status') }}</th>
                                         <th style="width: 50px">{{ \App\CPU\translate('action') }}</th>
                                     </tr>
                                 </thead>
@@ -56,6 +56,7 @@
                                             $productIds = json_decode($discount->product_ids, true);
                                         @endphp
                                         <tr>
+                                            <td>{{ $loop->iteration }}</td>
                                             <td>
                                                 {{ $discount->title }}
                                             </td>
@@ -68,7 +69,14 @@
                                                 </a>
                                             </td>
                                             <td>
-                                                <a class="btn btn-primary btn-sm"
+                                                <label class="switch">
+                                                    <input type="checkbox" class="status"
+                                                        id="{{ $discount->id }}" {{ $discount->status == 1 ? 'checked' : '' }}>
+                                                    <span class="slider round"></span>
+                                                </label>
+                                            </td>
+                                            <td>
+                                                <a class="btn btn-primary btn-sm mb-2"
                                                     href="{{ route('admin.discount.batch.edit', [$discount->id]) }}">
                                                     <i class="tio-edit"></i> {{ \App\CPU\translate('Edit') }}
                                                 </a>
@@ -103,17 +111,12 @@
 
 @push('script')
     <!-- Page level plugins -->
-    <script src="{{ asset('assets/back-end') }}/vendor/datatables/jquery.dataTables.min.js"></script>
-    <script src="{{ asset('assets/back-end') }}/vendor/datatables/dataTables.bootstrap4.min.js"></script>
-    <!-- Page level custom scripts -->
+    <script src="https://cdn.datatables.net/2.3.3/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/2.3.3/js/dataTables.bootstrap4.js"></script>
     <script>
-        // Call the dataTables jQuery plugin
-        $(document).ready(function() {
-            $('#dataTable').DataTable();
-        });
-
-
-
+        new DataTable('#datatable');
+    </script>
+    <script>
         $(document).on('change', '.status', function() {
             var id = $(this).attr("id");
             if ($(this).prop("checked") == true) {
@@ -127,7 +130,7 @@
                 }
             });
             $.ajax({
-                url: "{{ route('admin.landingpages.status') }}",
+                url: "{{ route('admin.discount.batch.status') }}",
                 method: 'POST',
                 data: {
                     id: id,
@@ -135,7 +138,7 @@
                 },
                 success: function() {
                     toastr.success('{{ \App\CPU\translate('Status updated successfully') }}');
-                    location.reload();
+
                 }
             });
         });
