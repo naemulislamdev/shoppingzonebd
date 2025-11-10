@@ -132,7 +132,7 @@
 
 @media (max-width: 480px) {
     .header-icon {
-        margin-top: -26px;
+        margin-top: 0;
         display: flex;
     }
     .header-slider-section {
