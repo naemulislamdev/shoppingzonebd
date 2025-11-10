@@ -1,7 +1,7 @@
 <header id="header">
     <div class="container">
         <div class="row main_row align-items-lg-center">
-            <div class="col-md-3 d-none d-md-block">
+            <div class="col-md-3 d-none d-lg-block">
                 <!-- <a class="navbar-brand" href="index.html">Shopping Zone BD</a> -->
                 <a href="{{ route('home') }}">
                     <img class="header-logo" src="{{ asset('storage/company') . '/' . $web_config['web_logo']->value }}"
