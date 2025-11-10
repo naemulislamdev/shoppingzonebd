@@ -46,10 +46,12 @@ use App\CPU\CustomerManager;
 use App\CPU\Convert;
 use App\Model\Branch;
 use App\Model\Color;
+use App\Models\Career;
 use App\Models\Lead;
 use App\Models\UserInfo;
 use App\ProductLandingPage;
 use Carbon\Carbon;
+use PhpParser\Node\Expr\FuncCall;
 
 class WebController extends Controller
 {
@@ -191,7 +193,7 @@ class WebController extends Controller
                     <a  href="' . route('products', ['id' => $category['id'], 'data_from' => 'category', 'page' => 1]) . '">
                     <p>' . $category->name . '</p>
                     </a>
-                    </div>
+                    </div>s
                 </div>
                 ';
             }
@@ -248,9 +250,9 @@ class WebController extends Controller
         $shop_products = $allProducts->paginate(30);
         return view('web-views.products.all_products', compact('shop_products'));
     }
-    public function sellingProducts(Request $request)
+    public function specialProducts(Request $request)
     {
-        $allProducts = Product::with(['reviews'])->active();
+        $allProducts = Product::with(['reviews'])->where('discount', '>', 0)->active();
 
         $query = null;
         if ($request->get('min_price') !== null && $request->get('max_price') !== null) {
@@ -275,10 +277,6 @@ class WebController extends Controller
         $branchs = Branch::where('status', 1)->get();
         return view('web-views.outlets', compact('branchs'));
     }
-    //checkout function
-    // public function checkout(){
-    //     return view('frontend.checkout');
-    // }
     public function clientReview(Request $request)
     {
         if (auth('customer')->check()) {
@@ -1184,9 +1182,9 @@ class WebController extends Controller
     public function captcha($tmp)
     {
 
-        $phrase = new PhraseBuilder;
+        $phrase = new App\Http\Controllers\Web\PhraseBuilder;
         $code = $phrase->build(4);
-        $builder = new CaptchaBuilder($code, $phrase);
+        $builder = new App\Http\Controllers\Web\CaptchaBuilder($code, $phrase);
         $builder->setBackgroundColor(220, 210, 230);
         $builder->setMaxAngle(25);
         $builder->setMaxBehindLines(0);

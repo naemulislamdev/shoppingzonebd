@@ -11,12 +11,14 @@
 |
  */
 
+use App\Http\Controllers\CareerController;
 use App\Http\Controllers\ComplainController;
 use App\Http\Controllers\Seller\Auth\RegisterController;
 use App\Http\Controllers\Web\CartController;
 use App\Http\Controllers\Web\ChattingController;
 use App\Http\Controllers\Web\CouponController;
 use App\Http\Controllers\Web\CurrencyController;
+use App\Http\Controllers\Web\FeedController;
 use App\Http\Controllers\Web\ReviewController;
 use App\Http\Controllers\Web\UserLoyaltyController;
 use App\Http\Controllers\Web\UserProfileController;
@@ -25,11 +27,16 @@ use App\Http\Controllers\Web\WebController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Mail;
 
+
+
 //for maintenance mode
 Route::get('maintenance-mode', 'Web\WebController@maintenance_mode')->name('maintenance-mode');
-Route::get('/complain', [ComplainController::class,'customerComplain'])->name('customer.complain');
+Route::get('/complain', [ComplainController::class, 'customerComplain'])->name('customer.complain');
 
-Route::post('/complain/store', [ComplainController::class,'customerComplainStore'])->name('customer.complain.store');
+Route::post('/complain/store', [ComplainController::class, 'customerComplainStore'])->name('customer.complain.store');
+
+// facebook feed route
+Route::get('/feed/facebook', [FeedController::class, 'facebookFeed']);
 
 Route::middleware(['maintenance_mode'])->group(function () {
 
@@ -40,11 +47,18 @@ Route::middleware(['maintenance_mode'])->group(function () {
         Route::get('/shop', 'shop')->name('shop');
         Route::get('/outlets', 'outlets')->name('outlets');
         Route::get('/shop-cart', 'shop_cart')->name('shop-cart');
-        Route::get('/selling-product', 'sellingProducts')->name('selling.product');
+        Route::get('/special-offers', 'specialProducts')->name('offers.product');
         Route::post('/client-review', 'clientReview')->name('client_review');
         Route::get('/leads', 'leads')->name('leads');
         Route::post('/leads/store', 'leadsStore')->name('leads.store');
         Route::post('/save-user-info', 'saveUserInfo')->name('save.user.info');
+    });
+    // career front-end routes
+    Route::controller(CareerController::class)->group(function () {
+        Route::get('/careers', 'careers')->name('careers');
+        Route::get('/careers-details/{slug}', 'careerDetails')->name('career.details');
+        Route::get('/career/apply-form/{slug}', 'showApplyForm')->name('career.form');
+        Route::post('/career/apply-form/store', 'storeApplication')->name('career.form.store');
     });
 
     // Route::get('quick-view', 'WebController@quick_view')->name('quick-view');
@@ -108,7 +122,7 @@ Route::middleware(['maintenance_mode'])->group(function () {
         Route::get('new-product', 'new_product')->name('newProduct');
     });
 
-    Route::post('/currency', [CurrencyController::class,'changeCurrency'])->name('currency.change');
+    Route::post('/currency', [CurrencyController::class, 'changeCurrency'])->name('currency.change');
 
     //profile Route
     Route::controller(UserProfileController::class)->group(function () {
@@ -167,10 +181,9 @@ Route::middleware(['maintenance_mode'])->group(function () {
 
 
     Route::group(['prefix' => 'contact', 'as' => 'contact.'], function () {
-        Route::post('store', [WebController::class,'contact_store'])->name('store');
-        Route::get('/code/captcha/{tmp}', [WebController::class,'captcha'])->name('default-captcha');
+        Route::post('store', [WebController::class, 'contact_store'])->name('store');
+        Route::get('/code/captcha/{tmp}', [WebController::class, 'captcha'])->name('default-captcha');
     });
-
 });
 
 //Seller shop apply
@@ -296,8 +309,8 @@ Route::get('/test', function () {
     return view('seller-views.product.barcode-pdf', compact('product', 'quantity'));
 });
 
-Route::get('/page/{slug}', [WebController::class,'signleProductLandingPage'])->name('signle.landing_page');
-Route::get('/{slug}', [WebController::class,'landingPage'])->name('landing_page');
+Route::get('/page/{slug}', [WebController::class, 'signleProductLandingPage'])->name('signle.landing_page');
+Route::get('/{slug}', [WebController::class, 'landingPage'])->name('landing_page');
 
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

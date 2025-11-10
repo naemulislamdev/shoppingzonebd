@@ -1,5 +1,5 @@
 @extends('layouts.front-end.app')
-@section('title', 'Shop')
+@section('title', 'Special Offers')
 @section('content')
     <section class="py-3">
         <div class="container">
@@ -9,7 +9,7 @@
             <div class="row mb-3">
                 <div class="col text-center">
                     <div class="section-heading-title">
-                        <h3>Selling Products</h3>
+                        <h3>Our Special Offers</h3>
                         <div class="heading-border"></div>
                     </div>
                     <div class="grid-controls">
@@ -50,7 +50,7 @@
             </div>
             @if (count($selling_products) > 0)
                 <div class="row product-grid" id="selling-ajax-products">
-                    @include('web-views.products.selling_ajax_products',['products'=> $selling_products])
+                    @include('web-views.products.selling_ajax_products', ['products' => $selling_products])
                 </div>
                 <div class="row">
                     <div class="col-12 d-flex align-items-center justify-content-center">

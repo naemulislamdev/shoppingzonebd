@@ -24,7 +24,6 @@ use Intervention\Image\Encoders\WebpEncoder;
 
 class Helpers
 {
-    //Start image upload manager
     public static function uploadWithCompress(string $dir, int $targetSizeKB, $image = null, $alt_text = null)
     {
         if ($image !== null) {

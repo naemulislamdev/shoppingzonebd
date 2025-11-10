@@ -14,7 +14,6 @@
                                 <th>অ্যাকশন</th>
                             </tr>
                         </thead>
-
                         <tbody>
                             @if (session()->has('cart') && count(session()->get('cart')) > 0)
                                 @foreach (session()->get('cart') as $key => $cartItem)
@@ -75,7 +74,11 @@
                         <h2 class="address-title">আপনার ঠিকানা</h2>
                     </div>
                     <div class="card-body">
+<<<<<<< HEAD
+                        <form action="{{ route('customer.product.checkout.order') }}" method="POST">
+=======
                         <form action="{{ route('customer.product.checkout.order') }}" method="POST" id="userInfoForm">
+>>>>>>> 21002221a8b5e137d6f78a621b4e036239cccd67
                             @csrf
                             <div class="row">
                                 <div class="col-md-12">

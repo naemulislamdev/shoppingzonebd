@@ -9,7 +9,7 @@
         position: absolute;
         top: 45%;
         transform: translateY(-50%);
-        background: rgba(255, 94, 0, 0.862) !important;
+        background: rgb(255 94 0 / 54%) !important;
         color: #fff;
         border: none;
         outline: none;
@@ -37,14 +37,14 @@
 
     section.category .owl-nav .owl-prev,
     .new-arrivals-section .owl-nav .owl-prev {
-        left: 93%;
-        top: 0 !important;
+
+        top: 54% !important;
     }
 
     section.category .owl-nav .owl-next,
     .new-arrivals-section .owl-nav .owl-next {
-        right: 0;
-        top: 0;
+
+        top: 54%;
     }
 
     section.category .owl-nav button,
@@ -62,7 +62,6 @@
 
     .category .card img {
         border-radius: 12px 12px 0 0;
-
     }
 
     section.category .card-title {
@@ -75,6 +74,104 @@
         font-family: jost;
         font-size: 14px;
         margin-top: 5px;
+    }
+
+    /* .category .category-carosel img {
+        height: 200px;
+    } */
+
+    /*new arrival slider */
+    .owl-carousel {
+        position: relative;
+    }
+
+    .owl-nav .owl-prev {
+        left: 4px;
+    }
+
+    .owl-nav .owl-next {
+        right: -4px;
+    }
+
+    .owl-nav button.disabled {
+        background: #555 !important;
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+
+
+    .new-arrivals-section .product-box>.product-image2>a>img {
+        width: 100% !important;
+        height: auto;
+        object-fit: contain;
+        display: block;
+        margin: 0 auto !important;
+    }
+
+    .section__title span {
+        position: absolute;
+        color: #f0f1f3;
+        left: 0;
+        right: 0;
+        z-index: -1;
+        font-weight: 700;
+        font-size: 3rem;
+        text-transform: uppercase;
+        line-height: 0;
+        font-family: Open Sans, sans-serif;
+    }
+
+    .btn-warning {
+        color: #fff !important;
+        background-color: #f26d21 !important;
+    }
+
+    .btn-warning:hover {
+        color: #fff;
+        background-color: #f26d21 !important;
+    }
+
+    section.category .category-item .image-box {
+        height: 200px;
+    }
+
+    .owl-carousel .owl-item img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: top;
+    }
+
+    /* Mobile Category styles*/
+    section.mobile-category .category-item img {
+        max-width: 100%;
+        height: auto;
+    }
+
+    section.mobile-category .category-item h5 {
+        font-size: 15px;
+    }
+
+    section.mobile-category .category-item p {
+        font-size: 12px;
+        margin-top: 5px;
+    }
+
+    section.mobile-category .category-item {
+        background: #f26d21;
+        height: 170px !important;
+    }
+
+    section.mobile-category .category-item .image-box {
+        height: 120px;
+    }
+
+    section.mobile-category .category-item .image-box img {
+        height: 100%;
+        width: 100%;
+
     }
 </style>
 @section('title', \App\CPU\translate('Welcome To') . ' ' . $web_config['name']->value)
@@ -96,7 +193,7 @@
     <!------start  header main slider-->
     @include('layouts.front-end.partials.slider')
     {{-- New Arrivals Section Start --}}
-    <section class="new-arrivals-section my-2 my-lg-4">
+    <section class="new-arrivals-section my-2 my-lg-5">
         <div class="container">
             <div class="row mb-3">
                 <div class="col text-center">
@@ -104,8 +201,7 @@
                         <h3>NEW ARRIVALS</h3>
                         <div class="heading-border"></div>
                         <div class="d-flex justify-content-start">
-                            <a href="{{ route('shop') }}"
-                                class="btn btn-outline-warning  text-start  d-none d-lg-block">Shop
+                            <a href="{{ route('shop') }}" class="btn btn-warning  text-start  d-none d-lg-block">Shop
                                 More</a>
                         </div>
                     </div>
@@ -183,7 +279,7 @@
     </section>
 
     {{-- Category Section Start --}}
-    <section class="category my-5">
+    <section class="category my-5 d-none d-lg-block">
         <div class="container px-0">
             <div class="row mb-5">
                 <div class="col text-center">
@@ -194,7 +290,7 @@
                     </div>
                 </div>
             </div>
-            <div class="owl-carousel category-carosel mt-4 mt-lg-4 pt-5">
+            <div class="owl-carousel category-carosel mt-4 mt-lg-4 ">
                 @foreach ($categories as $category)
                     @php
                         $productCount = $productCounts[$category->id] ?? 0;
@@ -202,7 +298,30 @@
                     <div style="background: #f26d21" class="category-item card">
                         <a href="{{ route('products', ['id' => $category['id'], 'data_from' => 'category', 'page' => 1]) }}"
                             class="">
-                            <img src='{{ asset("storage/category/$category->icon") }}' alt="{{ $category->name }}">
+                            {{-- <img src='{{ asset("storage/category/$category->icon") }}' alt="{{ $category->name }}"> --}}
+                            <div class="image-box">
+                                <img src='{{ asset('assets/front-end/images/product/cat-2.png') }}'
+                                    alt="{{ $category->name }}">
+                            </div>
+                            <div class="card-body text-center">
+                                <h5 class="card-title text-white mb-0">{{ $category['name'] }}</h5>
+                                <p class="card-text text-white p-0 m-0">{{ $productCount }} Products</p>
+                            </div>
+                        </a>
+                    </div>
+                @endforeach
+                @foreach ($categories as $category)
+                    @php
+                        $productCount = $productCounts[$category->id] ?? 0;
+                    @endphp
+                    <div style="background: #f26d21" class="category-item card">
+                        <a href="{{ route('products', ['id' => $category['id'], 'data_from' => 'category', 'page' => 1]) }}"
+                            class="">
+                            {{-- <img src='{{ asset("storage/category/$category->icon") }}' alt="{{ $category->name }}"> --}}
+                            <div class="image-box">
+                                <img src='{{ asset('assets/front-end/images/product/cat-1.png') }}'
+                                    alt="{{ $category->name }}">
+                            </div>
                             <div class="card-body text-center">
                                 <h5 class="card-title text-white mb-0">{{ $category['name'] }}</h5>
                                 <p class="card-text text-white p-0 m-0">{{ $productCount }} Products</p>
@@ -214,6 +333,45 @@
             </div>
         </div>
     </section>
+    {{-- mobile category --}}
+    <section class="mobile-category d-block d-lg-none">
+        <div class="container">
+            <div class="row">
+                <div class="col text-center">
+                    <div class="section-heading-title position-relative z-30">
+                        <h3>Shop By Category</h3>
+                        <div class="heading-border"></div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row gap-0">
+                @foreach ($categories as $category)
+                    @php
+                        $productCount = $productCounts[$category->id] ?? 0;
+                    @endphp
+                    <div class="col-4 px-2 pb-3">
+                        <div style="background: #f26d21" class="category-item card">
+                            <a href="{{ route('products', ['id' => $category['id'], 'data_from' => 'category', 'page' => 1]) }}"
+                                class="stretched-link">
+                                <div class="image-box">
+                                    <img src="{{ asset("storage/category/$category->icon") }}"
+                                        alt="{{ $category->name }}">
+                                </div>
+                                <div class="card-body text-center p-1">
+                                    <h5 class="card-title text-white mb-0">{{ $category['name'] }}</h5>
+                                    <p class="card-text text-white p-0 m-0">{{ $productCount }} Products</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                @endforeach
+
+
+            </div>
+        </div>
+    </section>
+    {{-- mobile category --}}
     {{-- Category Section End --}}
     <!------Start Product section----->
     <section class="py-3">
@@ -514,8 +672,8 @@
                                                 alt="{{ $product['name'] }}">
                                         </a>
                                         <ul class="social">
-                                            <li><a href="{{ route('product', $product->slug) }}" data-tip="Quick View"><i
-                                                        class="fa fa-eye"></i></a></li>
+                                            <li><a href="{{ route('product', $product->slug) }}"
+                                                    data-tip="Quick View"><i class="fa fa-eye"></i></a></li>
 
                                             <li><a style="cursor: pointer" data-toggle="modal"
                                                     data-target="#addToCartModal_{{ $product->id }}"

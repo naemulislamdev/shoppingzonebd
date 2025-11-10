@@ -77,7 +77,7 @@
                             <li><a href="{{ route('video_shopping') }}">{{ \App\CPU\translate('video shopping') }}</a>
                             </li>
                             {{-- <li><a href="{{ route('campain') }}">{{\App\CPU\translate('Campaign')}}</i></a> --}}
-                            <li class="dd-btn1"><a href="#">{{ \App\CPU\translate('Offer') }} <i
+                            {{-- <li class="dd-btn1"><a href="#">{{ \App\CPU\translate('Offer') }} <i
                                         class="fa fa-angle-down"></i></a>
                                 @php($landingPages = \App\Model\LandingPages::where('status', 1)->get())
                                 <div class="dropdown-menu1 offer-dropdown">
@@ -93,12 +93,13 @@
                                         @endforeach
                                     </ul>
                                 </div>
-                            </li>
+                            </li> --}}
 
-                            <li><a
-                                    href="{{ route('selling.product') }}">{{ \App\CPU\translate('Selling product') }}</a>
+                            <li><a href="{{ route('offers.product') }}"><img style="height: 30px; width: auto;"
+                                        src="{{ asset('assets/front-end/img/sp_offer.png') }}" alt="special image"></a>
                             </li>
                             <li><a href="{{ route('outlets') }}">{{ \App\CPU\translate('Our outlets') }}</a></li>
+                            <li><a href="{{ route('careers') }}">{{ \App\CPU\translate('Careers') }}</a></li>
                         </ul>
                     </div>
 
@@ -224,7 +225,7 @@ $company_mobile_logo = \App\Model\BusinessSetting::where('type', 'company_mobile
                         {{ \App\CPU\translate('Video Shopping') }}</a>
                 </div>
             </div>
-            <div class="menu-box">
+            {{-- <div class="menu-box">
                 <div class="menu-link" id="headingTwo">
                     <a class="mmenu-btn menu-link-active" type="button" data-toggle="collapse"
                         data-target="#offers" aria-expanded="true"><i
@@ -246,17 +247,23 @@ $company_mobile_logo = \App\Model\BusinessSetting::where('type', 'company_mobile
                         </ul>
                     </div>
                 </div>
-            </div>
+            </div> --}}
             <div class="menu-box">
                 <div class="menu-link">
-                    <a href="{{ route('selling.product') }}"><i
-                            class="fa fa-ptab3 mr-2"></i>{{ \App\CPU\translate('Selling Product') }}</a>
+                    <a href="{{ route('offers.product') }}"><i
+                            class="fa fa-ptab3 mr-2"></i>{{ \App\CPU\translate('Special Offer') }}</a>
                 </div>
             </div>
             <div class="menu-box">
                 <div class="menu-link">
                     <a href="{{ route('outlets') }}"><i
                             class="fa fa-ptab3 mr-2"></i>{{ \App\CPU\translate('Our outlets') }}</a>
+                </div>
+            </div>
+            <div class="menu-box">
+                <div class="menu-link">
+                    <a href="{{ route('careers') }}"><i
+                            class="fa fa-ptab3 mr-2"></i>{{ \App\CPU\translate('Careers') }}</a>
                 </div>
             </div>
             <div class="menu-box mt-2 text-white">

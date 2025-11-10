@@ -995,6 +995,23 @@ input[name="color"]:checked + .color-label img {
 @endsection
 @push('scripts')
     <script>
+        /* 2️⃣ Product Detail View (Single Product Page) */
+        dataLayer.push({
+            event: "view_item",
+            ecommerce: {
+                items: [{
+                    item_id: {{ $product->id }},
+                    item_name: {{ $product->name }},
+                    item_brand: {{ $product->brand_id }},
+                    item_category: "category_id", // incomplte
+                    item_variant: {{ $product->variation }}, // incomplte
+                    price: {{ \App\CPU\Helpers::currency_converter($product->unit_price) }},
+                    currency: "BDT"
+                }]
+            }
+        });
+    </script>
+    <script>
         //Product description collapse
         $(document).ready(function() {
             $('.collapse').on('show.bs.collapse', function() {

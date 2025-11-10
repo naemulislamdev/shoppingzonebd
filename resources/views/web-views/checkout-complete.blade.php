@@ -278,6 +278,37 @@
 @endsection
 @push('scripts')
     <script>
+        /* 8️⃣ Purchase (After Order Success) */
+        window.dataLayer = window.dataLayer || [];
+        dataLayer.push({
+            event: "purchase",
+            ecommerce: {
+                transaction_id: "{{ $order->invoice_no }}",
+                affiliation: "My eCommerce Store",
+                value: {{ $order->final_amount ?? 0 }},
+                tax: 0.00,
+                shipping: {{ $order->shipping_change ?? 0 }},
+                currency: "BDT",
+                coupon: "",
+                items: [
+                    @foreach ($order->details as $detail)
+                        {
+                            item_id: "{{ $detail->product->id ?? '' }}",
+                            item_name: {!! json_encode($detail->product->name ?? '') !!},
+                            item_brand: "Wishmart",
+                            item_category: {!! json_encode($detail->product->category->name ?? '') !!},
+                            price: {{ number_format($detail->unit_price, 2, '.', '') }},
+                            quantity: {{ $detail->quantity }}
+                        }
+                        @if (!$loop->last)
+                            ,
+                        @endif
+                    @endforeach
+                ]
+            }
+        });
+    </script>
+    <script>
         ttq.identify({
             "email": "<hashed_email_address>", // string. The email of the customer if available. It must be hashed with SHA-256 on the client side.
             "phone_number": "<hashed_phone_number>", // string. The phone number of the customer if available. It must be hashed with SHA-256 on the client side.

@@ -59,6 +59,8 @@ use App\Http\Controllers\Admin\SupportTicketController;
 use App\Http\Controllers\Admin\SystemController;
 use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\WithdrawController;
+use App\Http\Controllers\CareerController;
+use App\Http\Controllers\JobApplicationController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('/admin')->as('admin.')->group(function () {
@@ -78,6 +80,7 @@ Route::prefix('/admin')->as('admin.')->group(function () {
     /*authenticated*/
     Route::middleware('admin')->group(function () {
 
+
         //dashboard routes
         Route::get('/', [DashboardController::class, 'dashboard'])->name('dashboard'); //previous dashboard route
         Route::controller(DashboardController::class)->prefix('/dashboard')->as('dashboard.')->group(function () {
@@ -85,9 +88,9 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::post('order-stats', 'order_stats')->name('order-stats');
             Route::post('business-overview', 'business_overview')->name('business-overview');
         });
-        Route::get('/complain/list', [ComplainAdminController::class,'list'])->name('complain.list');
-        Route::get('/complain/view/{id}', [ComplainAdminController::class,'view'])->name('complain.view');
-        Route::post('/complain/delete/', [ComplainAdminController::class,'delete'])->name('complain.delete');
+        Route::get('/complain/list', [ComplainAdminController::class, 'list'])->name('complain.list');
+        Route::get('/complain/view/{id}', [ComplainAdminController::class, 'view'])->name('complain.view');
+        Route::post('/complain/delete/', [ComplainAdminController::class, 'delete'])->name('complain.delete');
         //system routes
         Route::get('search-function', [SystemController::class, 'search_function'])->name('search-function');
         Route::get('maintenance-mode', [SystemController::class, 'maintenance_mode'])->name('maintenance-mode');
@@ -403,7 +406,7 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::delete('delete/{id}', 'delete')->name('delete');
             Route::get('updated-product-list', 'updated_product_list')->name('updated-product-list');
             Route::post('updated-shipping', 'updated_shipping')->name('updated-shipping');
-            Route::post('add-color','addColor')->name('add.color');
+            Route::post('add-color', 'addColor')->name('add.color');
 
             Route::get('view/{id}', 'view')->name('view');
             Route::get('bulk-import', 'bulk_import_index')->name('bulk-import');
@@ -458,8 +461,8 @@ Route::prefix('/admin')->as('admin.')->group(function () {
         Route::prefix('/business-settings')->as('business-settings.')->group(function () {
             Route::middleware('module:business_settings')->group(function () {
 
-                Route::get('sms-module', [SMSModuleController::class,'sms_index'])->name('sms-module');
-                Route::post('sms-module-update/{sms_module}', [SMSModuleController::class,'sms_update'])->name('sms-module-update');
+                Route::get('sms-module', [SMSModuleController::class, 'sms_index'])->name('sms-module');
+                Route::post('sms-module-update/{sms_module}', [SMSModuleController::class, 'sms_update'])->name('sms-module-update');
             });
 
 
@@ -476,11 +479,11 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             });
 
             Route::prefix('/shipping-type')->as('shipping-type.')->middleware('module:business_settings')->group(function () {
-                Route::post('store', [ShippingTypeController::class,'store'])->name('store');
+                Route::post('store', [ShippingTypeController::class, 'store'])->name('store');
             });
 
             Route::prefix('/category-shipping-cost')->as('category-shipping-cost.')->middleware('module:business_settings')->group(function () {
-                Route::post('store', [CategoryShippingCostController::class,'store'])->name('store');
+                Route::post('store', [CategoryShippingCostController::class, 'store'])->name('store');
             });
 
             Route::controller(LanguageController::class)->prefix('/language')->as('language.')->middleware('module:business_settings')->group(function () {
@@ -504,35 +507,35 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             });
 
             Route::prefix('/web-config')->as('web-config.')->middleware('module:web_&_app_settings')->group(function () {
-                Route::get('/', [BusinessSettingsController::class,'companyInfo'])->name('index')->middleware('actch');
-                Route::post('update-colors', [BusinessSettingsController::class,'update_colors'])->name('update-colors');
-                Route::post('update-language', [BusinessSettingsController::class,'update_language'])->name('update-language');
-                Route::post('update-company', [BusinessSettingsController::class,'updateCompany'])->name('company-update');
-                Route::post('update-company-email', [BusinessSettingsController::class,'updateCompanyEmail'])->name('company-email-update');
-                Route::post('update-company-phone', [BusinessSettingsController::class,'updateCompanyPhone'])->name('company-phone-update');
-                Route::post('upload-web-logo', [BusinessSettingsController::class,'uploadWebLogo'])->name('company-web-logo-upload');
-                Route::post('upload-mobile-logo', [BusinessSettingsController::class,'uploadMobileLogo'])->name('company-mobile-logo-upload');
-                Route::post('upload-footer-log', [BusinessSettingsController::class,'uploadFooterLog'])->name('company-footer-logo-upload');
-                Route::post('upload-fav-icon', [BusinessSettingsController::class,'uploadFavIcon'])->name('company-fav-icon');
-                Route::post('update-company-copyRight-text', [BusinessSettingsController::class,'updateCompanyCopyRight'])->name('company-copy-right-update');
-                Route::post('app-store/{name}', [BusinessSettingsController::class,'update'])->name('app-store-update');
-                Route::get('currency-symbol-position/{side}', [BusinessSettingsController::class,'currency_symbol_position'])->name('currency-symbol-position');
-                Route::post('shop-banner', [BusinessSettingsController::class,'shop_banner'])->name('shop-banner');
+                Route::get('/', [BusinessSettingsController::class, 'companyInfo'])->name('index')->middleware('actch');
+                Route::post('update-colors', [BusinessSettingsController::class, 'update_colors'])->name('update-colors');
+                Route::post('update-language', [BusinessSettingsController::class, 'update_language'])->name('update-language');
+                Route::post('update-company', [BusinessSettingsController::class, 'updateCompany'])->name('company-update');
+                Route::post('update-company-email', [BusinessSettingsController::class, 'updateCompanyEmail'])->name('company-email-update');
+                Route::post('update-company-phone', [BusinessSettingsController::class, 'updateCompanyPhone'])->name('company-phone-update');
+                Route::post('upload-web-logo', [BusinessSettingsController::class, 'uploadWebLogo'])->name('company-web-logo-upload');
+                Route::post('upload-mobile-logo', [BusinessSettingsController::class, 'uploadMobileLogo'])->name('company-mobile-logo-upload');
+                Route::post('upload-footer-log', [BusinessSettingsController::class, 'uploadFooterLog'])->name('company-footer-logo-upload');
+                Route::post('upload-fav-icon', [BusinessSettingsController::class, 'uploadFavIcon'])->name('company-fav-icon');
+                Route::post('update-company-copyRight-text', [BusinessSettingsController::class, 'updateCompanyCopyRight'])->name('company-copy-right-update');
+                Route::post('app-store/{name}', [BusinessSettingsController::class, 'update'])->name('app-store-update');
+                Route::get('currency-symbol-position/{side}', [BusinessSettingsController::class, 'currency_symbol_position'])->name('currency-symbol-position');
+                Route::post('shop-banner', [BusinessSettingsController::class, 'shop_banner'])->name('shop-banner');
 
-                Route::get('db-index', [DatabaseSettingController::class,'db_index'])->name('db-index');
-                Route::post('db-clean', [DatabaseSettingController::class,'clean_db'])->name('clean-db');
+                Route::get('db-index', [DatabaseSettingController::class, 'db_index'])->name('db-index');
+                Route::post('db-clean', [DatabaseSettingController::class, 'clean_db'])->name('clean-db');
 
-                Route::get('environment-setup', [EnvironmentSettingsController::class,'environment_index'])->name('environment-setup');
-                Route::post('update-environment', [EnvironmentSettingsController::class,'environment_setup'])->name('update-environment');
+                Route::get('environment-setup', [EnvironmentSettingsController::class, 'environment_index'])->name('environment-setup');
+                Route::post('update-environment', [EnvironmentSettingsController::class, 'environment_setup'])->name('update-environment');
 
                 //sitemap generate
-                Route::get('mysitemap', [SiteMapController::class,'index'])->name('mysitemap');
-                Route::get('mysitemap-download', [SiteMapController::class,'download'])->name('mysitemap-download');
+                Route::get('mysitemap', [SiteMapController::class, 'index'])->name('mysitemap');
+                Route::get('mysitemap-download', [SiteMapController::class, 'download'])->name('mysitemap-download');
             });
 
             Route::prefix('/order-settings')->as('order-settings.')->middleware('module:business_settings')->group(function () {
-                Route::get('index', [OrderSettingsController::class,'order_settings'])->name('index');
-                Route::post('update-order-settings', [OrderSettingsController::class,'update_order_settings'])->name('update-order-settings');
+                Route::get('index', [OrderSettingsController::class, 'order_settings'])->name('index');
+                Route::post('update-order-settings', [OrderSettingsController::class, 'update_order_settings'])->name('update-order-settings');
             });
 
             Route::controller(BusinessSettingsController::class)->prefix('/seller-settings')->as('seller-settings.')->middleware('module:business_settings')->group(function () {
@@ -545,8 +548,8 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             });
 
             Route::prefix('/payment-method')->as('payment-method.')->middleware('module:business_settings')->group(function () {
-                Route::get('/', [PaymentMethodController::class,'index'])->name('index')->middleware('actch');
-                Route::post('{name}', [PaymentMethodController::class,'update'])->name('update');
+                Route::get('/', [PaymentMethodController::class, 'index'])->name('index')->middleware('actch');
+                Route::post('{name}', [PaymentMethodController::class, 'update'])->name('update');
             });
 
             Route::controller(BusinessSettingsController::class)->middleware('module:web_&_app_settings')->group(function () {
@@ -628,6 +631,22 @@ Route::prefix('/admin')->as('admin.')->group(function () {
         });
 
 
+        // career routes
+        Route::controller(CareerController::class)->prefix("/career")->as('career.')->group(function () {
+            Route::get('/view', 'index')->name('view');
+            Route::post('/store', 'store')->name('store');
+            Route::put('/update/{id}', 'update')->name('update');
+            Route::post('/delete', 'delete')->name('delete');
+            Route::post('/status', 'status')->name('status');
+        });
+        // applications routes
+        Route::controller(JobApplicationController::class)->prefix("/application")->as('application.')->group(function () {
+            Route::get('/view', 'index')->name('view');
+            Route::post('/delete', 'delete')->name('delete');
+            Route::post('/status', 'status')->name('status');
+        });
+
+
         //pos management
         Route::controller(POSController::class)->prefix('/pos')->as('pos.')->middleware('module:pos_management')->group(function () {
             Route::get('/', 'index')->name('index');
@@ -681,7 +700,6 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('view/{id}', 'view')->name('view');
             Route::post('update/{id}', 'update')->name('update');
             Route::post('send-mail/{id}', 'send_mail')->name('send-mail');
-
         });
         Route::controller(ContactController::class)->prefix('/leads')->as('leads.')->middleware('module:support_section')->group(function () {
             Route::get('list', 'leadsList')->name('list');

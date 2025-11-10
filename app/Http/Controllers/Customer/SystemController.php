@@ -355,7 +355,6 @@ class SystemController extends Controller
             session()->forget('payment_method');
             session()->forget('customer_info');
             session()->forget('shipping_method_id');
-            $order = Order::find($order_id);
 
             //return view('web-views.checkout-complete', compact('order'));
             return redirect()->route('customer.checkout-complete', ['id' => $order_id]);
@@ -365,6 +364,7 @@ class SystemController extends Controller
     }
     public function singlepCheckout(Request $request)
     {
+
         $this->validate($request, [
             'name' => 'required|string|max:150',
             'email' => 'nullable|email',
@@ -551,7 +551,6 @@ class SystemController extends Controller
             session()->forget('payment_method');
             session()->forget('customer_info');
             session()->forget('shipping_method_id');
-            $order = Order::find($order_id);
 
             //return view('web-views.checkout-complete', compact('order'));
             return redirect()->route('customer.checkout-complete', ['id' => $order_id]);

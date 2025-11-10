@@ -201,6 +201,53 @@ $route = request()->route()->getName();
                         <!-- End POS -->
 
 
+                        @if (\App\CPU\Helpers::module_permission_check('career_management'))
+                            <li class="nav-item {{ Request::is('admin/career*') ? 'scroll-here' : '' }}">
+                                <small class="nav-subtitle"
+                                    title="">{{ \App\CPU\translate('career_management') }}</small>
+                                <small class="tio-more-horizontal nav-subtitle-replacer"></small>
+                            </li>
+                            <!-- career -->
+                            <li
+                                class="navbar-vertical-aside-has-menu {{ Request::is('admin/career*') ? 'active' : '' }}">
+                                <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle"
+                                    href="javascript:">
+                                    <i class="fa-solid fa-briefcase nav-icon"></i>
+                                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">
+                                        {{ \App\CPU\translate('Careers') }}
+                                    </span>
+                                </a>
+                                <ul class="js-navbar-vertical-aside-submenu nav nav-sub"
+                                    style="display: {{ Request::is('admin/career*') ? 'block' : 'none' }}">
+                                    <li class="nav-item {{ Request::is('admin/career/view') ? 'active' : '' }}">
+                                        <a class="nav-link" href="{{ route('admin.career.view') }}" title="">
+                                            <span class="tio-circle nav-indicator-icon"></span>
+                                            <span class="text-truncate">
+                                                {{ \App\CPU\translate('Jobs') }}
+                                                <span class="badge badge-info badge-pill ml-1">
+                                                    {{ \App\Models\Career::all()->count() }}
+                                                </span>
+                                            </span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item {{ Request::is('admin/application/view') ? 'active' : '' }}">
+                                        <a class="nav-link" href="{{ route('admin.application.view') }}"
+                                            title="">
+                                            <span class="tio-circle nav-indicator-icon"></span>
+                                            <span class="text-truncate">
+                                                {{ \App\CPU\translate('Job Applications') }}
+                                                <span class="badge badge-info badge-pill ml-1">
+                                                    {{ \App\Models\JobApplication::all()->count() }}
+                                                </span>
+                                            </span>
+                                        </a>
+                                    </li>
+
+                                </ul>
+                            </li>
+                        @endif
+                        <!--Career Management ends-->
+
                         @if (\App\CPU\Helpers::module_permission_check('order_management'))
                             <li class="nav-item {{ Request::is('admin/orders*') ? 'scroll-here' : '' }}">
                                 <small class="nav-subtitle"
@@ -400,14 +447,16 @@ $route = request()->route()->getName();
                                         class="nav-item {{ Request::is('admin/product/bulk-import') ? 'active' : '' }}">
                                         <a class="nav-link " href="{{ route('admin.product.bulk-import') }}">
                                             <span class="tio-circle nav-indicator-icon"></span>
-                                            <span class="text-truncate">{{ \App\CPU\translate('bulk_import') }}</span>
+                                            <span
+                                                class="text-truncate">{{ \App\CPU\translate('bulk_import') }}</span>
                                         </a>
                                     </li>
                                     <li
                                         class="nav-item {{ Request::is('admin/product/bulk-export') ? 'active' : '' }}">
                                         <a class="nav-link " href="{{ route('admin.product.bulk-export') }}">
                                             <span class="tio-circle nav-indicator-icon"></span>
-                                            <span class="text-truncate">{{ \App\CPU\translate('bulk_export') }}</span>
+                                            <span
+                                                class="text-truncate">{{ \App\CPU\translate('bulk_export') }}</span>
                                         </a>
                                     </li>
                                 </ul>
