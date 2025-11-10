@@ -1900,4 +1900,5 @@
   'Back to Users Information' => 'Back to Users Information',
   'Complain List' => 'Complain List',
   'data_deleted_successfully' => 'Data deleted successfully',
+  'Order Process' => 'Order Process',
 );

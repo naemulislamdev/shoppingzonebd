@@ -5,12 +5,12 @@
     <meta property="og:image" content="{{ asset('storage/company') }}/{{ $web_config['web_logo']->value }}" />
     <meta property="og:title" content="Best Online Marketplace In Bangladesh {{ $web_config['name']->value }} Home" />
     <meta property="og:url" content="{{ env('APP_URL') }}">
-    <meta property="og:description" content="{!! substr($web_config['about']->value, 0, 100) !!}">
+    <meta property="og:description" content="{!! substr(strip_tags($web_config['about']->value), 0, 100) !!}">
 
     <meta property="twitter:card" content="{{ asset('storage/company') }}/{{ $web_config['web_logo']->value }}" />
     <meta property="twitter:title" content="Welcome To {{ $web_config['name']->value }} Home" />
     <meta property="twitter:url" content="{{ env('APP_URL') }}">
-    <meta property="twitter:description" content="{!! substr($web_config['about']->value, 0, 100) !!}">
+    <meta property="twitter:description" content="{!! substr(strip_tags($web_config['about']->value), 0, 100) !!}">
     <style>
         .main-banner {
             height: auto;

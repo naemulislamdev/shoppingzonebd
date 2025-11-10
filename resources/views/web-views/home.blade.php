@@ -112,7 +112,7 @@
                 </div>
             </div>
             <div class="owl-carousel related-products product-carosel mt-4 mt-lg-4" data-delay="3000">
-                @php($decimal_point_settings = \App\CPU\Helpers::get_business_settings('decimal_point_settings'))
+                @php $decimal_point_settings = \App\CPU\Helpers::get_business_settings('decimal_point_settings'); @endphp
                 @if ($arrival_products->count() > 0)
                     <!-- Your product columns go here -->
                     @foreach ($arrival_products as $product)
@@ -175,98 +175,12 @@
                         </div>
                     @endforeach
                 @endif
-                {{-- <div class="item">
-                    <div class="product-column">
-                        <div class="product-box product-box-col-2">
-                            <input type="hidden" name="quantity" value="" min="" max="100">
-                            <div class="product-image2 product-image2-col-2">
-
-                                <div class="discount-box float-end">
-                                    <span>
-                                        -10%
-                                    </span>
-                                </div>
-
-                                <a href="">
-                                    <img class="pic-1" src="{{ asset('assets') }}/front-end/images/product/p-3.jpg">
-                                    <img class="pic-2" src="{{ asset('assets') }}/front-end/images/product/p-3.jpg">
-                                </a>
-                                <ul class="social">
-                                    <li><a href="" data-tip="Quick View"><i class="fa fa-eye"></i></a></li>
-                                    <li>
-                                        <a style="cursor: pointer" data-toggle="modal"
-                                            data-target="#addToCartModal_{{ 2 }}" data-tip="Add to Cart">
-                                            <i class="fa fa-shopping-cart"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="product-content">
-                                <h3 class="title"><a href="">product name Lorem ipsum dolor sit amet.</a>
-                                </h3>
-                                <div class="price d-flex justify-content-center align-content-center">
-
-                                    <span class="mr-2">2999</span>
-                                    <del>200</del>
-                                </div>
-                                <button type="button" style="cursor: pointer;" class="btn btn-primary">অর্ডার
-                                    করুন</button>
-                            </div>
-
-                        </div>
-                    </div>
-                </div> --}}
 
             </div>
             <div class="d-flex justify-content-center">
                 <a href="" class="btn btn-outline-warning  text-center  d-block d-lg-none">Shop More</a>
             </div>
     </section>
-    {{-- New Arrivals Section End --}}
-    {{-- <section class="category-section my-4">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-11 ">
-                    <div class="row mb-3">
-                        <div class="col">
-                            <div class="category-title-box">
-                                <div class="category-title">
-                                    <h5>Product Collection</h5>
-                                    <h1>Discover our products</h1>
-                                </div>
-                                <div class="tp-right-btn">
-                                    <a href="{{ route('shop') }}">Shop all products <i class="fa fa-arrow-right"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="homeCategories owl-carousel owl-theme ">
-                        @foreach ($categories as $category)
-                            @php
-                                $productCount = $productCounts[$category->id] ?? 0;
-                            @endphp
-                            <div class="item">
-                                <div class="tp-category-item-3 p-relative text-center">
-                                    <div class="tp-category-thumb-3">
-                                        <img src="{{ asset("storage/category/$category->icon") }}"
-                                            alt="{{ $category->name }}">
-                                    </div>
-                                    <div class="tp-category-content-3">
-                                        <h3 class="tp-category-title-3">
-                                            <a
-                                                href="{{ route('products', ['id' => $category['id'], 'data_from' => 'category', 'page' => 1]) }}">{{ $category['name'] }}</a>
-                                        </h3>
-                                        <span class="tp-categroy-ammount-3">{{ $productCount }} products</span>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-
-                </div>
-            </div>
-        </div>
-    </section> --}}
 
     {{-- Category Section Start --}}
     <section class="category my-5">

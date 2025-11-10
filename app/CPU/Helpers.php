@@ -45,12 +45,6 @@ class Helpers
             // Read the uploaded image
             $img = $manager->read($image->getRealPath());
 
-            // Resize (optional but helps reduce big file sizes)
-            $img->resize(1200, null, function ($constraint) {
-                $constraint->aspectRatio();
-                $constraint->upsize();
-            });
-
             // Compress and encode as WebP
             $quality = 80; // start high quality
             $temp = tempnam(sys_get_temp_dir(), 'img_');

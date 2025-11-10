@@ -127,7 +127,7 @@ dataLayer.push({
         item_list_id: "category_{{ $category->slug ?? 'default' }}",
         item_list_name: "{{ $category->name ?? 'Product List' }}",
         items: [
-            @foreach ($products as $index => $product)
+            @foreach ($shop_products as $index => $product)
             {
                 item_id: "{{ $product->id }}",
                 item_name: "{{ $product->name }}",

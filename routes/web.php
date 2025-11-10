@@ -54,7 +54,6 @@ Route::middleware(['maintenance_mode'])->group(function () {
         Route::get('checkout-shipping', 'checkout_shipping')->name('checkout-shipping');
         Route::get('checkout-payment', 'checkout_payment')->name('checkout-payment');
         Route::get('checkout-review', 'checkout_review')->name('checkout-review');
-        Route::get('checkout-complete', 'checkout_complete')->name('checkout-complete');
         Route::get('order-placed', 'order_placed')->name('order-placed');
         Route::post('order_note', 'order_note')->name('order_note');
     });
