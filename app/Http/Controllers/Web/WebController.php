@@ -47,6 +47,7 @@ use App\CPU\Convert;
 use App\Model\Branch;
 use App\Models\Career;
 use App\Model\Color;
+use App\Models\BatchDiscount;
 use App\Models\Lead;
 use App\Models\UserInfo;
 use App\ProductLandingPage;
@@ -1287,5 +1288,10 @@ class WebController extends Controller
         );
 
         return response()->json(['success' => true]);
+    }
+    public function batchOffers()
+    {
+        $batch_offers = BatchDiscount::where('status', 1)->get();
+        return view('web-views.batch_offer', compact('batch_offers'));
     }
 }

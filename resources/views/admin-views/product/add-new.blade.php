@@ -106,7 +106,8 @@
                                 <label class="input-label" for="name">{{ \App\CPU\translate('name') }}<span
                                         class="text-danger">*</span>
                                 </label>
-                                <input type="text" name="name" class="form-control" placeholder="Enter product name">
+                                <input type="text" name="name" class="form-control" placeholder="Enter product name" required
+                                    value="{{ old('name') }}">
                                 @error('name')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror

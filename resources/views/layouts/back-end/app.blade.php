@@ -519,186 +519,210 @@
             return Math.floor(Math.random() * 90000) + 100000;
         }
     </script>
-     <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const container = document.querySelector('.navbar-vertical-content');
-        const activeItem = container.querySelector('.nav-item.active');
-        const activeItemAside = container.querySelector('.navbar-vertical-aside-has-menu.active');
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const container = document.querySelector('.navbar-vertical-content');
+            const activeItem = container.querySelector('.nav-item.active');
+            const activeItemAside = container.querySelector('.navbar-vertical-aside-has-menu.active');
 
-        if (activeItem) {
-            activeItem.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center', // or 'start' for top
-                inline: 'nearest'
-            });
-        }
+            if (activeItem) {
+                activeItem.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center', // or 'start' for top
+                    inline: 'nearest'
+                });
+            }
 
-        if (activeItemAside) {
-            activeItemAside.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center', // or 'start' for top
-                inline: 'nearest'
-            });
-        }
-    });
-</script>
-<script>
+            if (activeItemAside) {
+                activeItemAside.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center', // or 'start' for top
+                    inline: 'nearest'
+                });
+            }
+        });
+    </script>
+    <script>
         document.addEventListener('DOMContentLoaded', function() {
-                    // Cache all menu items
-                    const menuItems = [];
-                    const menuLinks = document.querySelectorAll(
-                        '.navbar-vertical-aside-has-menu a.nav-link, .navbar-vertical-aside-has-menu a.js-navbar-vertical-aside-menu-link'
-                        );
+            // Cache all menu items
+            const menuItems = [];
+            const menuLinks = document.querySelectorAll(
+                '.navbar-vertical-aside-has-menu a.nav-link, .navbar-vertical-aside-has-menu a.js-navbar-vertical-aside-menu-link'
+            );
 
-                    menuLinks.forEach(link => {
-                        // Skip empty text links
-                        const textElement = link.querySelector('.text-truncate');
-                        if (!textElement || !textElement.textContent.trim()) return;
+            menuLinks.forEach(link => {
+                // Skip empty text links
+                const textElement = link.querySelector('.text-truncate');
+                if (!textElement || !textElement.textContent.trim()) return;
 
-                        const iconElement = link.querySelector('i.nav-icon');
-                        const iconClass = iconElement ? iconElement.className : 'tio-label-outlined';
+                const iconElement = link.querySelector('i.nav-icon');
+                const iconClass = iconElement ? iconElement.className : 'tio-label-outlined';
 
-                        menuItems.push({
-                            text: textElement.textContent.trim(),
-                            url: link.getAttribute('href'),
-                            icon: iconClass,
-                            element: link
-                        });
-                    });
+                menuItems.push({
+                    text: textElement.textContent.trim(),
+                    url: link.getAttribute('href'),
+                    icon: iconClass,
+                    element: link
+                });
+            });
 
-                    // Create search container
-                    const searchContainer = document.createElement('div');
-                    searchContainer.className = 'menu-search-container';
+            // Create search container
+            const searchContainer = document.createElement('div');
+            searchContainer.className = 'menu-search-container';
 
-                    // Move the search input into the container
-                    const searchInputs = document.querySelectorAll('input[name="manue_search"]');
-                    const searchInput = searchInputs[searchInputs.length - 1]; // Get the last one
-                    searchInput.parentNode.insertBefore(searchContainer, searchInput);
-                    searchContainer.appendChild(searchInput);
+            // Move the search input into the container
+            const searchInputs = document.querySelectorAll('input[name="manue_search"]');
+            const searchInput = searchInputs[searchInputs.length - 1]; // Get the last one
+            searchInput.parentNode.insertBefore(searchContainer, searchInput);
+            searchContainer.appendChild(searchInput);
 
-                    // Create results container
-                    const resultsContainer = document.createElement('div');
-                    resultsContainer.className = 'menu-search-results';
-                    searchContainer.appendChild(resultsContainer);
+            // Create results container
+            const resultsContainer = document.createElement('div');
+            resultsContainer.className = 'menu-search-results';
+            searchContainer.appendChild(resultsContainer);
 
-                    // Search functionality
-                    searchInput.addEventListener('input', function(e) {
-                            const searchTerm = e.target.value.trim().toLowerCase();
-                            resultsContainer.innerHTML = '';
+            // Search functionality
+            searchInput.addEventListener('input', function(e) {
+                const searchTerm = e.target.value.trim().toLowerCase();
+                resultsContainer.innerHTML = '';
 
-                            if (searchTerm.length < 2) {
-                                resultsContainer.style.display = 'none';
-                                return;
-                            }
+                if (searchTerm.length < 2) {
+                    resultsContainer.style.display = 'none';
+                    return;
+                }
 
-                            const filteredItems = menuItems.filter(item =>
-                                item.text.toLowerCase().includes(searchTerm))
-                                .slice(0, 10);
+                const filteredItems = menuItems.filter(item =>
+                        item.text.toLowerCase().includes(searchTerm))
+                    .slice(0, 10);
 
-                                if (filteredItems.length === 0) {
-                                    const noResults = document.createElement('div');
-                                    noResults.className = 'menu-search-result-item';
-                                    noResults.textContent = 'No results found';
-                                    resultsContainer.appendChild(noResults);
-                                } else {
-                                    filteredItems.forEach(item => {
-                                        const resultItem = document.createElement('div');
-                                        resultItem.className = 'menu-search-result-item';
+                if (filteredItems.length === 0) {
+                    const noResults = document.createElement('div');
+                    noResults.className = 'menu-search-result-item';
+                    noResults.textContent = 'No results found';
+                    resultsContainer.appendChild(noResults);
+                } else {
+                    filteredItems.forEach(item => {
+                        const resultItem = document.createElement('div');
+                        resultItem.className = 'menu-search-result-item';
 
-                                        // Highlight matching text
-                                        const startIndex = item.text.toLowerCase().indexOf(searchTerm);
-                                        const endIndex = startIndex + searchTerm.length;
-                                        const before = item.text.substring(0, startIndex);
-                                        const match = item.text.substring(startIndex, endIndex);
-                                        const after = item.text.substring(endIndex);
+                        // Highlight matching text
+                        const startIndex = item.text.toLowerCase().indexOf(searchTerm);
+                        const endIndex = startIndex + searchTerm.length;
+                        const before = item.text.substring(0, startIndex);
+                        const match = item.text.substring(startIndex, endIndex);
+                        const after = item.text.substring(endIndex);
 
-                                        resultItem.innerHTML = `
+                        resultItem.innerHTML = `
                     <i class="${item.icon}"></i>
                     <span class="text">
                         ${before}<span class="menu-search-highlight">${match}</span>${after}
                     </span>
                 `;
 
-                                        resultItem.addEventListener('click', function() {
-                                            // Close any open submenus first
-                                            document.querySelectorAll(
-                                                '.navbar-vertical-aside-has-menu.show').forEach(
-                                                menu => {
-                                                    menu.classList.remove('show');
-                                                });
+                        resultItem.addEventListener('click', function() {
+                            // Close any open submenus first
+                            document.querySelectorAll(
+                                '.navbar-vertical-aside-has-menu.show').forEach(
+                                menu => {
+                                    menu.classList.remove('show');
+                                });
 
-                                            // If the item is in a dropdown, open its parent menu
-                                            let parentMenu = item.element.closest(
-                                                '.navbar-vertical-aside-has-menu');
-                                            while (parentMenu) {
-                                                parentMenu.classList.add('show');
-                                                const toggle = parentMenu.querySelector(
-                                                    '.nav-link-toggle');
-                                                if (toggle) {
-                                                    const submenu = parentMenu.querySelector(
-                                                        '.nav-sub');
-                                                    if (submenu) submenu.style.display = 'block';
-                                                }
-                                                parentMenu = parentMenu.parentElement.closest(
-                                                    '.navbar-vertical-aside-has-menu');
-                                            }
-
-                                            // Navigate to the URL
-                                            if (item.url && item.url !== 'javascript:') {
-                                                window.location.href = item.url;
-                                            }
-
-                                            // Clear search
-                                            searchInput.value = '';
-                                            resultsContainer.style.display = 'none';
-                                        });
-
-                                        resultsContainer.appendChild(resultItem);
-                                    });
+                            // If the item is in a dropdown, open its parent menu
+                            let parentMenu = item.element.closest(
+                                '.navbar-vertical-aside-has-menu');
+                            while (parentMenu) {
+                                parentMenu.classList.add('show');
+                                const toggle = parentMenu.querySelector(
+                                    '.nav-link-toggle');
+                                if (toggle) {
+                                    const submenu = parentMenu.querySelector(
+                                        '.nav-sub');
+                                    if (submenu) submenu.style.display = 'block';
                                 }
-
-                                resultsContainer.style.display = 'block';
-                            });
-
-                        // Close results when clicking outside
-                        document.addEventListener('click', function(e) {
-                            if (!searchContainer.contains(e.target)) {
-                                resultsContainer.style.display = 'none';
+                                parentMenu = parentMenu.parentElement.closest(
+                                    '.navbar-vertical-aside-has-menu');
                             }
+
+                            // Navigate to the URL
+                            if (item.url && item.url !== 'javascript:') {
+                                window.location.href = item.url;
+                            }
+
+                            // Clear search
+                            searchInput.value = '';
+                            resultsContainer.style.display = 'none';
                         });
 
-                        // Handle keyboard navigation
-                        searchInput.addEventListener('keydown', function(e) {
-                            if (e.key === 'ArrowDown') {
-                                e.preventDefault();
-                                const firstItem = resultsContainer.querySelector('.menu-search-result-item');
-                                if (firstItem) firstItem.focus();
-                            }
-                        });
-
-                        resultsContainer.addEventListener('keydown', function(e) {
-                            const items = resultsContainer.querySelectorAll('.menu-search-result-item');
-                            const currentItem = document.activeElement;
-                            const currentIndex = Array.from(items).indexOf(currentItem);
-
-                            if (e.key === 'ArrowDown') {
-                                e.preventDefault();
-                                if (currentIndex < items.length - 1) {
-                                    items[currentIndex + 1].focus();
-                                }
-                            } else if (e.key === 'ArrowUp') {
-                                e.preventDefault();
-                                if (currentIndex > 0) {
-                                    items[currentIndex - 1].focus();
-                                } else {
-                                    searchInput.focus();
-                                }
-                            } else if (e.key === 'Enter' && currentItem) {
-                                e.preventDefault();
-                                currentItem.click();
-                            }
-                        });
+                        resultsContainer.appendChild(resultItem);
                     });
+                }
+
+                resultsContainer.style.display = 'block';
+            });
+
+            // Close results when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!searchContainer.contains(e.target)) {
+                    resultsContainer.style.display = 'none';
+                }
+            });
+
+            // Handle keyboard navigation
+            searchInput.addEventListener('keydown', function(e) {
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    const firstItem = resultsContainer.querySelector('.menu-search-result-item');
+                    if (firstItem) firstItem.focus();
+                }
+            });
+
+            resultsContainer.addEventListener('keydown', function(e) {
+                const items = resultsContainer.querySelectorAll('.menu-search-result-item');
+                const currentItem = document.activeElement;
+                const currentIndex = Array.from(items).indexOf(currentItem);
+
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    if (currentIndex < items.length - 1) {
+                        items[currentIndex + 1].focus();
+                    }
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    if (currentIndex > 0) {
+                        items[currentIndex - 1].focus();
+                    } else {
+                        searchInput.focus();
+                    }
+                } else if (e.key === 'Enter' && currentItem) {
+                    e.preventDefault();
+                    currentItem.click();
+                }
+            });
+        });
+    </script>
+    <script>
+        function dashboard_order_report_filter() {
+            let from_date = $('#from_date').val();
+            let to_date = $('#to_date').val();
+
+            $.ajax({
+                url: "{{ route('admin.dashboard.order.report.filter') }}",
+                type: "GET",
+                data: {
+                    from_date: from_date,
+                    to_date: to_date
+                },
+                beforeSend: function() {
+                    $('#order_stats').html('<h4>Loading...</h4>');
+                },
+                success: function(response) {
+                    $('#order_stats').html(response.view);
+                },
+                error: function(xhr) {
+                    console.log(xhr.responseText);
+                }
+            });
+        }
     </script>
 </body>
 

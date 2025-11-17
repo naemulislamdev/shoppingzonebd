@@ -36,11 +36,13 @@
             border-style: solid;
             border-color: red;
         }
+
         .border-bottom {
-    background: #f26d21;
-    border-radius: 5px;
-}
-        .border-bottom > h5{
+            background: #f26d21;
+            border-radius: 5px;
+        }
+
+        .border-bottom>h5 {
             color: #fff;
         }
     </style>
@@ -65,6 +67,42 @@
             <div class="row">
                 <div class="col-lg-8 col-md-8">
                     <div class="row">
+                        <div class="col-md-12">
+                            <div class="card mb-3" style="background-color: #ffffff">
+                                <div class="card-body">
+                                    <div>
+                                        <h4 style="color:rgb(13, 13, 13)"><i style="font-size: 30px"
+                                                class="tio-chart-line-up"></i>{{ \App\CPU\translate('Order Reports') }}
+                                        </h4>
+                                    </div>
+                                    <div class="row ">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Form Date</label>
+                                                <input type="date" value="{{date('Y-m-d')}}" class="form-control" id="from_date" name="from_date">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>To Date</label>
+                                                <input type="date" value="{{date('Y-m-d')}}" class="form-control" id="to_date" name="to_date">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4" style="margin-top: 30px">
+                                            <button class="btn btn-primary" onclick="dashboard_order_report_filter()">
+                                                {{ \App\CPU\translate('Filter') }}
+                                            </button>
+                                        </div>
+
+                                    </div>
+                                    <div class="row gx-2 gx-lg-3" id="order_stats">
+                                        @include('admin-views.partials._dashboard-order-reports', [
+                                            'results' => $results,
+                                        ])
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="col-md-12">
                             <div class="card mb-3" style="background-color: #ffffff">
                                 <div class="card-body">
@@ -358,8 +396,7 @@
 @push('script')
     <script src="{{ asset('assets/back-end') }}/vendor/chart.js/dist/Chart.min.js"></script>
     <script src="{{ asset('assets/back-end') }}/vendor/chart.js.extensions/chartjs-extensions.js"></script>
-    <script
-        src="{{ asset('assets/back-end') }}/vendor/chartjs-plugin-datalabels/dist/chartjs-plugin-datalabels.min.js">
+    <script src="{{ asset('assets/back-end') }}/vendor/chartjs-plugin-datalabels/dist/chartjs-plugin-datalabels.min.js">
     </script>
 @endpush
 

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class OrderTransaction extends Model
 {
+    protected $guarded = ['id'];
     public function seller()
     {
         return $this->belongsTo(Seller::class, 'seller_id');
