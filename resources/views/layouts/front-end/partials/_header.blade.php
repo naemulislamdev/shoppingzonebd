@@ -1,7 +1,7 @@
 <header id="header">
     <div class="container">
-        <div class="row main_row">
-            <div class="col-md-3 d-none d-md-block">
+        <div class="row main_row align-items-lg-center">
+            <div class="col-md-3 d-none d-lg-block">
                 <!-- <a class="navbar-brand" href="index.html">Shopping Zone BD</a> -->
                 <a href="{{ route('home') }}">
                     <img class="header-logo" src="{{ asset('storage/company') . '/' . $web_config['web_logo']->value }}"
@@ -14,6 +14,9 @@
                 <nav class="navbar">
                     <div class="menu-area">
                         <ul>
+                            <li><a href="#"><img style="height: 60px; width: auto;"
+                                        src="{{ asset('assets/front-end/img/11-offer.png') }}" alt="11 offer image"></a>
+                            </li>
                             <li><a href="{{ route('home') }}">{{ \App\CPU\translate('Home') }}</a></li>
 
                             <li class="dd-btn1"><a href="#">{{ \App\CPU\translate('Categories') }} <i
@@ -107,7 +110,10 @@
                 </nav>
             </div>
             <div class="col-md-2 ms-auto">
-                <div class="header-icon ms-5">
+                <div class="header-icon ms-5 align-items-center">
+                    <a class="d-block d-lg-none" href="#"><img style="height: 50px; width: auto;"
+                            src="{{ asset('assets/front-end/img/11-offer.png') }}" alt="special image"></a>
+
                     <a data-bs-toggle="offcanvas" href="#searchOffcanvas" role="button"
                         aria-controls="searchOffcanvas"><i class="fa fa-search" aria-hidden="true"></i></a>
                     <a href="{{ route('wishlists') }}"><i class="fa fa-heart-o" aria-hidden="true"></i>
@@ -125,6 +131,8 @@
                         <a href="{{ route('customer.auth.login') }}" class="d-lg-none"><i class="fa fa-user"
                                 aria-hidden="true"></i></a>
                     @endif
+
+
                 </div>
             </div>
         </div>
