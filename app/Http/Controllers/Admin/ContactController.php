@@ -212,4 +212,17 @@ class ContactController extends Controller
         }
         return (new FastExcel($data))->download('user_info.xlsx');
     }
+    public function status(Request $request)
+    {
+
+        if ($request->ajax()) {
+            $userinfo = UserInfo::find($request->id);
+            $userinfo->order_status = $request->order_status;
+            $userinfo->order_note = $request->note;
+            $userinfo->save();
+            $data = $request->order_status;
+            return response()->json($data);
+
+        }
+    }
 }

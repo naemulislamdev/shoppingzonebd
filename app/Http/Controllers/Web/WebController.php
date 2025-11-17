@@ -50,7 +50,7 @@ use App\Model\Color;
 use App\Models\Lead;
 use App\Models\UserInfo;
 use App\ProductLandingPage;
-use Carbon\Carbon;
+use Carbon\Carbon; 
 
 class WebController extends Controller
 {

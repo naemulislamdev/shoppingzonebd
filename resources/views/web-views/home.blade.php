@@ -189,6 +189,7 @@
 @endpush
 @section('content')
 
+
     @include('layouts.front-end.partials._modals')
     <!------start  header main slider-->
     @include('layouts.front-end.partials.slider')
@@ -209,10 +210,12 @@
             </div>
             <div class="owl-carousel related-products product-carosel mt-4 mt-lg-4" data-delay="3000">
                 @php $decimal_point_settings = \App\CPU\Helpers::get_business_settings('decimal_point_settings'); @endphp
+                
                 @if ($arrival_products->count() > 0)
                     <!-- Your product columns go here -->
                     @foreach ($arrival_products as $product)
                         <div class="item">
+
                             <div class="product-column">
                                 <div class="product-box product-box-col-2">
                                     <input type="hidden" name="quantity" value="{{ $product->minimum_order_qty ?? 1 }}"
@@ -327,7 +330,7 @@
                                                                     {{ $choice->title }}
                                                                 </h4>
                                                             </div>
-                                                            <div class="col-12">
+                                                            <div class="col-12" style="margin-top: 20px">
                                                                 <div class="d-flex">
                                                                     @foreach ($choice->options as $key => $option)
                                                                         <div class="v-size-box">
@@ -519,6 +522,7 @@
                 <div class="row product-grid">
                     <!-- Your product columns go here -->
                     @foreach ($featured_products as $product)
+
                         @include('web-views.products.product_box', ['dataCategory' => 'category1'])
                     @endforeach
                 </div>

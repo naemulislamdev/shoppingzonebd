@@ -1,7 +1,7 @@
 <header id="header">
     <div class="container">
         <div class="row main_row align-items-lg-center">
-            <div class="col-md-3 d-none d-md-block">
+            <div class="col-md-3 d-none d-lg-block">
                 <!-- <a class="navbar-brand" href="index.html">Shopping Zone BD</a> -->
                 <a href="{{ route('home') }}">
                     <img class="header-logo" src="{{ asset('storage/company') . '/' . $web_config['web_logo']->value }}"
@@ -112,7 +112,7 @@
             <div class="col-md-2 ms-auto">
                 <div class="header-icon ms-5 align-items-center">
                     <a class="d-block d-lg-none" href="#"><img style="height: 50px; width: auto;"
-                            src="{{ asset('assets/front-end/img/11-offer.png') }}" alt="special image"></a>
+                            src="{{ asset('assets/front-end/img/11-offer.png') }}" alt="offer image"></a>
 
                     <a data-bs-toggle="offcanvas" href="#searchOffcanvas" role="button"
                         aria-controls="searchOffcanvas"><i class="fa fa-search" aria-hidden="true"></i></a>

@@ -63,17 +63,18 @@
 
         .v-color-box>input:checked+.color-label,
         .v-size-box>input:checked+.size-label {
-            border: .125rem solid #02ab16 !important;
+            border: 4px solid #02ab16 !important;
         }
 
         .v-size-box>input:checked+.size-label::after {
-            content: '✔';
-            color: white;
-            font-size: .75rem;
+            content: '✓';
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            color: green !important;
+            font-size: 19px !important;
+            top: 51% !important;
+            left: 77% !important;
+            font-weight: bolder;
+            transform: translate(-73%, -50%) rotate(7deg) !important;
         }
 
         .cs_header_number_wrap {
@@ -128,7 +129,8 @@
             right: 0rem;
             width: 100%;
         }
-        .product-box{
+
+        .product-box {
             box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
         }
 
@@ -159,9 +161,10 @@
         .product-image2-col-2 {
             height: 16.875rem
         }
+
         .product-box .title {
-    text-align: left;
-}
+            text-align: left;
+        }
     </style>
     @php
         $request = request()->route()->getName();
@@ -841,7 +844,7 @@
                     data: $('#' + form_id).serializeArray(),
                     beforeSend: function() {
                         $('#loading').show();
-                    },
+                    }, 
                     success: function(data) {
 
                         if (data.data == 1) {

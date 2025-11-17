@@ -19,6 +19,11 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->text('address')->nullable();
             $table->boolean('status')->default(false);
+            $table->string("type")->nullable();
+            $table->string("order_process")->nullable();
+            $table->text("product_details")->nullable();
+            $table->enum('order_status', ['pending', 'canceled', 'confirmed'])->default('pending');
+            $table->string('order_note')->nullable();
             $table->timestamps();
         });
     }

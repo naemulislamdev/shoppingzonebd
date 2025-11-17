@@ -19,7 +19,10 @@ class CareerController extends Controller
             $key = explode(' ', $request['search']);
             $banners = Career::where(function ($q) use ($key) {
                 foreach ($key as $value) {
-                    $q->Where('type', 'like', "%{$value}%");
+                    $q->Where('type', 'like', "%{$value}%")
+                        ->orWhere('position', 'like', "%{$value}%")
+                        ->orWhere('department', 'like', "%{$value}%")
+                        ->orWhere('status', 'like', "%{$value}%");
                 }
             })->orderBy('id', 'desc');
             $query_param = ['search' => $request['search']];

@@ -1,6 +1,5 @@
-
 <?php
-
+namespace App\Http\Controllers;
 
 use App\CPU\CartManager;
 use App\CPU\Helpers;
@@ -31,7 +30,6 @@ use PayPal\Auth\OAuthTokenCredential;
 use PayPal\Common\PayPalModel;
 use PayPal\Rest\ApiContext;
 
-namespace App\Http\Controllers;
 
 class PaypalPaymentController extends Controller
 {

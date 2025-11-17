@@ -15,18 +15,28 @@ class JobApplicationController extends Controller
     public function index(Request $request)
     {
         $query_param = [];
-        $search = $request['search'];
-        if ($request->has('search')) {
-            $key = explode(' ', $request['search']);
+        $search = $request->search;
+
+        if (!empty($search)) {
+
+            $key = explode(' ', $search);
+
             $application = JobApplication::where(function ($q) use ($key) {
                 foreach ($key as $value) {
-                    $q->Where('status', 'like', "%{$value}%");
+                    $q->where(function ($sub) use ($value) {
+                        $sub->where('name', 'like', "%{$value}%")
+                            ->orWhere('email', 'like', "%{$value}%")
+                            ->orWhere('phone', 'like', "%{$value}%")
+                            ->orWhere('status', 'like', "%{$value}%");
+                    });
                 }
             })->orderBy('id', 'desc');
-            $query_param = ['search' => $request['search']];
+
+            $query_param = ['search' => $search];
         } else {
             $application = JobApplication::orderBy('id', 'desc');
         }
+
         $applications = $application->paginate(Helpers::pagination_limit())->appends($query_param);
 
         return view("admin-views.job_applications.view", compact("applications", "search"));

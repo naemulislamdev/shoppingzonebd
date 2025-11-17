@@ -1,5 +1,5 @@
 @extends('layouts.back-end.app')
-@section('title', \App\CPU\translate('leads List'))
+@section('title', \App\CPU\translate('Users List'))
 @push('css_or_js')
     <!-- Custom styles for this page -->
     {{-- <link href="{{ asset('assets/back-end') }}/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet"> --}}
@@ -8,7 +8,7 @@
 @endpush
 
 @section('content')
-    <div class="content container-fluid">
+    <div class="content container-fluid p-2">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">{{ \App\CPU\translate('Dashboard') }}</a>
@@ -30,8 +30,7 @@
                             <div class="flex-start col-lg-3 mb-3 mb-lg-0">
                                 <h5>{{ \App\CPU\translate('User') }} {{ \App\CPU\translate('Information') }}
                                     {{ \App\CPU\translate('table') }} </h5>
-                                <h5
-                                    style="color: red;">
+                                <h5 style="color: red;">
                                     ({{ $userInfos->count() }})</h5>
                             </div>
                             <div class="col-lg-2">
@@ -42,21 +41,23 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body p-0">
                         <div class="table-responsive">
                             <table id="example" class="table table-striped table-bordered">
                                 <thead>
                                     <tr>
-                                        <th>SL#</th>
-                                        <th>Date and Time</th>
-                                        <th>Name</th>
-                                        <th>Phone</th>
-                                        <th>Address</th>
-                                        <th>Status</th>
-                                        <th>Product</th>
-                                        <th>Order Process</th>
-                                        <th>Type</th>
-                                        <th>action</th>
+                                        <th style="width: 2%;">SL#</th>
+                                        <th style="width: 10%;">Date and Time</th>
+                                        <th style="width: 10%;">Name</th>
+                                        <th style="width: 10%;">Phone</th>
+                                        <th style="width: 15%;">Address</th>
+                                        <th style="width: 5%;">Status</th>
+                                        <th style="width: 10%;">Product</th>
+                                        <th style="width: 3%;">Order Process</th>
+                                        <th style="width: 12%;">Order Status</th>
+                                        <th style="width: 10%;">Status Note</th>
+                                        <th style="width: 8%;">Type</th>
+                                        <th style="width: 5%;">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -64,7 +65,10 @@
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
                                             <td>
-                                                {{ \Carbon\Carbon::parse($userInfo->created_at)->format('d M Y') }}{{date('h:i A',strtotime($userInfo['created_at']))}}</td>
+                                                {{ \Carbon\Carbon::parse($userInfo->created_at)->format('d M Y') }}
+                                                <br>
+                                                {{ date('h:i A', strtotime($userInfo['created_at'])) }}
+                                            </td>
                                             <td>{{ $userInfo['name'] }}</td>
                                             <td>{{ $userInfo['phone'] }}</td>
                                             <td>{{ $userInfo['address'] }}</td>
@@ -149,6 +153,33 @@
                                                     <span class="badge badge-success">Completed</span>
                                                 @endif
                                             </td>
+                                            <td class="m-0 p-0" >
+                                                <div class="form-group">
+                                                    <div class="hs-unfold float-right ">
+                                                        <div class="dropdown">
+                                                            <select name="order_status"
+                                                                onchange="order_status(this.value, {{ $userInfo['id'] }})"
+                                                                class="status form-control"
+                                                                data-id="{{ $userInfo['id'] }}">
+
+                                                                <option value="pending"
+                                                                    {{ $userInfo->order_status == 'pending' ? 'selected' : '' }}>
+                                                                    {{ \App\CPU\translate('Pending') }}</option>
+                                                                <option value="confirmed"
+                                                                    {{ $userInfo->order_status == 'confirmed' ? 'selected' : '' }}>
+                                                                    {{ \App\CPU\translate('Confirmed') }}</option>
+                                                                <option value="canceled"
+                                                                    {{ $userInfo->order_status == 'canceled' ? 'selected' : '' }}>
+                                                                    {{ \App\CPU\translate('Canceled') }} </option>
+
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                {{ $userInfo->order_note }}
+                                            </td>
                                             <td>{{ $userInfo->type }}</td>
                                             <td>
 
@@ -169,7 +200,7 @@
                                         </tr>
                                     @endforeach
                                 </tbody>
-                                <tfoot>
+                                {{-- <tfoot>
                                     <tr>
                                         <th>SL#</th>
                                         <th>Date</th>
@@ -182,7 +213,7 @@
                                         <th>Type</th>
                                         <th>action</th>
                                     </tr>
-                                </tfoot>
+                                </tfoot> --}}
                             </table>
                         </div>
                     </div>
@@ -240,5 +271,140 @@
                 }
             })
         });
+    </script>
+    <script>
+        function order_status(status, id) {
+
+            var orderStatus = status ? status : 'pending';
+
+            if (status === 'confirmed') {
+                Swal.fire({
+                    title: '{{ \App\CPU\translate('Are you sure Change this?') }}!',
+                    text: "{{ \App\CPU\translate('Think before you completed') }}.",
+                    html: `
+                        <br />
+                        <form class="form-horizontal" action="{{ route('admin.user-info.status') }}" method="post">
+                            <input type="hidden" name="order_status" value="${status}">
+                            <input type="hidden" name="id" value="${id}">
+                            <input required
+                                class="form-control wedding-input-text wizard-input-pad"
+                                type="text"
+                                name="note"
+                                id="note"
+                                placeholder="For ${status} note">
+                        </form>
+                    `,
+                    showCancelButton: true,
+                    confirmButtonColor: '#377dff',
+                    cancelButtonColor: 'secondary',
+                    confirmButtonText: '{{ \App\CPU\translate('Yes, Change it') }}!'
+                }).then((result) => {
+                    if (result.value) {
+                        $.ajaxSetup({
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                            }
+                        });
+                        $.ajax({
+                            url: "{{ route('admin.user-info.status') }}",
+                            method: 'POST',
+                            data: $("form").serialize(),
+                            success: function(data) {
+                                toastr.success('Status Change successfully');
+                                location.reload();
+
+                            },
+                            error: function(data) {
+                                toastr.warning('Something went wrong !');
+                            }
+                        });
+                    }
+                });
+            } else if (status === 'canceled') {
+                Swal.fire({
+                    title: 'Are you sure Change this?',
+                    text: "You won't be able to revert this!",
+                    html: `
+                        <br />
+                        <form class="form-horizontal" action="{{ route('admin.user-info.status') }}" method="post">
+                            <input type="hidden" name="order_status" value="canceled">
+                            <input type="hidden" name="id" value="${id}">
+                            <input required class="form-control wedding-input-text wizard-input-pad" type="text" name="note" id="note" placeholder="For ${status} note">
+                        </form>
+                    `,
+                    showCancelButton: true,
+                    confirmButtonColor: '#377dff',
+                    cancelButtonColor: 'secondary',
+                    confirmButtonText: 'Yes, Change it!',
+                }).then((result) => {
+                    if (result.value) {
+                        $.ajaxSetup({
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                            }
+                        });
+                        $.ajax({
+                            url: "{{ route('admin.user-info.status') }}",
+                            method: 'POST',
+                            data: $("form").serialize(),
+                            success: function(data) {
+
+                                toastr.success('Status Change successfully');
+                                location.reload();
+                            },
+                            error: function(data) {
+                                toastr.warning('Something went wrong !');
+                            }
+                        });
+                    }
+                });
+            } else {
+                Swal.fire({
+                    title: '{{ \App\CPU\translate('Are you sure Change this') }}?',
+                    text: "You won't be able to revert this!",
+                    html: `
+                            <br />
+                            <form class="form-horizontal" action="{{ route('admin.user-info.status') }}" method="post">
+                                <input type="hidden" name="order_status" value="${status}">
+                                <input type="hidden" name="id" value="${id}">
+                                <input
+                                    required
+                                    class="form-control wedding-input-text wizard-input-pad"
+                                    type="text"
+                                    name="note"
+                                    id="note"
+                                    placeholder="For ${status} note"
+                                >
+                            </form>
+                        `,
+                    showCancelButton: true,
+                    confirmButtonColor: '#377dff',
+                    cancelButtonColor: 'secondary',
+                    confirmButtonText: '{{ \App\CPU\translate('Yes, Change it') }}!'
+                }).then((result) => {
+                    if (result.value) {
+                        $.ajaxSetup({
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                            }
+                        });
+                        $.ajax({
+                            url: "{{ route('admin.user-info.status') }}",
+                            method: 'POST',
+                            data: $("form").serialize(),
+                            success: function(data) {
+
+                                toastr.success('Status Change successfully');
+                                location.reload();
+                            },
+                            error: function(data) {
+                                toastr.warning('Something went wrong !');
+                            }
+                        });
+                    }
+                });
+            }
+
+        }
     </script>
 @endpush

@@ -65,7 +65,7 @@
                                          <h4 style="font-size: 18px; margin:0;">{{ $choice->title }}
                                          </h4>
                                      </div>
-                                     <div class="col-12">
+                                     <div class="col-12" style="margin-top: 20px">
                                          <div class="d-flex">
                                              @foreach ($choice->options as $key => $option)
                                                  <div class="v-size-box">

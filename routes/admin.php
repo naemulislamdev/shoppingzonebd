@@ -712,6 +712,7 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::post('delete', 'userInfoDestroy')->name('delete');
             Route::get('view/{id}', 'userInfoView')->name('view');
             Route::get('bulk-export', 'bulk_export_dataUserInfo')->name('bulk-export');
+            Route::post('status', 'status')->name('status');
         });
 
         Route::controller(DeliveryManController::class)->prefix('/delivery-man')->as('delivery-man.')->group(function () {

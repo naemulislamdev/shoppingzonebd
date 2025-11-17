@@ -77,7 +77,7 @@
                                     @foreach ($applications as $i => $application)
                                         <tr>
                                             <th scope="row">{{ ++$i }}</th>
-                                            <td>{{ $application->name }}</td>
+                                            <td>{{ $application->name }}  </td>
                                             <td>{{ $application->email }}</td>
                                             <td>{{ $application->phone }}</td>
 
@@ -333,6 +333,7 @@
                 success: function(data) {
                     toastr.success(
                         '{{ \App\CPU\translate('Application_status_update_successfully') }}');
+                        
                 },
                 error: function(xhr) {
                     toastr.error('Something went wrong!');
