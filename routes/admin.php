@@ -86,6 +86,8 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('/', 'dashboard')->name('index');
             Route::post('order-stats', 'order_stats')->name('order-stats');
             Route::post('business-overview', 'business_overview')->name('business-overview');
+            Route::get('/admin/report/order/filter', 'OrderReportFilter')->name('order.report.filter');
+
         });
         Route::get('/complain/list', [ComplainAdminController::class, 'list'])->name('complain.list');
         Route::get('/complain/view/{id}', [ComplainAdminController::class, 'view'])->name('complain.view');
@@ -330,6 +332,7 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('order', [ReportController::class, 'order_index'])->name('order');
             Route::get('earning', [ReportController::class, 'earning_index'])->name('earning');
             Route::any('set-date', [ReportController::class, 'set_date'])->name('set-date');
+            Route::get('create-order-transection', [ReportController::class, 'cot_store'])->name('create-order-transection');
             //sale report inhouse
             Route::get('inhoue-product-sale', [InhouseProductSaleController::class, 'index'])->name('inhoue-product-sale');
             Route::get('seller-product-sale', [SellerProductSaleReportController::class, 'index'])->name('seller-product-sale');

@@ -7,9 +7,9 @@
                 <div class="discount-box float-end">
                     <span>
                         @if ($product->discount_type == 'percent')
-                            {{ round($product->discount, $decimal_point_settings) }}%
+                            {{ $product->discount }}%
                         @elseif($product->discount_type == 'flat')
-                            {{ \App\CPU\Helpers::currency_converter($product->discount) }}
+                            {{ $product->discount }}৳
                         @endif
                     </span>
                 </div>
@@ -37,10 +37,16 @@
             </h3>
             <div class="price d-flex justify-content-center align-content-center">
                 @if ($product->discount > 0)
-                    <span
-                        class="mr-2">{{ \App\CPU\Helpers::currency_converter(
-                            $product->unit_price - \App\CPU\Helpers::get_product_discount($product, $product->unit_price),
-                        ) }}</span>
+                    @php
+                        $converted = str_replace(',', '', \App\CPU\Helpers::currency_converter($product->unit_price));
+                        $discountPrice = $converted - $product->discount;
+                    @endphp
+                    @if ($product->discount > 0 && $product->discount_type == 'flat')
+                        <span class="mr-2">{{ $discountPrice }}</span>
+                    @elseif ($product->discount > 0 && $product->discount_type == 'percent')
+                        <span class="mr-2">{{ $converted - ($converted * $product->discount) / 100 }}</span>
+                    @endif
+
                     <del>{{ \App\CPU\Helpers::currency_converter($product->unit_price) }}</del>
                 @else
                     <span>{{ \App\CPU\Helpers::currency_converter($product->unit_price) }}</span>
@@ -49,7 +55,6 @@
             <button type="button" style="cursor: pointer;" class="btn btn-primary"
                 onclick="buy_now('form-{{ $product->id }}')">অর্ডার করুন</button>
         </div>
-
     </div>
 </div>
 <!-- AddToCart Modal -->

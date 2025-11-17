@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Model\Order;
 use Illuminate\Http\Request;
 
 class ReportController extends Controller
@@ -38,5 +39,24 @@ class ReportController extends Controller
 
         $previousUrl = strtok(url()->previous(), '?');
         return redirect()->to($previousUrl . '?' . http_build_query(['from_date' => $request['from'], 'to_date' => $request['to']]))->with(['from' => $from, 'to' => $to]);
+    }
+    public function cot_store()
+    {
+        $orders = Order::where('order_status', 'confirmed',)->where('payment_status', 'paid')->get();
+        foreach ($orders as $order) {
+            \App\Model\OrderTransaction::create([
+                'seller_id' => 1,
+                'order_id' => $order->id,
+                'order_amount' => $order->order_amount,
+                'seller_amount' => 00,
+                'received_by' => 'admin',
+                'status' => 'disburse',
+                'delivery_charge' => $order->shipping_cost,
+                'payment_method' => $order->payment_method,
+                'created_at' => $order->updated_at,
+                'updated_at' => now(),
+            ]);
+        }
+        return 'Order transactions created successfully';
     }
 }

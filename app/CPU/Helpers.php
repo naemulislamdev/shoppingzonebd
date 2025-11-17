@@ -488,7 +488,8 @@ class Helpers
         if ($product->discount_type == 'percent') {
             $discount = ($price * $product->discount) / 100;
         } elseif ($product->discount_type == 'flat') {
-            $discount = $product->discount;
+            //$discount = $product->discount;
+            $discount = BackEndHelper::currency_to_usd( $product->discount);
         }
 
         return floatval($discount);

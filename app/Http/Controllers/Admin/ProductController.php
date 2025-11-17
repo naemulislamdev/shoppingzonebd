@@ -27,6 +27,7 @@ use App\campaing_detalie;
 use App\Http\Requests\ProductRequest;
 use Illuminate\Http\Client\Request as ClientRequest;
 use Illuminate\Support\Facades\Request as FacadesRequest;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends BaseController
 {
@@ -193,7 +194,7 @@ class ProductController extends BaseController
                 array_push($variations, $item);
                 $stock_count += $item['qty'];
             }
-            if($request->colors){
+            if ($request->colors) {
                 foreach ($request->colors as $key => $color) {
                     $colorName = Color::where('code', $color)->first()->name;
                     $imageValu = $request->color_image[$key];
@@ -245,19 +246,19 @@ class ProductController extends BaseController
                 foreach ($request->file('images') as $img) {
                     //dd($img);
                     //$product_images[] = ImageManager::upload('product/', 'png', $img);
-                    $product_images[] = Helpers::uploadWithCompress('product/' , 300, $img);
+                    $product_images[] = Helpers::uploadWithCompress('product/', 300, $img);
                 }
                 $p->images = json_encode($product_images);
             }
             // $p->thumbnail = ImageManager::upload('product/thumbnail/', 'webp', $request->image, $request->alt_text);
             //dd($request->image);
-            $p->thumbnail = Helpers::uploadWithCompress('product/thumbnail/' , 300, $request->image, $request->alt_text);
+            $p->thumbnail = Helpers::uploadWithCompress('product/thumbnail/', 300, $request->image, $request->alt_text);
             //$p->size_chart = ImageManager::upload('product/thumbnail/', 'png', $request->size_chart);
-            $p->size_chart = Helpers::uploadWithCompress('product/thumbnail/' , 300, $request->size_chart);
+            $p->size_chart = Helpers::uploadWithCompress('product/thumbnail/', 300, $request->size_chart);
 
             $p->meta_title = $request->meta_title;
             $p->meta_description = $request->meta_description;
-            $p->meta_image = Helpers::uploadWithCompress('product/meta/' , 300, $request->meta_image);
+            $p->meta_image = Helpers::uploadWithCompress('product/meta/', 300, $request->meta_image);
 
             $p->save();
 
@@ -389,7 +390,7 @@ class ProductController extends BaseController
             ->when($request->sort_oqrderQty == 'default', function ($q) use ($request) {
                 return $q->orderBy('id');
             });
-            //->where('current_stock', '<', $stock_limit)
+        //->where('current_stock', '<', $stock_limit)
 
         $pro = $pro->orderBy('id', 'DESC')->paginate(Helpers::pagination_limit())->appends(['status' => $request['status']])->appends($query_param);
         return view('admin-views.product.stock-limit-list', compact('pro', 'search', 'request_status', 'sort_oqrderQty'));
@@ -631,7 +632,7 @@ class ProductController extends BaseController
                 array_push($variations, $item);
                 $stock_count += $item['qty'];
             }
-            if($request->colors){
+            if ($request->colors) {
                 foreach ($request->colors as $key => $color) {
                     $colorName = Color::where('code', $color)->first();
                     $imageValu = $request->color_image[$key];
@@ -679,9 +680,9 @@ class ProductController extends BaseController
             return response()->json([], 200);
         } else {
             if ($request->file('images')) {
+                
                 foreach ($request->file('images') as $img) {
-                    //$product_images[] = ImageManager::upload('product/', 'png', $img);
-                    $product_images[] = Helpers::updateWithCompress('product/', $img);
+                    $product_images[] = Helpers::uploadWithCompress('product/', 300, $img);
                 }
                 $product->images = json_encode($product_images);
             }

@@ -74,7 +74,7 @@
                         <h2 class="address-title">আপনার ঠিকানা</h2>
                     </div>
                     <div class="card-body">
-                        <form action="{{ route('customer.product.checkout.order') }}" method="POST" id="userInfoForm">
+                        <form action="{{ route('customer.product.checkout.order') }}" method="POST">
                             @csrf
                             <div class="row">
                                 <div class="col-md-12">

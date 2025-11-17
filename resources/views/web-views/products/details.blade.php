@@ -278,19 +278,7 @@
                                 <h1 class="product-name mb-2">{{ $product->name }}</h1>
                                 <div>
                                     <span class="product-price">
-                                        @php
-                                            // Convert USD price to BDT as a numeric value
-                                            $converted = str_replace(',', '', \App\CPU\Helpers::currency_converter($product->unit_price));
-
-                                            // Subtract discount (already in BDT)
-                                            $discountPrice = $converted - $product->discount;
-                                        @endphp
-                                        <span>৳</span>
-                                        @if ($product->discount > 0 && $product->discount_type == 'flat')
-                                            {{ $discountPrice }}
-                                        @else
                                             {{ \App\CPU\Helpers::get_price_range($product) }}
-                                        @endif
                                     </span>
                                 </div>
 

@@ -700,6 +700,30 @@
             });
         });
     </script>
+    <script>
+        function dashboard_order_report_filter() {
+            let from_date = $('#from_date').val();
+            let to_date = $('#to_date').val();
+
+            $.ajax({
+                url: "{{ route('admin.dashboard.order.report.filter') }}",
+                type: "GET",
+                data: {
+                    from_date: from_date,
+                    to_date: to_date
+                },
+                beforeSend: function() {
+                    $('#order_stats').html('<h4>Loading...</h4>');
+                },
+                success: function(response) {
+                    $('#order_stats').html(response.view);
+                },
+                error: function(xhr) {
+                    console.log(xhr.responseText);
+                }
+            });
+        }
+    </script>
 </body>
 
 </html>

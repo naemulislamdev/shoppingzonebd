@@ -505,6 +505,19 @@ class OrderController extends Controller
         $transaction = OrderTransaction::where(['order_id' => $order['id']])->first();
         if (isset($transaction) && $transaction['status'] == 'disburse') {
             return response()->json($request->order_status);
+        } else {
+            if ($request->order_status == 'confirmed') {
+                OrderTransaction::create([
+                    'seller_id' => 1,
+                    'order_id' => $order['id'],
+                    'order_amount' => $order['order_amount'],
+                    'seller_amount' => 00,
+                    'received_by' => 'admin',
+                    'status' => 'disburse',
+                    'payment_method' => $order['payment_method']
+
+                ]);
+            }
         }
 
         if ($request->order_status == 'delivered' && $order['seller_id'] != null) {

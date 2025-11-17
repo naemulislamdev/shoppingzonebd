@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\CPU\Helpers;
 use App\Http\Controllers\Controller;
 use App\Model\AdminWallet;
 use App\Model\Brand;
@@ -32,7 +33,8 @@ class DashboardController extends Controller
 
         $most_rated_products = Product::rightJoin('reviews', 'reviews.product_id', '=', 'products.id')
             ->groupBy('product_id')
-            ->select(['product_id',
+            ->select([
+                'product_id',
                 DB::raw('AVG(reviews.rating) as ratings_average'),
                 DB::raw('count(*) as total')
             ])
@@ -40,7 +42,7 @@ class DashboardController extends Controller
             ->take(6)
             ->get();
 
-            
+
         $top_store_by_earning = SellerWallet::select('seller_id', DB::raw('SUM(total_earning) as count'))
             ->groupBy('seller_id')
             ->orderBy("count", 'desc')
@@ -128,13 +130,36 @@ class DashboardController extends Controller
         $data['top_store_by_order_received'] = $top_store_by_order_received;
 
         $admin_wallet = AdminWallet::where('admin_id', 1)->first();
-        $data['inhouse_earning'] = $admin_wallet!=null?$admin_wallet->inhouse_earning:0;
-        $data['commission_earned'] = $admin_wallet!=null?$admin_wallet->commission_earned:0;
-        $data['delivery_charge_earned'] = $admin_wallet!=null?$admin_wallet->delivery_charge_earned:0;
-        $data['pending_amount'] = $admin_wallet!=null?$admin_wallet->pending_amount:0;
-        $data['total_tax_collected'] = $admin_wallet!=null?$admin_wallet->total_tax_collected:0;
+        $data['inhouse_earning'] = $admin_wallet != null ? $admin_wallet->inhouse_earning : 0;
+        $data['commission_earned'] = $admin_wallet != null ? $admin_wallet->commission_earned : 0;
+        $data['delivery_charge_earned'] = $admin_wallet != null ? $admin_wallet->delivery_charge_earned : 0;
+        $data['pending_amount'] = $admin_wallet != null ? $admin_wallet->pending_amount : 0;
+        $data['total_tax_collected'] = $admin_wallet != null ? $admin_wallet->total_tax_collected : 0;
 
-        return view('admin-views.system.dashboard', compact('data', 'inhouse_data', 'seller_data', 'commission_data'));
+        //Order report data
+         $from = date('Y-m-d') . " 00:00:00";
+        $to   = date('Y-m-d') . " 23:59:59";
+
+        // Fetch data
+        $results = Order::selectRaw("
+                COUNT(*) as total_orders,
+                SUM(order_amount) as total_amount,
+                SUM(CASE WHEN order_status='pending' THEN 1 END) as pending_qty,
+                SUM(CASE WHEN order_status='pending' THEN order_amount END) as pending_amount,
+                SUM(CASE WHEN order_status='confirmed' THEN 1 END) as confirmed_qty,
+                SUM(CASE WHEN order_status='confirmed' THEN order_amount END) as confirmed_amount,
+                SUM(CASE WHEN order_status='canceled' THEN 1 END) as canceled_qty,
+                SUM(CASE WHEN order_status='canceled' THEN order_amount END) as canceled_amount
+        ")
+            ->whereBetween('created_at', [$from, $to])
+            ->first();
+        // Convert USD → BDT
+        $results->total_amount        = Helpers::currency_converter($results->total_amount ?? 0);
+        $results->pending_amount      = Helpers::currency_converter($results->pending_amount ?? 0);
+        $results->confirmed_amount    = Helpers::currency_converter($results->confirmed_amount ?? 0);
+        $results->canceled_amount     = Helpers::currency_converter($results->canceled_amount ?? 0);
+
+        return view('admin-views.system.dashboard', compact('data', 'inhouse_data', 'seller_data', 'commission_data', 'results'));
     }
 
     public function order_stats(Request $request)
@@ -185,7 +210,7 @@ class DashboardController extends Controller
             })
             ->count();
         $delivered = Order::where(['order_status' => 'delivered'])
-            ->where('order_type','default_type')
+            ->where('order_type', 'default_type')
             ->when($today, function ($query) {
                 return $query->whereDate('created_at', Carbon::today());
             })
@@ -230,5 +255,36 @@ class DashboardController extends Controller
         ];
 
         return $data;
+    }
+    public function OrderReportFilter(Request $request)
+    {
+        $from = $request->from_date . " 00:00:00";
+        $to   = $request->to_date . " 23:59:59";
+
+        // Fetch data
+        $results = Order::selectRaw("
+                COUNT(*) as total_orders,
+                SUM(order_amount) as total_amount,
+                SUM(CASE WHEN order_status='pending' THEN 1 END) as pending_qty,
+                SUM(CASE WHEN order_status='pending' THEN order_amount END) as pending_amount,
+                SUM(CASE WHEN order_status='confirmed' THEN 1 END) as confirmed_qty,
+                SUM(CASE WHEN order_status='confirmed' THEN order_amount END) as confirmed_amount,
+                SUM(CASE WHEN order_status='canceled' THEN 1 END) as canceled_qty,
+                SUM(CASE WHEN order_status='canceled' THEN order_amount END) as canceled_amount
+        ")
+            ->whereBetween('created_at', [$from, $to])
+            ->first();
+        // Convert USD → BDT
+        $results->total_amount        = Helpers::currency_converter($results->total_amount ?? 0);
+        $results->pending_amount      = Helpers::currency_converter($results->pending_amount ?? 0);
+        $results->confirmed_amount    = Helpers::currency_converter($results->confirmed_amount ?? 0);
+        $results->canceled_amount     = Helpers::currency_converter($results->canceled_amount ?? 0);
+
+        // Return the updated card HTML
+        $html = view('admin-views.partials._dashboard-order-reports', compact('results'))->render();
+
+        return response()->json([
+            'view' => $html
+        ]);
     }
 }
