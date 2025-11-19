@@ -7,9 +7,9 @@
                 <div class="discount-box float-end">
                     <span>
                         @if ($product->discount_type == 'percent')
-                            {{ $product->discount }}%
+                            {{ round($product->discount, $decimal_point_settings) }}%
                         @elseif($product->discount_type == 'flat')
-                            {{ $product->discount }}৳
+                            {{ \App\CPU\Helpers::currency_converter($product->discount) }}৳
                         @endif
                     </span>
                 </div>
@@ -37,16 +37,10 @@
             </h3>
             <div class="price d-flex justify-content-center align-content-center">
                 @if ($product->discount > 0)
-                    @php
-                        $converted = str_replace(',', '', \App\CPU\Helpers::currency_converter($product->unit_price));
-                        $discountPrice = $converted - $product->discount;
-                    @endphp
-                    @if ($product->discount > 0 && $product->discount_type == 'flat')
-                        <span class="mr-2">{{ $discountPrice }}</span>
-                    @elseif ($product->discount > 0 && $product->discount_type == 'percent')
-                        <span class="mr-2">{{ $converted - ($converted * $product->discount) / 100 }}</span>
-                    @endif
-
+                    <span
+                        class="mr-2">{{ \App\CPU\Helpers::currency_converter(
+                            $product->unit_price - \App\CPU\Helpers::get_product_discount($product, $product->unit_price),
+                        ) }}</span>
                     <del>{{ \App\CPU\Helpers::currency_converter($product->unit_price) }}</del>
                 @else
                     <span>{{ \App\CPU\Helpers::currency_converter($product->unit_price) }}</span>

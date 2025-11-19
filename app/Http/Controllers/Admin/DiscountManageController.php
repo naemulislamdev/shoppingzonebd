@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\CPU\BackEndHelper;
 use App\Http\Controllers\Controller;
 use App\Model\Category;
 use App\Model\Product;
@@ -49,7 +50,7 @@ class DiscountManageController extends Controller
                 $foundAnyProduct = true;
 
                 if ($discountType === 'flat') {
-                    $product->discount = $discountAmount;
+                    $product->discount = BackEndHelper::currency_to_usd($discountAmount);
                     $product->discount_type = 'flat';
                 } elseif ($discountType === 'percent') {
                     $product->discount = $discountAmount;
@@ -106,7 +107,7 @@ class DiscountManageController extends Controller
                 $foundAnyProduct = true;
 
                 if ($discountType === 'flat') {
-                    $product->discount = $discountAmount;
+                    $product->discount = BackEndHelper::currency_to_usd($discountAmount);
                     $product->discount_type = 'flat';
                 } elseif ($discountType === 'percentage') {
                     $product->discount = $discountAmount;
@@ -184,7 +185,7 @@ class DiscountManageController extends Controller
 
             $product = Product::find($productId);
             if ($product) {
-                $product->discount = $amount;
+                $product->discount = $type == 'flat' ? BackEndHelper::currency_to_usd($amount) : $amount;
                 $product->discount_type = $type;
                 $product->save();
             }
@@ -223,7 +224,7 @@ class DiscountManageController extends Controller
 
             $product = Product::find($productId);
             if ($product) {
-                $product->discount = $amount;
+                $product->discount = $type == 'flat' ? BackEndHelper::currency_to_usd($amount) : $amount;
                 $product->discount_type = $type;
                 $product->save();
             }

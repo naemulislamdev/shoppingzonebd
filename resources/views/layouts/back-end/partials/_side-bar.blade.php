@@ -1142,6 +1142,16 @@ $route = request()->route()->getName();
                                 </a>
                             </li>
                             <li
+                                class="navbar-vertical-aside-has-menu {{ Request::is('admin/investors*') ? 'active' : '' }}">
+                                <a class="js-navbar-vertical-aside-menu-link nav-link"
+                                    href="{{ route('admin.investors.list') }}">
+                                    <i class="tio-messages nav-icon"></i>
+                                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">
+                                        Investors Info
+                                    </span>
+                                </a>
+                            </li>
+                            <li
                                 class="navbar-vertical-aside-has-menu {{ Request::is('admin/leads*') ? 'active' : '' }}">
                                 <a class="js-navbar-vertical-aside-menu-link nav-link"
                                     href="{{ route('admin.leads.list') }}">

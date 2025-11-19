@@ -31,6 +31,14 @@ use Illuminate\Support\Facades\Storage;
 
 class ProductController extends BaseController
 {
+    public function updateProductFlatDiscount(){
+        $products = Product::where('discount_type', 'flat')->get();
+        foreach($products as $product){
+            $product->discount = BackEndHelper::currency_to_usd($product->discount);
+            $product->save();
+        }
+       return response()->json(['message' => 'Flat discounts updated successfully.'], 200);
+    }
     public function add_new()
     {
         $cat = Category::where(['parent_id' => 0])->get();
@@ -680,7 +688,7 @@ class ProductController extends BaseController
             return response()->json([], 200);
         } else {
             if ($request->file('images')) {
-                
+
                 foreach ($request->file('images') as $img) {
                     $product_images[] = Helpers::uploadWithCompress('product/', 300, $img);
                 }

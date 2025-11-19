@@ -164,20 +164,6 @@ class ContactController extends Controller
     //--- User Information Management ---//
     public function userInfoList(Request $request)
     {
-        // $query_param = [];
-        // $search = $request['search'];
-        // if ($request->has('search')) {
-        //     $key = explode(' ', $request['search']);
-        //     $userInfos = UserInfo::where(function ($q) use ($key) {
-        //         foreach ($key as $value) {
-        //             $q->orWhere('name', 'like', "%{$value}%")
-        //                 ->orWhere('phone', 'like', "%{$value}%");
-        //         }
-        //     });
-        //     $query_param = ['search' => $request['search']];
-        // } else {
-        //     $userInfos = new UserInfo();
-        // }
         $userInfos =  UserInfo::latest()->get();
         return view('admin-views.user-info.list', compact('userInfos'));
     }
@@ -224,5 +210,43 @@ class ContactController extends Controller
             return response()->json($data);
 
         }
+    }
+    //--- Investment Management ---//
+    public function investorsList(Request $request)
+    {
+        $investors =  Investor::latest()->get();
+        return view('admin-views.investors.list', compact('investors'));
+    }
+
+    public function investorsView($id)
+    {
+        $investor = Investor::findOrFail($id);
+        $investor->update(['status' => 1]);
+        return view('admin-views.investors.view', compact('investor'));
+    }
+    public function investorsDestroy(Request $request)
+    {
+        $lead = Investor::find($request->id);
+        $lead->delete();
+
+        return response()->json();
+    }
+    public function bulk_export_investors()
+    {
+        $investors = Investor::latest()->get();
+        //export from userInfos
+        $data = [];
+        foreach ($investors as $item) {
+            $data[] = [
+                'Date' => Carbon::parse($item->created_at)->format('d M Y'),
+                'name' => $item->name,
+                'phone' => $item->mobile_number,
+                'address' => $item->address,
+                'occupation' => $item->occupation,
+                'investment_amount' => $item->investment_amount,
+                //'status' => $item->status == 0 ? 'Unseen' : 'Seen',
+            ];
+        }
+        return (new FastExcel($data))->download('investors_info.xlsx');
     }
 }

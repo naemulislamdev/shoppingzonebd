@@ -488,8 +488,7 @@ class Helpers
         if ($product->discount_type == 'percent') {
             $discount = ($price * $product->discount) / 100;
         } elseif ($product->discount_type == 'flat') {
-            //$discount = $product->discount;
-            $discount = BackEndHelper::currency_to_usd( $product->discount);
+            $discount = $product->discount;
         }
 
         return floatval($discount);
@@ -844,7 +843,7 @@ if (!function_exists('format_price')) {
     function format_price($price)
     {
         //return number_format($price, 2) . currency_symbol();
-        return number_format($price, 2);
+        return number_format($price);
     }
 }
 

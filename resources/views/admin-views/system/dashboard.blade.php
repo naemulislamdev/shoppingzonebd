@@ -46,6 +46,43 @@
             color: #fff;
         }
     </style>
+    <style>
+    .report-card {
+        border-radius: 15px;
+        padding: 22px;
+        transition: 0.3s;
+        color: #fff !important;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        position: relative;
+        overflow: hidden;
+    }
+    .report-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 6px 25px rgba(0,0,0,0.15);
+    }
+
+    .report-icon {
+        font-size: 48px;
+        opacity: 0.20;
+        position: absolute;
+        right: 15px;
+        bottom: 10px;
+    }
+
+    .report-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 5px;
+        opacity: 0.9;
+    }
+
+    .report-values {
+        font-size: 16px;
+        line-height: 1.5;
+        font-weight: 500;
+    }
+</style>
+
 @endpush
 
 @section('content')

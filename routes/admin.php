@@ -418,6 +418,7 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('barcode/generate', 'barcode_generate')->name('barcode.generate');
             Route::get('CampaingDelete/{id}', 'CampaingDelete')->name('CampaingDelete');
             Route::get('productsearch', 'productsearch')->name('productsearch');
+            Route::get('updateProductFlatDiscount', 'updateProductFlatDiscount')->name('updateProductFlatDiscount');
         });
 
         Route::controller(DiscountManageController::class)->prefix('/discount')->as('discount.')->middleware('module:product_management')->group(function () {
@@ -703,6 +704,12 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('view/{id}', 'view')->name('view');
             Route::post('update/{id}', 'update')->name('update');
             Route::post('send-mail/{id}', 'send_mail')->name('send-mail');
+        });
+        Route::controller(ContactController::class)->prefix('/investors')->as('investors.')->middleware('module:support_section')->group(function () {
+            Route::get('list', 'investorsList')->name('list');
+            Route::get('view/{id}', 'investorsView')->name('view');
+            Route::post('delete', 'investorsDestroy')->name('delete');
+            Route::get('bulk-export', 'bulk_export_investors')->name('bulk-export');
         });
         Route::controller(ContactController::class)->prefix('/leads')->as('leads.')->middleware('module:support_section')->group(function () {
             Route::get('list', 'leadsList')->name('list');

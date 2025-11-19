@@ -3,7 +3,7 @@
 @section('title', \App\CPU\translate('Batch Products'))
 @push('css_or_js')
     <link href="https://cdn.datatables.net/2.3.3/css/dataTables.bootstrap4.css" rel="stylesheet">
-    @endpush
+@endpush
 
 @section('content')
     <div class="content container-fluid">
@@ -28,15 +28,12 @@
                                 <div>
                                     <h5>{{ \App\CPU\translate('Batch discount product table') }}</h5>
                                 </div>
-
                             </div>
                         </div>
                     </div>
                     <div class="card-body" style="padding: 0">
                         <div class="table-responsive">
-                            <table id="datatable"
-                                class="table table-hover table-thead-bordered"
-                                style="width: 100%">
+                            <table id="datatable" class="table table-hover table-thead-bordered" style="width: 100%">
                                 <thead class="thead-light">
                                     <tr>
                                         <th>{{ \App\CPU\translate('SL') }}</th>
@@ -56,15 +53,16 @@
                                                 {{ $product->name }}
                                             </td>
                                             <td>{{ $product->code }}</td>
-                                            <td>{{\App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($product['unit_price']))}}</td>
+                                            <td>{{ \App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($product['unit_price'])) }}
+                                            </td>
                                             <td>
-                                                {{ $product->discount }}
+                                                {{$product['discount_type'] == 'flat'? \App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($product['discount'])) : $product['discount'].'%'}}
                                             </td>
                                             <td>
                                                 {{ $product->discount_type }}
                                             </td>
                                             <td>
-                                               <a class="btn btn-danger btn-sm"
+                                                <a class="btn btn-danger btn-sm"
                                                     href="{{ route('admin.discount.batch.remove.product', $product->id) }}">
                                                     <i class="tio-delete"></i> {{ \App\CPU\translate('Remove') }}
                                                 </a>

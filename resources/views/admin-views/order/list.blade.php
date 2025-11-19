@@ -353,11 +353,11 @@
 
                             <div class="row">
                                 <div class="col-12 col-sm-4">
-                                    <input type="date" name="from" value="{{$from}}" id="from_date"
+                                    <input type="date" name="from" value="{{$from ?? date('Y-m-d')}}" id="from_date"
                                             class="form-control">
                                 </div>
                                 <div class="col-12 col-sm-4 mt-2 mt-sm-0">
-                                    <input type="date" value="{{$to}}" name="to" id="to_date"
+                                    <input type="date" value="{{$to ?? date('Y-m-d')}}" name="to" id="to_date"
                                             class="form-control">
                                 </div>
                                 <div class="col-12 col-sm-2 mt-2 mt-sm-0  ">
