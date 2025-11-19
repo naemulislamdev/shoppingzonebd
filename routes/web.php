@@ -13,6 +13,7 @@
 
 use App\Http\Controllers\CareerController;
 use App\Http\Controllers\ComplainController;
+use App\Http\Controllers\InvestorController;
 use App\Http\Controllers\Seller\Auth\RegisterController;
 use App\Http\Controllers\Web\CartController;
 use App\Http\Controllers\Web\ChattingController;
@@ -37,6 +38,8 @@ Route::post('/complain/store', [ComplainController::class, 'customerComplainStor
 
 // facebook feed route
 Route::get('/feed/facebook', [FeedController::class, 'facebookFeed']);
+
+
 
 Route::middleware(['maintenance_mode'])->group(function () {
 
@@ -65,7 +68,14 @@ Route::middleware(['maintenance_mode'])->group(function () {
     // Route::get('quick-view', 'WebController@quick_view')->name('quick-view');
     // Route::get('searched-products', 'WebController@searched_products')->name('searched-products');
 
-    Route::controller(WebController::class)->middleware(['customer'])->group(function () {
+    // Investor routes
+    Route::controller(InvestorController::class)->group(function () {
+        Route::get('/investor', 'create')->name('investor.crate');
+        Route::post('/investor/store', 'store')->name('investor.store');
+
+    });
+
+Route::controller(WebController::class)->middleware(['customer'])->group(function () {
         Route::get('checkout-shipping', 'checkout_shipping')->name('checkout-shipping');
         Route::get('checkout-payment', 'checkout_payment')->name('checkout-payment');
         Route::get('checkout-review', 'checkout_review')->name('checkout-review');

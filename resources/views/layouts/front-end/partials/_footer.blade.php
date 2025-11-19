@@ -58,6 +58,9 @@
                         </li>
                         <li><a href="{{ route('track-order.index') }}">{{ \App\CPU\translate('Track Order') }}</a>
                         </li>
+                        <li>
+                            <a href="{{ route('investor.crate') }}">Investor</a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -71,7 +74,9 @@
                                 alt="Google play store logo"></a>
                         <a href="#"><img src="{{ asset('assets/front-end') }}/images/logo/apple_app.png"
                                 alt="Apple app store logo"></a>
+
                     </div>
+
                 </div>
             </div>
         </div>
@@ -80,6 +85,7 @@
                 <div class="text-center footer-pay-logo">
                     <img src="{{ asset('assets/front-end') }}/images/payment/SSLCommerz02.png" alt="">
                 </div>
+
             </div>
         </div>
     </div>

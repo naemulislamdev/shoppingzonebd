@@ -45,6 +45,7 @@
         .border-bottom>h5 {
             color: #fff;
         }
+
     </style>
 @endpush
 
@@ -68,24 +69,26 @@
                 <div class="col-lg-8 col-md-8">
                     <div class="row">
                         <div class="col-md-12">
-                            <div class="card mb-3" style="background-color: #ffffff">
+                            <div class="card mb-3" style="background-color: #ffffff; box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;">
                                 <div class="card-body">
                                     <div>
-                                        <h4 style="color:rgb(13, 13, 13)"><i style="font-size: 30px"
-                                                class="tio-chart-line-up"></i>{{ \App\CPU\translate('Order Reports') }}
+
+                                        <h4 class="d-flex align-items-center" style="color:rgb(13, 13, 13)"><img style="height: 40px" src="{{asset('assets/back-end/img/chart-line-up.gif')}}" alt="order line up">{{ \App\CPU\translate('Order Reports') }}
                                         </h4>
                                     </div>
                                     <div class="row ">
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>Form Date</label>
-                                                <input type="date" value="{{date('Y-m-d')}}" class="form-control" id="from_date" name="from_date">
+                                                <input type="date" value="{{ date('Y-m-d') }}" class="form-control"
+                                                    id="from_date" name="from_date">
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>To Date</label>
-                                                <input type="date" value="{{date('Y-m-d')}}" class="form-control" id="to_date" name="to_date">
+                                                <input type="date" value="{{ date('Y-m-d') }}" class="form-control"
+                                                    id="to_date" name="to_date">
                                             </div>
                                         </div>
                                         <div class="col-md-4" style="margin-top: 30px">
@@ -104,8 +107,8 @@
                             </div>
                         </div>
                         <div class="col-md-12">
-                            <div class="card mb-3" style="background-color: #ffffff">
-                                <div class="card-body">
+                            <div class="card mb-3" style="background-color: #ffffff; box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;">
+                                <div class="card-body" >
                                     <div class="row flex-between gx-2 gx-lg-3 mb-2">
                                         <div>
                                             <h4 style="color:white"><i style="font-size: 30px"
@@ -137,11 +140,12 @@
                                     </div>
                                 </div>
                             </div>
+
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-lg-12 col-md-12">
-                            <div class="card mb-3" style="background-color: #ffffff">
+                            <div class="card mb-3" style="background-color: #ffffff; box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;">
                                 <div class="card-body">
                                     <div class="flex-between gx-2 gx-lg-3 mb-2">
                                         <div>
@@ -164,7 +168,7 @@
                     <div class="row mb-3">
                         <div class="col-md-12">
                             <!-- Card -->
-                            <div class="card h-100">
+                            <div class="card h-100" style="box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;">
                                 @include('admin-views.partials._top-selling-products', [
                                     'top_sell' => $data['top_sell'],
                                 ])
@@ -175,7 +179,7 @@
                     <div class="row">
                         <div class="col-lg-12 col-md-12 mb-3">
                             <!-- Card -->
-                            <div class="card h-100">
+                            <div class="card h-100" style="box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;">
                                 @include('admin-views.partials._top-customer', [
                                     'top_customer' => $data['top_customer'],
                                 ])
@@ -191,7 +195,7 @@
             <div class="row gx-2 gx-lg-3">
                 <div class="col-lg-12 mb-3 mb-lg-12">
                     <!-- Card -->
-                    <div class="card h-100">
+                    <div class="card h-100" style="box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;">
                         <!-- Body -->
                         <div class="card-body">
                             <div class="row mb-4">
@@ -322,7 +326,7 @@
             <div class="row gx-2 gx-lg-3 mt-2">
                 <div class="col-lg-6 mb-3">
                     <!-- Card -->
-                    <div class="card h-100">
+                    <div class="card h-100" style="box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;">
                         <!-- Header -->
                         <div class="card-header">
                             <h5 class="card-header-title">
@@ -347,7 +351,7 @@
 
                 <div class="col-lg-6 mb-3">
                     <!-- Card -->
-                    <div class="card h-100">
+                    <div class="card h-100" style="box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;">
                         @include('admin-views.partials._top-store-by-order', [
                             'top_store_by_order_received' => $data['top_store_by_order_received'],
                         ])
@@ -357,7 +361,7 @@
 
                 <div class="col-lg-6 mb-3">
                     <!-- Card -->
-                    <div class="card h-100">
+                    <div class="card h-100" style="box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;">
                         @include('admin-views.partials._top-selling-store', [
                             'top_store_by_earning' => $data['top_store_by_earning'],
                         ])
@@ -368,7 +372,7 @@
 
                 <div class="col-lg-6 mb-3">
                     <!-- Card -->
-                    <div class="card h-100">
+                    <div class="card h-100" style="box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;">
                         @include('admin-views.partials._most-rated-products', [
                             'most_rated_products' => $data['most_rated_products'],
                         ])
