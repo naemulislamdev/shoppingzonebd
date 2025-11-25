@@ -1,2 +1,11 @@
 User-agent: *
-Disallow:
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /login/
+Disallow: /register/
+Disallow: /password/
+Disallow: /checkout/
+Disallow: /order-track/
+Disallow: /shop-cart/
+
+Sitemap: https://shoppingzonebd.com.bd/sitemap.xml

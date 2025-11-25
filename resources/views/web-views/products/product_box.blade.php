@@ -7,7 +7,7 @@
                 <div class="discount-box float-end">
                     <span>
                         @if ($product->discount_type == 'percent')
-                            {{ round($product->discount, $decimal_point_settings) }}%
+                            {{ $product->discount }}%
                         @elseif($product->discount_type == 'flat')
                             {{ \App\CPU\Helpers::currency_converter($product->discount) }}৳
                         @endif
@@ -15,11 +15,11 @@
                 </div>
             @endif
             <a href="{{ route('product', $product->slug) }}">
-                <img class="pic-1"
-                    src="{{ \App\CPU\ProductManager::product_image_path('thumbnail') }}/{{ $product['thumbnail'] }}"
-                    alt="{{ $product['name'] }}">
-                <img class="pic-2"
-                    src="{{ \App\CPU\ProductManager::product_image_path('thumbnail') }}/{{ $product['thumbnail'] }}"
+                <!-- ✅ Lazy Loading Image -->
+                <img class="img-fluid lazy-image"
+                    loading="lazy"
+                    src="data:image/svg+xml,%3Csvg width='300' height='300' xmlns='http://www.w3.org/2000/svg'%3E%3C/svg%3E"
+                    data-src="{{ \App\CPU\ProductManager::product_image_path('thumbnail') }}/{{ $product['thumbnail'] }}"
                     alt="{{ $product['name'] }}">
             </a>
             <ul class="social">

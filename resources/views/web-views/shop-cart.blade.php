@@ -100,6 +100,55 @@
 @endsection
 
 @push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // get base total from partial (numeric)
+        const grandTotalElement = document.getElementById('grand-total');
+        // parse raw value (ensure it's numeric)
+        let baseTotal = parseFloat(
+            (grandTotalElement.dataset.raw || "0").toString().replace(/,/g, "")
+        );
+        console.log('Base Total:', baseTotal);
+
+        const shippingRadios = document.querySelectorAll('.shipping-method');
+        const preloader = document.getElementById('preloader');
+
+        function formatBDT(value) {
+            // If you want to use JS formatter:
+            // return new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value) + ' ৳';
+            // Or if you prefer to keep backend formatting, return value + ' ৳'
+            return value.toFixed(2) + ' ৳';
+        }
+
+        function updateTotal(shippingCost) {
+            if (preloader) preloader.style.display = 'inline-block';
+            setTimeout(function() {
+                const total = parseFloat(baseTotal) + parseFloat(shippingCost || 0);
+                // show formatted number
+                if (grandTotalElement) {
+                    grandTotalElement.innerHTML = formatBDT(total);
+                    // also update data-raw so further changes use the new base if needed
+                    grandTotalElement.dataset.raw = total;
+                }
+                if (preloader) preloader.style.display = 'none';
+            }, 300); // smaller delay, adjust as needed
+        }
+
+        // attach events
+        shippingRadios.forEach(function(radio) {
+            radio.addEventListener('change', function() {
+                // dataset.cost should be a number string
+                const costStr = this.dataset.cost || '0';
+                // remove commas, if any
+                const clean = String(costStr).replace(/,/g, '');
+                const shippingCost = parseFloat(clean) || 0;
+                updateTotal(shippingCost);
+                console.log(shippingCost);
+
+            });
+        });
+    });
+</script>
     <script>
         cartQuantityInitialize();
     </script>
@@ -131,39 +180,6 @@
                 phoneFeedback.textContent = 'Phone number is required';
             } else if (!regex.test(phoneInput)) {
                 phoneFeedback.textContent = 'Please enter a valid Bangladeshi phone number (e.g. 0171XXXXXXX)';
-            }
-        });
-    </script>
-
-    <script>
-        $(document).ready(function() {
-            let typingTimer;
-            let doneTypingInterval = 1000; // Time in milliseconds (1 second)
-
-            $(".auto-save").on("input", function() {
-                clearTimeout(typingTimer);
-                typingTimer = setTimeout(saveUserData, doneTypingInterval);
-            });
-
-            function saveUserData() {
-                let formData = $("#userInfoForm").serialize();
-
-                $.ajax({
-                    url: "{{ route('save.user.info') }}",
-                    type: "POST",
-                    data: formData,
-                    dataType: "json",
-                    success: function(response) {
-                        if (response.success) {
-                            console.log("Data auto-saved successfully!");
-                        } else {
-                            console.log("Failed to save data.");
-                        }
-                    },
-                    error: function(xhr) {
-                        console.log("Error: ", xhr.responseText);
-                    }
-                });
             }
         });
     </script>

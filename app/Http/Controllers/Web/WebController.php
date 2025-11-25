@@ -54,9 +54,57 @@ use App\Models\UserInfo;
 use App\ProductLandingPage;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Sitemap\Sitemap;
+use Spatie\Sitemap\Tags\Url;
+use Illuminate\Support\Facades\Cache;
 
 class WebController extends Controller
 {
+    public function siteMaps()
+    {
+        return Cache::remember('sitemap', 3600, function () {
+            $siteURL = "https://shoppingzonebd.com.bd";
+            $sitemap = Sitemap::create();
+
+            // Add Home Page
+            $sitemap->add(
+                Url::create($siteURL.'/')
+                    ->setLastModificationDate(now())
+                    ->setChangeFrequency(Url::CHANGE_FREQUENCY_DAILY)
+                    ->setPriority(0.8)
+            );
+
+            // Add Contact Page
+            $sitemap->add(
+                Url::create($siteURL.'/contact')
+                    ->setLastModificationDate(now())
+                    ->setChangeFrequency(Url::CHANGE_FREQUENCY_MONTHLY)
+                    ->setPriority(0.5)
+            );
+
+            // Add Category Pages
+            foreach (Category::all() as $category) {
+                $sitemap->add(
+                    Url::create($siteURL.'/category/' . $category->slug)
+                        ->setLastModificationDate($category->updated_at ?? now())
+                        ->setChangeFrequency(Url::CHANGE_FREQUENCY_WEEKLY)
+                        ->setPriority(0.7)
+                );
+            }
+
+            // Add Product Pages
+            foreach (Product::all() as $product) {
+                $sitemap->add(
+                    Url::create($siteURL. '/product/' . $product->slug)
+                        ->setLastModificationDate($product->updated_at ?? now())
+                        ->setChangeFrequency(Url::CHANGE_FREQUENCY_WEEKLY)
+                        ->setPriority(0.9)
+                );
+            }
+
+            return $sitemap->toResponse(request());
+        });
+    }
     public function maintenance_mode()
     {
         $maintenance_mode = Helpers::get_business_settings('maintenance_mode') ?? 0;

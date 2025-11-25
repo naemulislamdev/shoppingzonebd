@@ -19,12 +19,14 @@
         "laravel/tinker": "^2.10",
         "lcobucci/jwt": "^5.3",
         "league/flysystem-aws-s3-v3": "^3.29",
+        "maatwebsite/excel": "^3.1",
         "madnest/madzipper": "^1.4",
         "mercadopago/dx-php": "v2.6.2",
         "milon/barcode": "^11.0",
         "mpdf/mpdf": "^8.2",
         "rap2hpoutre/fast-excel": "^5.5",
         "seshac/laravel-shiprocket-api": "^2.0",
+        "spatie/laravel-sitemap": "^7.3",
         "symfony/translation": "^6.4"
     },
     "require-dev": {

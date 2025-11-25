@@ -3,6 +3,10 @@
 @section('title', \App\CPU\translate('Investors'))
 
 @push('css_or_js')
+<<<<<<< HEAD
+=======
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.2/css/jquery.dataTables.min.css">
+>>>>>>> 08b253713f0288bba1d245f57280bfcf797b356b
 @endpush
 
 @section('content')

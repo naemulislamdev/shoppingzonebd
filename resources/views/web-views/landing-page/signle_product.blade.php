@@ -669,7 +669,6 @@
                                                                         </td>
                                                                     </tr>
                                                                     <tr>
-
                                                                         <td>
                                                                             <h5 class="shipping-title">Shipping :</h5>
                                                                             <ul class="p-0 m-0">

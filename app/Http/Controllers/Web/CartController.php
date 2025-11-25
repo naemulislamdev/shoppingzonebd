@@ -165,7 +165,16 @@ class CartController extends Controller
         return response()->json([
             'data' => $data,
             'status' => 'success',
-            'count' => session()->has('cart') ? count(session()->get('cart')) : 0
+            'count' => session()->has('cart') ? count(session()->get('cart')) : 0,
+            'product' => [
+                'id' => $product->id,
+                'name' => $product->name,
+                'brand' => $product->brand->name ?? '',
+                'category' => 'Shopping Zone Bd', //incomplete
+                'variant' => '',
+                'price' => \App\CPU\Helpers::currency_converter($product->unit_price),
+                'quantity' => $request['quantity']
+            ]
         ]);
     }
     public function subdomainOrdernow($id)

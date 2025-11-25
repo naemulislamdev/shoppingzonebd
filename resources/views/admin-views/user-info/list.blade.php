@@ -3,6 +3,10 @@
 @section('title', \App\CPU\translate('User Info'))
 
 @push('css_or_js')
+<<<<<<< HEAD
+=======
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.2/css/jquery.dataTables.min.css">
+>>>>>>> 08b253713f0288bba1d245f57280bfcf797b356b
 @endpush
 
 @section('content')
@@ -66,6 +70,46 @@
                             </div>
                         </form>
                     </div>
+<<<<<<< HEAD
+=======
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table id="example" class="table table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 2%;">SL#</th>
+                                        <th style="width: 10%;">Date and Time</th>
+                                        <th style="width: 10%;">Name</th>
+                                        <th style="width: 10%;">Phone</th>
+                                        <th style="width: 15%;">Address</th>
+                                        <th style="width: 5%;">Status</th>
+                                        <th style="width: 10%;">Product</th>
+                                        <th style="width: 3%;">Order Process</th>
+                                        <th style="width: 12%;">Order Status</th>
+                                        <th style="width: 10%;">Status Note</th>
+                                        <th style="width: 8%;">Type</th>
+                                        <th style="width: 5%;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    @foreach ($userInfos as $k => $userInfo)
+                                        <tr>
+                                            <td>{{ $loop->iteration }}</td>
+                                            <td>
+                                                {{ \Carbon\Carbon::parse($userInfo->created_at)->format('d M Y') }}
+                                                <br>
+                                                {{ date('h:i A', strtotime($userInfo['created_at'])) }}
+                                            </td>
+                                            <td>{{ $userInfo['name'] }}</td>
+                                            <td>{{ $userInfo['phone'] }}</td>
+                                            <td>{{ $userInfo['address'] }}</td>
+                                            <td>{{ $userInfo['status'] == 0 ? 'Unseen' : 'Seen' }}</td>
+                                            <td>
+                                                @php
+                                                    $product_details = json_decode($userInfo->product_details, true);
+                                                @endphp
+>>>>>>> 08b253713f0288bba1d245f57280bfcf797b356b
 
                 </div>
                 <!-- End Row -->
@@ -228,6 +272,7 @@
                             <td>{{ $userInfo->type }}</td>
                             <td>
 
+<<<<<<< HEAD
                                 <div class="d-flex justify-content-between">
                                     <a title="{{ \App\CPU\translate('View') }}" class="btn btn-info btn-sm mr-2 mb-2"
                                         style="cursor: pointer;" href="{{ route('admin.user-info.view', $userInfo->id) }}">
@@ -254,11 +299,34 @@
                         <div class="">
                             <!-- Pagination -->
                             {!! $userInfos->links() !!}
+=======
+                                                <div class="d-flex justify-content-between">
+                                                    <a title="{{ \App\CPU\translate('View') }}"
+                                                        class="btn btn-info btn-sm mr-2 mb-2" style="cursor: pointer;"
+                                                        href="{{ route('admin.user-info.view', $userInfo->id) }}">
+                                                        <i class="tio-visible"></i>
+                                                    </a>
+                                                    @if (auth('admin')->user()->admin_role_id == 3)
+                                                        <a class="btn btn-danger btn-sm delete mb-2 mr-2"
+                                                            style="cursor: pointer;" id="{{ $userInfo['id'] }}"
+                                                            title="{{ \App\CPU\translate('Delete') }}">
+                                                            <i class="tio-delete"></i>
+                                                        </a>
+                                                    @endif
+                                                </div>
+
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+>>>>>>> 08b253713f0288bba1d245f57280bfcf797b356b
                         </div>
                     </div>
                 </div>
                 <!-- End Pagination -->
             </div>
+<<<<<<< HEAD
             <!-- End Footer -->
         </div>
         <!-- End Card -->
@@ -266,7 +334,7 @@
 @endsection
 
 @push('script_2')
-   
+
     <script>
         $('#from_date,#to_date').change(function() {
             let fr = $('#from_date').val();
@@ -290,6 +358,13 @@
 
         })
     </script>
+=======
+        </div>
+    </div>
+@endsection
+
+@push('script')
+>>>>>>> 08b253713f0288bba1d245f57280bfcf797b356b
     <script>
         $(document).ready(function() {
             $('#example').DataTable({

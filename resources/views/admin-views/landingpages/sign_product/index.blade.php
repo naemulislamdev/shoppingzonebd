@@ -58,7 +58,7 @@
                                         {{ \App\CPU\translate('filter') }}
                                     </button>
                                 </div>
-                              
+
                             </div>
                         </form>
                     </div>

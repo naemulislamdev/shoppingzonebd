@@ -283,22 +283,22 @@
         dataLayer.push({
             event: "purchase",
             ecommerce: {
-                transaction_id: "{{ $order->invoice_no }}",
+                transaction_id: "{{ $order->order_id }}",
                 affiliation: "My eCommerce Store",
-                value: {{ $order->final_amount ?? 0 }},
+                value: {{ \App\CPU\Helpers::currency_converter( $order->order_amount) ?? 0 }},
                 tax: 0.00,
-                shipping: {{ $order->shipping_change ?? 0 }},
+                shipping: {{ \App\CPU\Helpers::currency_converter($order->shipping_cost) ?? 0 }},
                 currency: "BDT",
                 coupon: "",
                 items: [
                     @foreach ($order->details as $detail)
                         {
                             item_id: "{{ $detail->product->id ?? '' }}",
-                            item_name: {!! json_encode($detail->product->name ?? '') !!},
-                            item_brand: "Wishmart",
-                            item_category: {!! json_encode($detail->product->category->name ?? '') !!},
-                            price: {{ number_format($detail->unit_price, 2, '.', '') }},
-                            quantity: {{ $detail->quantity }}
+                            item_name: "{{ $detail->product->name ?? '' }}",
+                            item_brand: "Shopping Zone BD",
+                            item_category: "General",
+                            price: {{ \App\CPU\Helpers::currency_converter($detail->price) ?? 0 }},
+                            quantity: {{ $detail->qty }}
                         }
                         @if (!$loop->last)
                             ,
