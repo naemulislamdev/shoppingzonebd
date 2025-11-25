@@ -3,16 +3,18 @@
 namespace App\Http\Controllers\Admin;
 
 use App\CPU\Helpers;
+use App\Exports\DynamicExport;
 use App\Http\Controllers\Controller;
 use App\Model\BusinessSetting;
 use App\Model\Contact;
+use App\Models\Investor;
 use App\Models\Lead;
 use App\Models\UserInfo;
 use Brian2694\Toastr\Facades\Toastr;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
-use Rap2hpoutre\FastExcel\FastExcel;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ContactController extends Controller
 {
@@ -24,7 +26,7 @@ class ContactController extends Controller
             'message' => 'required',
         ], [
             'mobile_number.required' => 'Mobile Number is Empty!',
-            'subject.required' => ' Subject is Empty!',
+            'subject.required' => 'Subject is Empty!',
             'message.required' => 'Message is Empty!',
 
         ]);
@@ -149,7 +151,7 @@ class ContactController extends Controller
                 'name' => $item->name,
                 'phone' => $item->phone,
                 'address' => $item->address,
-                'division' => $item->division ,
+                'division' => $item->division,
                 'district' => $item->district,
                 'upazila' => $item->upazila,
                 'Showroom Size' => $item->showroom_size,
@@ -158,7 +160,8 @@ class ContactController extends Controller
 
             ];
         }
-        return (new FastExcel($data))->download('leads_info.xlsx');
+        $headings = ['Date', 'Name', 'Phone', 'Address', 'Division', 'District', 'Upazila', 'Showroom Size', 'Showroom Location', 'Status'];
+        return Excel::download(new DynamicExport($headings, $data), 'leads_info.xlsx');
     }
 
     //--- User Information Management ---//
@@ -196,7 +199,9 @@ class ContactController extends Controller
 
             ];
         }
-        return (new FastExcel($data))->download('user_info.xlsx');
+        $headings = ['Date', 'Name', 'Phone', 'Address', 'Status'];
+
+        return Excel::download(new DynamicExport($headings, $data), 'user_info.xlsx');
     }
     public function status(Request $request)
     {
@@ -208,7 +213,6 @@ class ContactController extends Controller
             $userinfo->save();
             $data = $request->order_status;
             return response()->json($data);
-
         }
     }
     //--- Investment Management ---//
@@ -234,7 +238,6 @@ class ContactController extends Controller
     public function bulk_export_investors()
     {
         $investors = Investor::latest()->get();
-        //export from userInfos
         $data = [];
         foreach ($investors as $item) {
             $data[] = [
@@ -244,9 +247,10 @@ class ContactController extends Controller
                 'address' => $item->address,
                 'occupation' => $item->occupation,
                 'investment_amount' => $item->investment_amount,
-                //'status' => $item->status == 0 ? 'Unseen' : 'Seen',
             ];
         }
-        return (new FastExcel($data))->download('investors_info.xlsx');
+        $headings = ['Date', 'Name', 'Phone', 'Address', 'Occupation', 'Investment Amount'];
+
+        return Excel::download(new DynamicExport($headings, $data), 'investors_info.xlsx');
     }
 }

@@ -15,8 +15,14 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @php
+                                $gTotal = 0;
+                            @endphp
                             @if (session()->has('cart') && count(session()->get('cart')) > 0)
                                 @foreach (session()->get('cart') as $key => $cartItem)
+                                @php
+                                    $gTotal += ($cartItem['price'] - $cartItem['discount']) * $cartItem['quantity'];
+                                @endphp
                                     <tr>
                                         <td class="product-col">
                                             <div class="checkout-product">
@@ -83,19 +89,18 @@
                                         @foreach (\App\Model\ShippingMethod::where(['status' => 1])->get() as $shipping)
                                             <div class="col-md-6">
                                                 <label class="shipping-box">
-                                                    <input type="radio" name="shipping_method_id"
-                                                        value="{{ $shipping['id'] }}"
-                                                        onchange="set_shipping_id(this.value)"
-                                                        {{ session()->has('shipping_method_id') && session('shipping_method_id') == $shipping['id'] ? 'checked' : '' }}>
-                                                    <span class="shipping-title">
-                                                        {{ $shipping['title'] }}
-                                                    </span>
-                                                    <span class="shipping-cost">
-                                                        {{ \App\CPU\Helpers::currency_converter($shipping['cost']) }}
-                                                    </span>
+                                                    {{-- data-cost must be a numeric (unformatted) value in BDT --}}
+                                                    <input type="radio" name="shipping_method" class="shipping-method"
+                                                        id="shipping_{{ $shipping['id'] }}"
+                                                        data-cost="{{ \App\CPU\Helpers::currency_converter2($shipping['cost']) }}"
+                                                        value="{{ $shipping['id'] }}">
+                                                    <span class="shipping-title">{{ $shipping['title'] }}</span>
+                                                    <span
+                                                        class="shipping-cost">{{ \App\CPU\Helpers::currency_converter($shipping['cost']) }}</span>
                                                 </label>
                                             </div>
                                         @endforeach
+
                                     </div>
                                 </div>
                             </div>
@@ -114,8 +119,8 @@
                                 <div class="col-md-6 mb-3">
                                     <div class="form-group">
                                         <label>নাম <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control auto-save" placeholder="আপনার নাম লিখুন"
-                                            name="name" value="{{ old('name') }}">
+                                        <input type="text" class="form-control auto-save"
+                                            placeholder="আপনার নাম লিখুন" name="name" value="{{ old('name') }}">
                                         @error('name')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
@@ -124,8 +129,9 @@
                                 <div class="col-md-6 mb-3">
                                     <div class="form-group">
                                         <label for="phone">ফোন নম্বর <span class="text-danger">*</span></label>
-                                        <input type="number" class="form-control auto-save" id="phone" name="phone"
-                                            placeholder="ফোন নম্বর লিখুন" required value="{{ old('phone') }}">
+                                        <input type="number" class="form-control auto-save" id="phone"
+                                            name="phone" placeholder="ফোন নম্বর লিখুন" required
+                                            value="{{ old('phone') }}">
                                         <span id="phoneFeedback" class="small text-danger"></span>
                                         @error('phone')
                                             <span class="text-danger">{{ $message }}</span>
@@ -153,49 +159,70 @@
             </div><!-- End .col-lg-9 -->
             <aside class="col-lg-4">
                 <div class="summary summary-cart">
+                    {{-- Now include the partial and send the formatted and raw values --}}
                     @include('web-views.partials._order-summary')
                 </div>
             </aside><!-- End .col-lg-3 -->
         </div><!-- End .row -->
     </div>
 </div>
-
-
 <script>
-    function set_shipping_id(id) {
-        @foreach (session()->get('cart') as $key => $item)
-            let key = '{{ $key }}';
-            @break
-        @endforeach
-        $.get({
-            url: '{{ url('/') }}/customer/set-shipping-method',
-            dataType: 'json',
-            data: {
-                id: id,
-                key: key
-            },
-            beforeSend: function() {
-                $('#loading').show();
-            },
-            success: function(data) {
-                if (data.status == 1) {
-                    toastr.success('Shipping method selected', {
-                        CloseButton: true,
-                        ProgressBar: true
-                    });
-                    setInterval(function() {
-                        location.reload();
-                    }, 2000);
-                } else {
-                    toastr.error('Choose proper shipping method.', {
-                        CloseButton: true,
-                        ProgressBar: true
-                    });
-                }
-            },
-            complete: function() {
-                $('#loading').hide();
-            },
+    $(document).ready(function() {
+        let typingTimer;
+        let doneTypingInterval = 1000; // Time in milliseconds (1 second)
+
+        $(".auto-save").on("input", function() {
+            clearTimeout(typingTimer);
+            typingTimer = setTimeout(saveUserData, doneTypingInterval);
         });
-    }
+
+        function saveUserData() {
+            let formData = $("#userInfoForm").serialize();
+
+            $.ajax({
+                url: "{{ route('save.user.info') }}",
+                type: "POST",
+                data: formData,
+                dataType: "json",
+                success: function(response) {
+                    if (response.success) {
+                        console.log("Data auto-saved successfully!");
+                    } else {
+                        console.log("Failed to save data.");
+                    }
+                },
+                error: function(xhr) {
+                    console.log("Error: ", xhr.responseText);
+                }
+            });
+        }
+    });
 </script>
+
+@if (session()->has('cart') && count(session()->get('cart')) > 0)
+<script>
+    window.dataLayer = window.dataLayer || [];
+
+    dataLayer.push({
+        event: "begin_checkout",
+        ecommerce: {
+            currency: "BDT",
+            value: {{ \App\CPU\Helpers::currency_converter($gTotal) }},
+            items: [
+                @foreach (session('cart') as $item)
+                {
+                    item_id: "{{ $item['id'] }}",
+                    item_name: "{{ $item['name'] }}",
+                    item_brand: "{{ $item['brand'] ?? '' }}",
+                    item_category: "{{ $item['category'] ?? '' }}",
+                    item_variant: "{{ $item['variant'] ?? '' }}",
+                    price: {{ \App\CPU\Helpers::currency_converter($item['price'] - $item['discount']) }},
+                    quantity: {{ $item['quantity'] }}
+                }@if(!$loop->last),@endif
+                @endforeach
+            ]
+        }
+    });
+</script>
+@endif
+

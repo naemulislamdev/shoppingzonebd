@@ -56,6 +56,7 @@ Route::middleware(['maintenance_mode'])->group(function () {
         Route::post('/leads/store', 'leadsStore')->name('leads.store');
         Route::post('/save-user-info', 'saveUserInfo')->name('save.user.info');
         Route::get('/offers/11.11-big-sale', 'batchOffers')->name('batch.offers');
+        Route::get('/sitemap.xml', 'siteMaps')->name('sitemap');
     });
     // career front-end routes
     Route::controller(CareerController::class)->group(function () {

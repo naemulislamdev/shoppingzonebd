@@ -210,7 +210,7 @@
             </div>
             <div class="owl-carousel related-products product-carosel mt-4 mt-lg-4" data-delay="3000">
                 @php $decimal_point_settings = \App\CPU\Helpers::get_business_settings('decimal_point_settings'); @endphp
-                
+
                 @if ($arrival_products->count() > 0)
                     <!-- Your product columns go here -->
                     @foreach ($arrival_products as $product)
@@ -265,8 +265,7 @@
                                                 <span>{{ \App\CPU\Helpers::currency_converter($product->unit_price) }}</span>
                                             @endif
                                         </div>
-                                        <button type="button" style="cursor: pointer;" class="btn btn-primary"
-                                            onclick="buy_now('form-{{ $product->id }}')">অর্ডার করুন</button>
+                                        <button type="button" style="cursor: pointer;" class="btn btn-primary new-av-product" data-pid="form-{{ $product->id }}">অর্ডার করুন</button>
                                     </div>
 
                                 </div>
@@ -522,7 +521,6 @@
                 <div class="row product-grid">
                     <!-- Your product columns go here -->
                     @foreach ($featured_products as $product)
-
                         @include('web-views.products.product_box', ['dataCategory' => 'category1'])
                     @endforeach
                 </div>
@@ -699,6 +697,27 @@
         $(document).ready(function() {
             $('#close-pModal').on('click', function() {
                 $('#popup-modal').modal('hide');
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const lazyImages = document.querySelectorAll(".lazy-image");
+
+            const imageObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.src = img.dataset.src; // load actual image
+                        img.classList.add("loaded");
+                        observer.unobserve(img);
+                    }
+                });
+            });
+
+            lazyImages.forEach(img => {
+                imageObserver.observe(img);
             });
         });
     </script>

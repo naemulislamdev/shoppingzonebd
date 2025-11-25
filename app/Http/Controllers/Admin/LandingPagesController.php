@@ -3,21 +3,16 @@
 namespace App\Http\Controllers\Admin;
 
 use App\CPU\ImageManager;
-use App\CPU\BackEndHelper;
 use App\CPU\Helpers;
 use App\Http\Controllers\Controller;
-use App\Model\LandingPage;
 use App\Model\LandingPages;
 use App\Model\Product;
-use App\Model\Translation;
 use App\ProductLandingPage;
 use App\ProductLandingPageSection;
 use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use Svg\Tag\Path;
 
 class LandingPagesController extends Controller
 {
@@ -32,22 +27,16 @@ class LandingPagesController extends Controller
     {
         $this->validate($request, [
             'title' => 'required|string',
-            'images' => 'required',
-            'mid_banner' => 'required',
-            'left_side_banner' => 'required',
-            'right_side_banner' => 'required',
-        ], [
-            'images.required' => 'Banner image is required!',
-            'mid_banner.required'  => 'Mid banner is required!',
-            'left_side_banner.required'  => 'Left banner is required!',
-            'right_side_banner.required' => 'Right banner is required!',
-
+            'images' => 'nullable',
+            'mid_banner' => 'nullable',
+            'left_side_banner' => 'nullable',
+            'right_side_banner' => 'nullable',
         ]);
 
         $images = null;
         if ($request->file('images')) {
             foreach ($request->file('images') as $img) {
-                $main_banner_images[] = ImageManager::upload('deal/main-banner/', 'png', $img);
+                $main_banner_images[] = Helpers::uploadWithCompress('main-banner/', 300, $img);
             }
             $images = json_encode($main_banner_images);
         }
@@ -55,11 +44,11 @@ class LandingPagesController extends Controller
         $flash_deal_id = DB::table('landing_pages')->insertGetId([
             'title' => $request['title'],
             'main_banner' => $images,
-            'mid_banner' => $request->has('mid_banner') ? ImageManager::upload('deal/', 'png', $request->file('mid_banner')) : 'def.png',
-            'left_side_banner' => $request->has('left_side_banner') ? ImageManager::upload('deal/', 'png', $request->file('left_side_banner')) : 'def.png',
-            'right_side_banner' => $request->has('right_side_banner') ? ImageManager::upload('deal/', 'png', $request->file('right_side_banner')) : 'def.png',
-            'meta_title' => $request['title'],
-            'meta_description' => $request['meta_description'],
+            'mid_banner' => Helpers::uploadWithCompress('deal/', 300, $request->file('mid_banner')),
+            // 'left_side_banner' =>  Helpers::uploadWithCompress('deal/', 300, $request->file('left_side_banner')),
+            // 'right_side_banner' => Helpers::uploadWithCompress('deal/', 300, $request->file('right_side_banner')),
+            // 'meta_title' => $request['title'],
+            // 'meta_description' => $request['meta_description'],
             'slug' => Str::slug($request['title']),
             'status' => 0,
             'created_at' => now(),
@@ -117,20 +106,20 @@ class LandingPagesController extends Controller
 
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $img) {
-                $uploaded_image = ImageManager::upload('deal/main-banner/', 'png', $img);
+                $uploaded_image = Helpers::uploadWithCompress('deal/main-banner/', 300, $img);
                 $images[] = $uploaded_image;
             }
         }
         $finalImage = json_encode($images);
 
         if ($request->mid_banner) {
-            $deal->mid_banner = ImageManager::update('deal/', $deal->mid_banner, 'png', $request->file('mid_banner'));
+            $deal->mid_banner = Helpers::updateWithCompress('deal/', $deal->mid_banner, $request->file('mid_banner'));
         }
         if ($request->left_side_banner) {
-            $deal->left_side_banner = ImageManager::update('deal/', $deal->left_side_banner, 'png', $request->file('left_side_banner'));
+            $deal->left_side_banner = Helpers::updateWithCompress('deal/', $deal->left_side_banner, $request->file('left_side_banner'));
         }
         if ($request->right_side_banner) {
-            $deal->right_side_banner = ImageManager::update('deal/', $deal->right_side_banner, 'png', $request->file('right_side_banner'));
+            $deal->right_side_banner = Helpers::updateWithCompress('deal/', $deal->right_side_banner, $request->file('right_side_banner'));
         }
 
         DB::table('landing_pages')->where(['id' => $deal_id])->update([
@@ -150,7 +139,6 @@ class LandingPagesController extends Controller
     public function add_product($deal_id)
     {
         $flash_deal_products = DB::table('landing_pages_products')->where('landing_id', $deal_id)->pluck('product_id');
-        // dd($flash_deal_products);
 
         $products = Product::whereIn('id', $flash_deal_products)->paginate(Helpers::pagination_limit());
 
@@ -202,7 +190,6 @@ class LandingPagesController extends Controller
     }
     public function store(Request $request)
     {
-        //dd($request->all());
         $request->validate([
             'title' => 'required|string',
             'images' => 'required',
@@ -216,7 +203,7 @@ class LandingPagesController extends Controller
         $images = null;
         if ($request->file('images')) {
             foreach ($request->file('images') as $img) {
-                $main_slider_images[] = ImageManager::upload('landingpage/slider/', 'png', $img);
+                $main_slider_images[] = Helpers::uploadWithCompress('landingpage/slider/', 300, $img);
             }
             $images = json_encode($main_slider_images);
         }
@@ -234,7 +221,7 @@ class LandingPagesController extends Controller
             'product_id' => $request->product_id,
             'description' => $request->description,
             'feature_list' => $featureList,
-            'feature_img' => $request->has('feature_image') ? ImageManager::upload('landingpage/', 'png', $request->file('feature_image')) : 'def.png',
+            'feature_img' => Helpers::uploadWithCompress('landingpage/', 300, $request->file('feature_image')),
             'video_url' => $request->video_url,
             'status' => 0,
             'created_at' => now(),
@@ -246,7 +233,7 @@ class LandingPagesController extends Controller
             foreach ($sectionTitles as $key => $val) {
 
                 $requestImg = $request->section_img[$key];
-                $sectionImg = $requestImg ? ImageManager::upload('landingpage/', 'png', $requestImg) : 'def.png';
+                $sectionImg = Helpers::uploadWithCompress('landingpage/', 300, $requestImg);
                 $sectionDirection = $request->section_direction[$key];
                 $orderButton = $request->order_button[$key];
                 ProductLandingPageSection::create([
@@ -264,8 +251,6 @@ class LandingPagesController extends Controller
     }
     public function LandingPageStatus(Request $request)
     {
-
-        // DB::table('landing_pages')->where(['status' => 1])->update(['status' => 0]);
         ProductLandingPage::where(['id' => $request['id']])->update([
             'status' => $request['status'],
         ]);
@@ -331,7 +316,6 @@ class LandingPagesController extends Controller
     }
     public function SingleProductUpdate(Request $request, $id)
     {
-        //dd($request->all());
         $request->validate([
             'title' => 'required|string',
             'description' => 'required|string',
@@ -345,7 +329,7 @@ class LandingPagesController extends Controller
 
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $img) {
-                $uploaded_image = ImageManager::upload('landingpage/slider/', 'png', $img);
+                $uploaded_image = Helpers::uploadWithCompress('landingpage/slider/', 300, $img);
                 $images[] = $uploaded_image;
             }
         }
@@ -373,7 +357,7 @@ class LandingPagesController extends Controller
 
 
         if ($request->feature_image) {
-            $featureImage = ImageManager::update('landingpage/', $productLandingpage->feature_img, 'png', $request->file('feature_image'));
+            $featureImage = Helpers::updateWithCompress('landingpage/', $productLandingpage->feature_img, $request->file('feature_image'));
         }
         $productLandingpage->update([
             'title' => $request->title,
@@ -391,7 +375,7 @@ class LandingPagesController extends Controller
             foreach ($request->existing_section_id as $sectionId) {
                 $section = ProductLandingPageSection::where('id', $sectionId)->first();
                 $requestImg = $request->file('section_img')[$sectionId] ?? null;
-                $sectionImg = $requestImg ? ImageManager::upload('landingpage/', 'png', $requestImg) : $section->section_img;
+                $sectionImg = Helpers::updateWithCompress('landingpage/', $section->section_img, $requestImg);
                 $section->update([
                     'section_title' => $request->section_title[$sectionId],
                     'section_description' => $request->section_description[$sectionId],
@@ -403,13 +387,12 @@ class LandingPagesController extends Controller
             }
         }
 
-
         // Handle new sections
         if ($request->has('new_section_title')) {
             foreach ($request->new_section_title as $key => $title) {
 
                 $requestImg = $request->file('new_section_img')[$key] ?? null;
-                $sectionImg = $requestImg ? ImageManager::upload('landingpage/', 'png', $requestImg) : 'def.png';
+                $sectionImg = Helpers::uploadWithCompress('landingpage/',300, $requestImg);
                 ProductLandingPageSection::create([
                     'section_title' => $title,
                     'section_description' => $request->new_section_description[$key],

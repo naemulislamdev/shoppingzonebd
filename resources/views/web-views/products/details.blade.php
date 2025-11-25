@@ -288,7 +288,7 @@
                                         @if ($product->discount_type == 'percent')
                                             {{ round($product->discount, $decimal_point_settings) }}%
                                         @elseif($product->discount_type == 'flat')
-                                            {{ $product->discount }}৳
+                                            {{ \App\CPU\Helpers::currency_converter($product->discount) }}৳
                                         @endif
                                     </span>
                                 @endif
@@ -1003,8 +1003,8 @@
                 items: [{
                     item_id: {{ $product->id }},
                     item_name: {{ $product->name }},
-                    item_brand: {{ $product->brand_id }},
-                    item_category: "category_id", // incomplte
+                    item_brand: {{ $product->brand->name ?? 'No Brand' }},
+                    item_category: "{{ $brand_name ?? 'General' }}", // incomplte
                     item_variant: {{ $product->variation }}, // incomplte
                     price: {{ \App\CPU\Helpers::currency_converter($product->unit_price) }},
                     currency: "BDT"

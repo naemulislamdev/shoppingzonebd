@@ -111,7 +111,7 @@ class ProductController extends BaseController
         $p->added_by = "admin";
         $p->name = $request->name;
         $p->code = $request->code;
-        $p->slug = Str::slug($request->name) . '-' . Str::random(6);
+        $p->slug = Str::slug($request->name);
 
         $category = [];
 
@@ -269,30 +269,6 @@ class ProductController extends BaseController
             $p->meta_image = Helpers::uploadWithCompress('product/meta/', 300, $request->meta_image);
 
             $p->save();
-
-
-            // $data = [];
-            // foreach ($request->lang as $index => $key) {
-            //     if ($request->name[$index] && $key != 'en') {
-            //         array_push($data, array(
-            //             'translationable_type' => 'App\Model\Product',
-            //             'translationable_id' => $p->id,
-            //             'locale' => $key,
-            //             'key' => 'name',
-            //             'value' => $request->name[$index],
-            //         ));
-            //     }
-            //     if ($request->description[$index] && $key != 'en') {
-            //         array_push($data, array(
-            //             'translationable_type' => 'App\Model\Product',
-            //             'translationable_id' => $p->id,
-            //             'locale' => $key,
-            //             'key' => 'description',
-            //             'value' => $request->description[$index],
-            //         ));
-            //     }
-            // }
-            // Translation::insert($data);
 
             if ($request->start_day) {
                 $campaing_detalie = [];
@@ -550,7 +526,7 @@ class ProductController extends BaseController
     {
 
         $product = Product::find($id);
-
+        // $product_slug = Str::slug($request->name) . '-'. Str::random(3);
         $product->name = $request->name;
 
         $category = [];
@@ -688,7 +664,6 @@ class ProductController extends BaseController
             return response()->json([], 200);
         } else {
             if ($request->file('images')) {
-
                 foreach ($request->file('images') as $img) {
                     $product_images[] = Helpers::uploadWithCompress('product/', 300, $img);
                 }

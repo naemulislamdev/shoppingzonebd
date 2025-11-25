@@ -1,7 +1,7 @@
 @extends('layouts.back-end.app')
 @section('title', \App\CPU\translate('Investors List'))
 @push('css_or_js')
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.4/css/dataTables.bootstrap4.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.2/css/jquery.dataTables.min.css">
 @endpush
 
 @section('content')
@@ -97,10 +97,6 @@
 @endsection
 
 @push('script')
-    <!-- Page level plugins -->
-    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-    <script src="https://cdn.datatables.net/2.3.4/js/dataTables.js"></script>
-    <script src="https://cdn.datatables.net/2.3.4/js/dataTables.bootstrap4.js"></script>
     <!-- Page level custom scripts -->
     <script>
         $(document).ready(function() {

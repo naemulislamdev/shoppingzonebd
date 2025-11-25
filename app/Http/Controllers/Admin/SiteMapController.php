@@ -18,7 +18,7 @@ class SiteMapController extends Controller
     }
 
     public function download(){
-        SitemapGenerator::create(url('/'))->writeToFile('public/sitemap.xml');
+        SitemapGenerator::create(url('/'))->writeToFile(public_path('sitemap.xml'));
         return response()->download(public_path('sitemap.xml'));
     }
 }

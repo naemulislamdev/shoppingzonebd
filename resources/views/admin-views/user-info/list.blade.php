@@ -1,10 +1,7 @@
 @extends('layouts.back-end.app')
 @section('title', \App\CPU\translate('Users List'))
 @push('css_or_js')
-    <!-- Custom styles for this page -->
-    {{-- <link href="{{ asset('assets/back-end') }}/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet"> --}}
-    {{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.css"> --}}
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.4/css/dataTables.bootstrap4.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.2/css/jquery.dataTables.min.css">
 @endpush
 
 @section('content')
@@ -61,6 +58,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+
                                     @foreach ($userInfos as $k => $userInfo)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
@@ -153,9 +151,9 @@
                                                     <span class="badge badge-success">Completed</span>
                                                 @endif
                                             </td>
-                                            <td class="m-0 p-0" >
+                                            <td class="m-0 p-0">
                                                 <div class="form-group">
-                                                    <div class="hs-unfold float-right ">
+                                                    <div class="hs-unfold float-right">
                                                         <div class="dropdown">
                                                             <select name="order_status"
                                                                 onchange="order_status(this.value, {{ $userInfo['id'] }})"
@@ -189,51 +187,29 @@
                                                         href="{{ route('admin.user-info.view', $userInfo->id) }}">
                                                         <i class="tio-visible"></i>
                                                     </a>
-                                                    <a class="btn btn-danger btn-sm delete mb-2 mr-2"
-                                                        style="cursor: pointer;" id="{{ $userInfo['id'] }}"
-                                                        title="{{ \App\CPU\translate('Delete') }}">
-                                                        <i class="tio-delete"></i>
-                                                    </a>
+                                                    @if (auth('admin')->user()->admin_role_id == 3)
+                                                        <a class="btn btn-danger btn-sm delete mb-2 mr-2"
+                                                            style="cursor: pointer;" id="{{ $userInfo['id'] }}"
+                                                            title="{{ \App\CPU\translate('Delete') }}">
+                                                            <i class="tio-delete"></i>
+                                                        </a>
+                                                    @endif
                                                 </div>
 
                                             </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
-                                {{-- <tfoot>
-                                    <tr>
-                                        <th>SL#</th>
-                                        <th>Date</th>
-                                        <th>Name</th>
-                                        <th>Phone</th>
-                                        <th>Address</th>
-                                        <th>Status</th>
-                                        <th>Product</th>
-                                        <th>Order Process</th>
-                                        <th>Type</th>
-                                        <th>action</th>
-                                    </tr>
-                                </tfoot> --}}
                             </table>
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
-
     </div>
 @endsection
 
 @push('script')
-    <!-- Page level plugins -->
-    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-    {{-- <script src="{{ asset('assets/back-end') }}/vendor/datatables/jquery.dataTables.min.js"></script>
-    <script src="{{ asset('assets/back-end') }}/vendor/datatables/dataTables.bootstrap4.min.js"></script> --}}
-    {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/js/bootstrap.min.js"></script> --}}
-    <script src="https://cdn.datatables.net/2.3.4/js/dataTables.js"></script>
-    <script src="https://cdn.datatables.net/2.3.4/js/dataTables.bootstrap4.js"></script>
-    <!-- Page level custom scripts -->
     <script>
         $(document).ready(function() {
             new DataTable('#example');

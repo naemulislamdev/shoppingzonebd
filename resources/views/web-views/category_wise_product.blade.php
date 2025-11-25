@@ -93,18 +93,32 @@
     </section>
 @endsection
 @push('scripts')
-    <script>
-        //When scroll display block in filter section other wise display none
-        // window.addEventListener('scroll', function() {
-        //     const header = document.getElementById('filter-box');
-        //     if (window.scrollY > 100) {
-        //         header.classList.add('scrolled');
-        //     } else {
-        //         header.classList.remove('scrolled');
-        //     }
-        // });
-    </script>
+<script>
+window.dataLayer = window.dataLayer || [];
 
+/* Product List View (Category Page) */
+dataLayer.push({
+    event: "view_item_list",
+    ecommerce: {
+        item_list_id: "category_{{ $category->slug ?? 'default' }}",
+        item_list_name: "{{$data['data_from'] ?? 'Product List' }}",
+        items: [
+            @foreach ($products as $index => $product)
+            {
+                item_id: "{{ $product->id }}",
+                item_name: "{{ $product->name }}",
+                item_brand: "{{$brand_name ?? 'Unknown' }}",
+                item_category: "{{ $brand_name ?? 'General' }}",
+                item_variant: "{{ $product->variant ?? 'Default' }}",
+                price: "{{ \App\CPU\Helpers::currency_converter($product->unit_price) }}",
+                currency: "BDT",
+                index: {{ $loop->iteration }}
+            }@if (!$loop->last),@endif
+            @endforeach
+        ]
+    }
+});
+</script>
     <script>
 
         function filter(value) {

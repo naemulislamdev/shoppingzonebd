@@ -478,7 +478,7 @@
                 $(this).owlCarousel({
                     loop: true,
                     margin: 10,
-                    autoplay: true,
+                    autoplay: false,
                     autoplayTimeout: 2000,
                     smartSpeed: 500,
                     nav: true,
@@ -712,17 +712,6 @@
         });
     </script>
     <script>
-        //When scroll display block in filter section other wise display none
-        // window.addEventListener('scroll', function() {
-        //     const header = document.getElementById('filter-box');
-        //     if (window.scrollY > 750) {
-        //         header.classList.add('scrolled');
-        //     } else {
-        //         header.classList.remove('scrolled');
-        //     }
-        // });
-    </script>
-    <script>
         //category filter category show and hide
         $(document).ready(function() {
             $('.category-header').on('click', function() {
@@ -844,7 +833,7 @@
                     data: $('#' + form_id).serializeArray(),
                     beforeSend: function() {
                         $('#loading').show();
-                    }, 
+                    },
                     success: function(data) {
 
                         if (data.data == 1) {
@@ -870,15 +859,33 @@
                             ProgressBar: true
                         });
 
-                        // Remove any backdrop that might still be visible
-                        // $('.modal-backdrop').remove();
-                        // $('.modal').hide();
-
                         $('#total_cart_count').text(data.count);
                         updateNavCart();
                         if (redirect_to_checkout) {
                             location.href = "{{ route('shop-cart') }}";
                         }
+
+                        if (data.product) {
+                            window.dataLayer = window.dataLayer || [];
+
+                            dataLayer.push({
+                                event: "add_to_cart",
+                                ecommerce: {
+                                    currency: "BDT",
+                                    value: (data.product.price * data.product.quantity).toFixed(2),
+                                    items: [{
+                                        item_id: data.product.id,
+                                        item_name: data.product.name,
+                                        item_brand: data.product.brand ?? "",
+                                        item_category: data.product.category ?? "",
+                                        item_variant: data.product.variant ?? "",
+                                        price: parseFloat(data.product.price),
+                                        quantity: parseInt(data.product.quantity)
+                                    }]
+                                }
+                            });
+                        }
+                        // END DATALAYER PUSH
                         // Product AI API integration
                         const productAPI = new ProductAPI("https://ai.szbdfinancing.com");
 
@@ -889,7 +896,6 @@
 
                         loadProduct();
                         //End
-
                     },
                     complete: function() {
                         $('#loading').hide();
@@ -906,8 +912,11 @@
 
         function buy_now(form_id) {
             addToCart(form_id, true);
-            // location.href = "{{ route('shop-cart') }}";
         }
+        $('.new-av-product').on('click', function() {
+            var product_id = $(this).data('pid');
+            addToCart(product_id, true);
+        });
 
         function currency_change(currency_code) {
             $.ajaxSetup({
