@@ -1162,6 +1162,16 @@ $route = request()->route()->getName();
                                 </a>
                             </li>
                             <li
+                                class="navbar-vertical-aside-has-menu {{ Request::is('admin/wholesale*') ? 'active' : '' }}">
+                                <a class="js-navbar-vertical-aside-menu-link nav-link"
+                                    href="{{ route('admin.wholesale.list') }}">
+                                    <i class="tio-messages nav-icon"></i>
+                                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">
+                                        Wholesale Info
+                                    </span>
+                                </a>
+                            </li>
+                            <li
                                 class="navbar-vertical-aside-has-menu {{ Request::is('admin/user-info*') ? 'active' : '' }}">
                                 <a class="js-navbar-vertical-aside-menu-link nav-link"
                                     href="{{ route('admin.user-info.list') }}">
@@ -1277,6 +1287,7 @@ $route = request()->route()->getName();
                         @if (\App\CPU\Helpers::module_permission_check('web_&_app_settings'))
                             <li
                                 class="nav-item {{ Request::is('admin/business-settings/social-media') || Request::is('admin/business-settings/terms-condition') || Request::is('admin/business-settings/privacy-policy') || Request::is('admin/business-settings/about-us') || Request::is('admin/helpTopic/list') || Request::is('admin/business-settings/fcm-index') || Request::is('admin/business-settings/mail') || Request::is('admin/business-settings/web-config/db-index') || Request::is('admin/business-settings/web-config/environment-setup') || Request::is('admin/business-settings/web-config') ? 'scroll-here' : '' }}">
+                                 {{ Request::is('admin/business-settings/social-media') || Request::is('admin/business-settings/terms-condition') || Request::is('admin/business-settings/privacy-policy') || Request::is('admin/business-settings/about-us') || Request::is('admin/helpTopic/list') || Request::is('admin/business-settings/fcm-index') || Request::is('admin/business-settings/mail') || Request::is('admin/business-settings/web-config/db-index') || Request::is('admin/business-settings/web-config/environment-setup') || Request::is('admin/business-settings/web-config') ? 'scroll-here' : '' }}
                                 <small class="nav-subtitle"
                                     title="">{{ \App\CPU\translate('web_&_app_settings') }}</small>
                                 <small class="tio-more-horizontal nav-subtitle-replacer"></small>
@@ -1334,6 +1345,45 @@ $route = request()->route()->getName();
                                         {{ \App\CPU\translate('web_config') }}
                                     </span>
                                 </a>
+                            </li>
+                            {{-- Blogs--}}
+                            <li
+                                class="navbar-vertical-aside-has-menu {{ Request::is('admin/business-settings/blog*') ? 'active' : '' }}">
+                                <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle"
+                                    href="javascript:">
+                                    <i class="tio-message-add nav-icon"></i>
+                                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">
+                                        {{ \App\CPU\translate('Blogs') }}
+                                    </span>
+                                </a>
+                                <ul class="js-navbar-vertical-aside-submenu nav nav-sub"
+                                    style="display: {{ Request::is('admin/business-settings/blog*') ? 'block' : 'none' }}">
+
+                                    <li class="nav-item {{ Request::is('admin/business-settings/blog/category*') ? 'active' : '' }}">
+                                        <a class="nav-link" href="{{ route('admin.business-settings.blogCategory.index') }}" title="">
+                                            <span class="tio-circle nav-indicator-icon"></span>
+                                            <span class="text-truncate">
+                                                {{ \App\CPU\translate('Blog Category') }}
+                                                <span class="badge badge-info badge-pill ml-1">
+                                                    {{ \App\Models\BlogCategory::all()->count() }}
+                                                </span>
+                                            </span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item {{ Request::is('admin/business-settings/blogs') ? 'active' : '' }}">
+                                        <a class="nav-link" href="{{route('admin.business-settings.blog.index')}}"
+                                            title="">
+                                            <span class="tio-circle nav-indicator-icon"></span>
+                                            <span class="text-truncate">
+                                                {{ \App\CPU\translate('Blogs') }}
+                                                <span class="badge badge-info badge-pill ml-1">
+                                                    {{ \App\Models\Blog::all()->count() }}
+                                                </span>
+                                            </span>
+                                        </a>
+                                    </li>
+
+                                </ul>
                             </li>
 
                             <li

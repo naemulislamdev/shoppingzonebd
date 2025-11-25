@@ -48,10 +48,12 @@ use App\Model\Branch;
 use App\Models\Career;
 use App\Model\Color;
 use App\Models\BatchDiscount;
+use App\Models\Blog;
 use App\Models\Lead;
 use App\Models\UserInfo;
 use App\ProductLandingPage;
-use Carbon\Carbon; 
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Hash;
 
 class WebController extends Controller
 {
@@ -64,9 +66,25 @@ class WebController extends Controller
         return redirect()->route('home');
     }
 
+    public function trendCollections()
+    {
+        return view("web-views.products.trend-collections");
+    }
+
+    // for front-end view
+    public function blogs()
+    {
+        $blogs = Blog::where("status", 1)->get();
+
+        return view("web-views.blogs.blogs", compact("blogs"));
+    }
+    public function blogDetails($slug) {
+        $id = Blog::where("slug", $slug)->get()[0]->id;
+        $blog = Blog::find($id);
+        return view("web-views.blogs.blogDetails", compact("blog"));
+    }
     public function home()
     {
-
         $home_categories = Category::where('home_status', true)->priority()->get();
         $home_categories->map(function ($data) {
             $id = '"' . $data['id'] . '"';

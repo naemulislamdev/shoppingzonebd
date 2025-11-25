@@ -6,6 +6,8 @@ use App\CPU\Helpers;
 use App\CPU\ImageManager;
 use App\Models\Career;
 use App\Models\JobApplication;
+use Carbon\Carbon;
+use Rap2hpoutre\FastExcel\FastExcel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -13,25 +15,76 @@ class CareerController extends Controller
 {
     public function index(Request $request)
     {
-        $query_param = [];
-        $search = $request['search'];
-        if ($request->has('search')) {
-            $key = explode(' ', $request['search']);
-            $banners = Career::where(function ($q) use ($key) {
-                foreach ($key as $value) {
-                    $q->Where('type', 'like', "%{$value}%")
+        $search = $request->search;
+        $from   = $request->from;
+        $to     = $request->to;
+
+        // base query
+        $careers = Career::query();
+
+        // search
+        if (!empty($search)) {
+            $keywords = explode(' ', $search);
+
+            $careers->where(function ($q) use ($keywords) {
+
+                foreach ($keywords as $value) {
+
+                    // normal fields
+                    $q->orWhere('id', 'like', "%{$value}%")
                         ->orWhere('position', 'like', "%{$value}%")
                         ->orWhere('department', 'like', "%{$value}%")
-                        ->orWhere('status', 'like', "%{$value}%");
+                        ->orWhere('location', 'like', "%{$value}%")
+                        ->orWhere('type', 'like', "%{$value}%")
+                        ->orWhere('salary', 'like', "%{$value}%")
+                        ->orWhere('deadline', 'like', "%{$value}%")
+                        ->orWhere('status', 'like', "%" . ($value == 'published' ? 1 : ($value == 'unpublished' ? 0 : '')) . "%");
                 }
-            })->orderBy('id', 'desc');
-            $query_param = ['search' => $request['search']];
-        } else {
-            $banners = Career::orderBy('id', 'desc');
+            });
         }
-        $careers = $banners->paginate(Helpers::pagination_limit())->appends($query_param);
 
-        return view("admin-views.career.view", compact("careers", "search"));
+
+        // date filter
+        if (!empty($from) && !empty($to)) {
+            $careers->whereDate('created_at', '>=', $from)
+                ->whereDate('created_at', '<=', $to);
+        }
+
+
+        $careers = $careers->latest()
+            ->paginate(20)
+            ->appends([
+                'search' => $search,
+                'from'   => $from,
+                'to'     => $to
+            ]);
+
+        return view("admin-views.career.view", compact("careers"));
+    }
+    public function bulk_export_dataJobsInfo()
+    {
+        $jobs = Career::latest()->get();
+
+        $data = [];
+
+        foreach ($jobs as $item) {
+            $data[] = [
+                'Date'             => Carbon::parse($item->created_at)->format('d M Y'),
+                'Position'         => $item->position,
+                'Department'       => $item->department,
+                'Location'         => $item->location,
+                'Description'      => strip_tags($item->description),
+                'Post Date'        => Carbon::parse($item->created_at)->format('d M Y'),
+                'Deadline'         => Carbon::parse($item->deadline)->format('d M Y'),
+                'Vacancies'        => $item->vacancies,
+                'Job Type'         => $item->type,
+                'Salary'           => $item->salary,
+                'Published Status' => $item->status == 1 ? 'Published' : 'Unpublished',
+            ];
+        }
+
+        // Export to Excel
+        return (new FastExcel($data))->download('jobs_posts_info.xlsx');
     }
     public function store(Request $request)
     {

@@ -1,107 +1,198 @@
 @extends('layouts.back-end.app')
-@section('title', \App\CPU\translate('Investors List'))
+
+@section('title', \App\CPU\translate('Investors'))
+
 @push('css_or_js')
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.4/css/dataTables.bootstrap4.css">
 @endpush
 
 @section('content')
-    <div class="content container-fluid p-2">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.2/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.4/css/buttons.dataTables.min.css">
+    <div class="content container-fluid">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">{{ \App\CPU\translate('Dashboard') }}</a>
                 </li>
-                <li class="breadcrumb-item" aria-current="page">{{ \App\CPU\translate('Customer Message') }}</li>
+                <li class="breadcrumb-item" aria-current="page">{{ \App\CPU\translate('Investors') }}</li>
             </ol>
         </nav>
-        <!-- Page Heading -->
-        <div class="d-sm-flex align-items-center justify-content-between mb-2">
-            <h1 class="h3 mb-0 text-black-50">Investor Information</h1>
+        <!-- Page Header -->
+        <div class="page-header mb-1">
+            <div class="flex-between align-items-center">
+                <div>
+                    <span class="h1"> <span class="page-header-title"></span> {{ \App\CPU\translate('Customer') }}
+                        {{ \App\CPU\translate('Message') }}</span>
+                    <span class="badge badge-soft-dark mx-2">{{ $investors->total() }}</span>
+                </div>
+
+            </div>
         </div>
+        <!-- End Page Header -->
 
-        <div class="row" style="margin-top: 20px">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
+        <!-- Card -->
+        <div class="card p-3">
+            <!-- Header -->
+            <div class="card-header">
+                <div class="row flex-between justify-content-between flex-grow-1">
 
-                        <div class="row justify-content-between align-items-center flex-grow-1">
-                            <div class="flex-start col-lg-3 mb-3 mb-lg-0">
-                                <h5>{{ \App\CPU\translate('User') }} {{ \App\CPU\translate('Information') }}
-                                    {{ \App\CPU\translate('table') }} </h5>
-                                <h5 style="color: red;">
-                                    ({{ $investors->count() }})</h5>
+                    <div class="col-12 col-md-5 mt-2 mt-sm-0">
+                        <form action="{{ url()->current() }}" id="form-data" method="GET">
+
+                            <div class="row">
+                                <div class="col-12 col-sm-4">
+                                    <input type="date" name="from" value="{{ $from ?? date('Y-m-d') }}" id="from_date"
+                                        class="form-control">
+                                </div>
+                                <div class="col-12 col-sm-4 mt-2 mt-sm-0">
+                                    <input type="date" value="{{ $to ?? date('Y-m-d') }}" name="to" id="to_date"
+                                        class="form-control">
+                                </div>
+                                <div class="col-12 col-sm-2 mt-2 mt-sm-0  ">
+                                    <button type="submit" class="btn btn-primary float-right float-sm-none"
+                                        onclick="formUrlChange(this)" data-action="{{ url()->current() }}">
+                                        {{ \App\CPU\translate('filter') }}
+                                    </button>
+                                </div>
+                                <div class="col-12 col-sm-2 mt-2 mt-sm-0  ">
+                                    <button type="submit" class="btn btn-success float-right float-sm-none"
+                                        onclick="formUrlChange(this)"
+                                        data-action="{{ route('admin.investors.bulk-export') }}">
+                                        {{ \App\CPU\translate('export') }}
+                                    </button>
+
+
+                                </div>
+
                             </div>
-                            <div class="col-lg-2">
-                                Export :
-                                <a href="{{ route('admin.investors.bulk-export') }}" class="btn btn-success btn-sm">
-                                    <i class="tio-file-text"></i> Excel
-                                </a>
-                            </div>
-                        </div>
+                        </form>
                     </div>
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table id="example" class="table table-striped table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th style="width: 2%;">SL#</th>
-                                        <th style="width: 10%;">Date and Time</th>
-                                        <th style="width: 10%;">Name</th>
-                                        <th style="width: 10%;">Phone</th>
-                                        <th style="width: 15%;">Address</th>
-                                        <th style="width: 10%;">Occupation</th>
-                                        <th style="width: 10%;">Investment Amount</th>
-                                        <th style="width: 5%;">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($investors as $k => $investor)
-                                        <tr>
-                                            <td>{{ $loop->iteration }}</td>
-                                            <td>
-                                                {{ \Carbon\Carbon::parse($investor->created_at)->format('d M Y') }}
-                                                <br>
-                                                {{ date('h:i A', strtotime($investor['created_at'])) }}
-                                            </td>
-                                            <td>{{ $investor['name'] }}</td>
-                                            <td>{{ $investor['mobile_number'] }}</td>
-                                            <td>{{ $investor['address'] }}</td>
-                                            <td>{{ $investor['occupation'] }}</td>
-                                            <td>{{ $investor['investment_amount'] }}</td>
-                                            <td>
 
-                                                <div class="d-flex justify-content-between">
-                                                    <a title="{{ \App\CPU\translate('View') }}"
-                                                        class="btn btn-info btn-sm mr-2 mb-2" style="cursor: pointer;"
-                                                        href="{{ route('admin.investors.view', $investor->id) }}">
-                                                        <i class="tio-visible"></i>
-                                                    </a>
-                                                    <a class="btn btn-danger btn-sm delete mb-2 mr-2"
-                                                        style="cursor: pointer;" id="{{ $investor['id'] }}"
-                                                        title="{{ \App\CPU\translate('Delete') }}">
-                                                        <i class="tio-delete"></i>
-                                                    </a>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+
+                </div>
+                <!-- End Row -->
+            </div>
+            <!-- End Header -->
+
+            <!-- Table -->
+            <table id="example" class="display" style="width:100%">
+                <thead class="thead-light">
+                    <tr>
+                        <th style="width: 2%;">SL#</th>
+                        <th style="width: 10%;">Date and Time</th>
+                        <th style="width: 10%;">Name</th>
+                        <th style="width: 10%;">Phone</th>
+                        <th style="width: 15%;">Address</th>
+                        <th style="width: 10%;">Occupation</th>
+                        <th style="width: 10%;">Remark</th>
+                        <th style="width: 10%;">Status</th>
+                        <th style="width: 8%;">Investment Amount</th>
+                        <th style="width: 5%;">Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach ($investors as $k => $investor)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>
+                                {{ \Carbon\Carbon::parse($investor->created_at)->format('d M Y') }}
+                                <br>
+                                {{ date('h:i A', strtotime($investor['created_at'])) }}
+                            </td>
+                            <td>{{ $investor['name'] }}</td>
+                            <td>{{ $investor['mobile_number'] }}</td>
+                            <td>{{ $investor['address'] }}</td>
+                            <td>{{ $investor['occupation'] }}</td>
+                            <td>
+                                @if ($investor['remark'] == '' || $investor['remark'] == null)
+                                    <button onclick="remark_status('{{ $investor['remark'] }}', {{ $investor['id'] }})"
+                                        class="btn btn-sm btn-secondary">
+                                        <i class="tio-comment"></i>
+                                    </button>
+                                @else
+                                    {{ $investor['remark'] }}
+                                @endif
+                            </td>
+                            <td>
+                                {{ $investor['status'] == 1 ? 'Unseen' : 'Seen' }}
+                            </td>
+                            <td>{{ round($investor['investment_amount']) }}</td>
+                            <td>
+
+                                <div class="d-flex justify-content-between">
+                                    <a title="{{ \App\CPU\translate('View') }}" class="btn btn-info btn-sm mr-2 mb-2"
+                                        style="cursor: pointer;" href="{{ route('admin.investors.view', $investor->id) }}">
+                                        <i class="tio-visible"></i>
+                                    </a>
+                                    <a class="btn btn-danger btn-sm delete mb-2 mr-2" style="cursor: pointer;"
+                                        id="{{ $investor['id'] }}" title="{{ \App\CPU\translate('Delete') }}">
+                                        <i class="tio-delete"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            <!-- End Table -->
+
+            <!-- Footer -->
+            <div class="card-footer">
+                <!-- Pagination -->
+                <div class="row table-responsive">
+                    <div class="">
+                        <div class="">
+                            <!-- Pagination -->
+                            {!! $investors->links() !!}
                         </div>
                     </div>
                 </div>
+                <!-- End Pagination -->
             </div>
-
+            <!-- End Footer -->
         </div>
-
+        <!-- End Card -->
     </div>
+
 @endsection
 
-@push('script')
-    <!-- Page level plugins -->
-    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-    <script src="https://cdn.datatables.net/2.3.4/js/dataTables.js"></script>
-    <script src="https://cdn.datatables.net/2.3.4/js/dataTables.bootstrap4.js"></script>
-    <!-- Page level custom scripts -->
+@push('script_2')
+    <script>
+        $('#from_date,#to_date').change(function() {
+            let fr = $('#from_date').val();
+            let to = $('#to_date').val();
+            if (fr != '') {
+                $('#to_date').attr('required', 'required');
+            }
+            if (to != '') {
+                $('#from_date').attr('required', 'required');
+            }
+            if (fr != '' && to != '') {
+                if (fr > to) {
+                    $('#from_date').val('');
+                    $('#to_date').val('');
+                    toastr.error('{{ \App\CPU\translate('Invalid date range') }}!', Error, {
+                        CloseButton: true,
+                        ProgressBar: true
+                    });
+                }
+            }
+
+        })
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('#example').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    'copyHtml5',
+                    'excelHtml5',
+                    'csvHtml5',
+                    'pdfHtml5'
+                ]
+            });
+        });
+    </script>
     <script>
         $(document).ready(function() {
             new DataTable('#example');
@@ -140,4 +231,60 @@
             })
         });
     </script>
+    <script>
+        function remark_status(remark, id) {
+
+            console.log(id);
+
+            var remark = remark ? remark : '';
+
+            if (status === '') {
+                Swal.fire({
+                    title: '{{ \App\CPU\translate('Are you sure Change this?') }}!',
+                    text: "{{ \App\CPU\translate('Think before you completed') }}.",
+                    html: `
+                        <br />
+                        <form class="form-horizontal" action="{{ route('admin.investors.remarkstatus') }}" method="post">
+                            <input type="hidden" name="id" value="${id}">
+                            <div>
+                                <label class="form-label text-start">Remark By: {{ auth('admin')->name }}</label>
+                            <input required
+                                class="form-control wedding-input-text wizard-input-pad"
+                                type="text"
+                                name="remark"
+                                id="remark"
+                                placeholder="Enter remark">
+                            </div>
+                        </form>
+                    `,
+                    showCancelButton: true,
+                    confirmButtonColor: '#377dff',
+                    cancelButtonColor: 'secondary',
+                    confirmButtonText: '{{ \App\CPU\translate('Yes, Change it') }}!'
+                }).then((result) => {
+                    if (result.value) {
+                        $.ajaxSetup({
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                            }
+                        });
+                        $.ajax({
+                            url: "{{ route('admin.investors.remarkstatus') }}",
+                            method: 'POST',
+                            data: $("form").serialize(),
+                            success: function(data) {
+                                toastr.success('Remark status added successfully');
+                                location.reload();
+
+                            },
+                            error: function(data) {
+                                toastr.warning('Something went wrong !');
+                            }
+                        });
+                    }
+                });
+            }
+        }
+    </script>
+
 @endpush

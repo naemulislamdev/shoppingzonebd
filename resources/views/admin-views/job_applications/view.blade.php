@@ -1,80 +1,97 @@
 @extends('layouts.back-end.app')
-@section('title', \App\CPU\translate('Career'))
+
+@section('title', \App\CPU\translate('Job Applications'))
+
 @push('css_or_js')
-    <meta name="csrf-token" content="{{ csrf_token() }}">
 @endpush
 
 @section('content')
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.2/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.4/css/buttons.dataTables.min.css">
     <div class="content container-fluid">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">{{ \App\CPU\translate('Dashboard') }}</a>
                 </li>
-                <li class="breadcrumb-item" aria-current="page">{{ \App\CPU\translate('Applications') }}</li>
+                <li class="breadcrumb-item" aria-current="page">{{ \App\CPU\translate('Jobs Applications') }}</li>
             </ol>
         </nav>
-        <!-- Page Heading -->
+        <!-- Page Header -->
+        <div class="page-header mb-1">
+            <div class="flex-between align-items-center">
+                <div>
+                    <span class="h1"> <span class="page-header-title"></span> {{ \App\CPU\translate('Jobs') }}
+                        {{ \App\CPU\translate('Application') }}</span>
+                    <span class="badge badge-soft-dark mx-2">{{ $applications->total() }}</span>
+                </div>
 
-        <!-- Content Row -->
+            </div>
+        </div>
+        <!-- End Page Header -->
 
-        <div class="row" style="margin-top: 20px" id="banner-table">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="flex-between row justify-content-between align-items-center flex-grow-1 mx-1">
-                            <div>
-                                <div class="d-flex">
-                                    <div>
-                                        <h5>{{ \App\CPU\translate('Applications_table') }}</h5>
-                                    </div>
-                                    <div class="mx-1">
-                                        <h5 style="color: red;">{{ $applications->count() }}</h5>
-                                    </div>
+        <!-- Card -->
+        <div class="card p-3">
+            <!-- Header -->
+            <div class="card-header">
+                <div class="row flex-between justify-content-between flex-grow-1">
+
+                    <div class="col-12 col-md-5 mt-2 mt-sm-0">
+                        <form action="{{ url()->current() }}" id="form-data" method="GET">
+
+                            <div class="row">
+                                <div class="col-12 col-sm-4">
+                                    <input type="date" name="from" value="{{ $from ?? date('Y-m-d') }}" id="from_date"
+                                        class="form-control">
                                 </div>
-                                <div style="width: 30vw" class="mt-4">
-                                    <!-- Search -->
-                                    <form action="{{ url()->current() }}" method="GET">
-                                        <div class="input-group input-group-merge input-group-flush">
-                                            <div class="input-group-prepend">
-                                                <div class="input-group-text">
-                                                    <i class="tio-search"></i>
-                                                </div>
-                                            </div>
-                                            <input id="datatableSearch_" type="search" name="search" class="form-control"
-                                                placeholder="{{ \App\CPU\translate('Search_Application_by_Status') }}"
-                                                aria-label="Search orders" value="" required>
-                                            <button type="submit"
-                                                class="btn btn-primary">{{ \App\CPU\translate('Search') }}</button>
-                                        </div>
-                                    </form>
-                                    <!-- End Search -->
+                                <div class="col-12 col-sm-4 mt-2 mt-sm-0">
+                                    <input type="date" value="{{ $to ?? date('Y-m-d') }}" name="to" id="to_date"
+                                        class="form-control">
                                 </div>
+                                <div class="col-12 col-sm-2 mt-2 mt-sm-0  ">
+                                    <button type="submit" class="btn btn-primary float-right float-sm-none"
+                                        onclick="formUrlChange(this)" data-action="{{ url()->current() }}">
+                                        {{ \App\CPU\translate('filter') }}
+                                    </button>
+                                </div>
+                                <div class="col-12 col-sm-2 mt-2 mt-sm-0  ">
+                                    <button type="submit" class="btn btn-success float-right float-sm-none"
+                                        onclick="formUrlChange(this)"
+                                        data-action="{{ route('admin.application.bulk-export') }}">
+                                        {{ \App\CPU\translate('export') }}
+                                    </button>
+
+
+                                </div>
+
                             </div>
-
-                        </div>
+                        </form>
                     </div>
-                    <div class="card-body" style="padding: 0">
-                        <div class="table-responsive">
-                            <table id="columnSearchDatatable"
-                                style="text-align: {{ Session::get('direction') === 'rtl' ? 'right' : 'left' }};"
-                                class="table table-borderless table-thead-bordered table-nowrap table-align-middle card-table">
-                                <thead class="thead-light">
-                                    <tr>
-                                        <th>{{ \App\CPU\translate('sl#') }}</th>
-                                        <th>{{ \App\CPU\translate('Name') }}</th>
-                                        <th>{{ \App\CPU\translate('Email') }}</th>
-                                        <th>{{ \App\CPU\translate('Phone') }}</th>
 
-                                        <th>{{ \App\CPU\translate('Applyed Job Position') }}</th>
-                                        <th>{{ \App\CPU\translate('CV') }}</th>
-                                        <th>{{ \App\CPU\translate('Applyed Date') }}</th>
-                                        <th>{{ \App\CPU\translate('Apply Status') }}</th>
-                                        <th>{{ \App\CPU\translate('action') }}</th>
-                                    </tr>
-                                </thead>
 
-                                <tbody>
-                                    @foreach ($applications as $i => $application)
+                </div>
+                <!-- End Row -->
+            </div>
+            <!-- End Header -->
+
+            <!-- Table -->
+            <table id="example" class="display" style="width:100%">
+                <thead class="thead-light">
+                    <tr>
+                        <th>{{ \App\CPU\translate('sl#') }}</th>
+                        <th>{{ \App\CPU\translate('Name') }}</th>
+                        <th>{{ \App\CPU\translate('Email') }}</th>
+                        <th>{{ \App\CPU\translate('Phone') }}</th>
+
+                        <th>{{ \App\CPU\translate('Applyed Job Position') }}</th>
+                        <th>{{ \App\CPU\translate('CV') }}</th>
+                        <th>{{ \App\CPU\translate('Applyed Date') }}</th>
+                        <th>{{ \App\CPU\translate('Apply Status') }}</th>
+                        <th>{{ \App\CPU\translate('action') }}</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach ($applications as $i => $application)
                                         <tr>
                                             <th scope="row">{{ ++$i }}</th>
                                             <td>{{ $application->name }}  </td>
@@ -282,28 +299,31 @@
                                         </div>
                                         <!-- view Application Modal End-->
                                     @endforeach
-                                </tbody>
+                </tbody>
+            </table>
+            <!-- End Table -->
 
-                            </table>
+            <!-- Footer -->
+            <div class="card-footer">
+                <!-- Pagination -->
+                <div class="row table-responsive">
+                    <div class="">
+                        <div class="">
+                            <!-- Pagination -->
+                            {!! $applications->links() !!}
                         </div>
                     </div>
-                    <div class="card-footer">
-                        {{ $applications->links() }}
-                    </div>
-                    @if ($applications->count() <= 0)
-                        <div class="text-center p-4">
-                            <img class="mb-3" src="{{ asset('assets/back-end') }}/svg/illustrations/sorry.svg"
-                                alt="Image Description" style="width: 7rem;">
-                            <p class="mb-0">{{ \App\CPU\translate('No_data_to_show') }}</p>
-                        </div>
-                    @endif
                 </div>
+                <!-- End Pagination -->
             </div>
+            <!-- End Footer -->
         </div>
+        <!-- End Card -->
     </div>
+
 @endsection
 
-@push('script')
+@push('script_2')
     <!-- include summernote css/js -->
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
@@ -312,7 +332,44 @@
             $('#summernote').summernote();
         });
     </script>
+
     <script>
+        $('#from_date,#to_date').change(function() {
+            let fr = $('#from_date').val();
+            let to = $('#to_date').val();
+            if (fr != '') {
+                $('#to_date').attr('required', 'required');
+            }
+            if (to != '') {
+                $('#from_date').attr('required', 'required');
+            }
+            if (fr != '' && to != '') {
+                if (fr > to) {
+                    $('#from_date').val('');
+                    $('#to_date').val('');
+                    toastr.error('{{ \App\CPU\translate('Invalid date range') }}!', Error, {
+                        CloseButton: true,
+                        ProgressBar: true
+                    });
+                }
+            }
+
+        })
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('#example').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    'copyHtml5',
+                    'excelHtml5',
+                    'csvHtml5',
+                    'pdfHtml5'
+                ]
+            });
+        });
+    </script>
+   <script>
         $(document).on('change', '.status', function() {
             var id = $(this).attr("id");
             var status = $(this).val(); // <--- selected option এর value নাও
@@ -333,7 +390,7 @@
                 success: function(data) {
                     toastr.success(
                         '{{ \App\CPU\translate('Application_status_update_successfully') }}');
-                        
+
                 },
                 error: function(xhr) {
                     toastr.error('Something went wrong!');

@@ -11,6 +11,7 @@
 |
  */
 
+use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\CareerController;
 use App\Http\Controllers\ComplainController;
 use App\Http\Controllers\InvestorController;
@@ -25,6 +26,7 @@ use App\Http\Controllers\Web\UserLoyaltyController;
 use App\Http\Controllers\Web\UserProfileController;
 use App\Http\Controllers\Web\UserWalletController;
 use App\Http\Controllers\Web\WebController;
+use App\Http\Controllers\WholesaleController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Mail;
 
@@ -73,6 +75,20 @@ Route::middleware(['maintenance_mode'])->group(function () {
         Route::get('/investor', 'create')->name('investor.crate');
         Route::post('/investor/store', 'store')->name('investor.store');
 
+    });
+    // Wholesale routes
+    Route::controller(WholesaleController::class)->group(function () {
+        Route::get('/wholesale', 'create')->name('wholesale.crate');
+        Route::post('/wholesale/store', 'store')->name('wholesale.store');
+    });
+    //Blogs
+    Route::controller(WebController::class)->group(function () {
+        Route::get('/blogs', 'blogs')->name('blogs');
+        Route::get('/blogs/{slug}', 'blogDetails')->name('blog.details');
+    });
+    // trend collections routes
+    Route::controller(WebController::class)->group(function () {
+        Route::get('/trend-collections', 'trendCollections')->name('trend.collections');
     });
 
 Route::controller(WebController::class)->middleware(['customer'])->group(function () {

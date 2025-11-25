@@ -3,7 +3,7 @@
     <h5 class="card-header-title">
         <i class="tio-user"></i> {{\App\CPU\translate('top_customer')}}
     </h5>
-    <i class="tio-poi-user" style="font-size: 45px"></i>
+    <img style="height: 50px" src="{{asset('assets/back-end/img/top-customers.gif')}}" alt="gift box">
 </div>
 <!-- End Header -->
 

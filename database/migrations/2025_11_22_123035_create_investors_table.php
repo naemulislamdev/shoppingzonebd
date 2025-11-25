@@ -7,7 +7,8 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Run the migrations. php artisan migrate --path=database/migrations/2025_11_18_134058_create_investors_table.php
+     * Run the migrations.
+     * php artisan migrate --path=database/migrations/2025_11_22_123035_create_investors_table.php
      */
     public function up(): void
     {
@@ -18,6 +19,8 @@ return new class extends Migration
             $table->text('address')->nullable();
             $table->string('occupation')->nullable();
             $table->decimal('investment_amount', 12, 2)->nullable();
+            $table->string('status')->default(1);
+            $table->text('remark')->nullable()->default(null);
             $table->timestamps();
         });
     }

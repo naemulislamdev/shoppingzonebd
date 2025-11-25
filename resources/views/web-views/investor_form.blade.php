@@ -28,14 +28,14 @@
         border-radius: 10px 10px 0 0 !important;
     }
     .investor-card {
-    font-family: 'SolaimanLipi', sans-serif;
-}
+        font-family: 'SolaimanLipi', sans-serif;
+    }
 </style>
 @section('content')
     <section class="py-3 career">
         <div class="container " style="min-height: 100vh;">
-            <div class="row">
-                <div class="col-lg-7 mx-auto">
+            <div class="row align-items-center">
+                <div class="col-lg-5 order-2 order-lg-1">
                     <div class="card investor-card">
                          <div class="card-header py-3 bg-orange text-white">
                                 <h4 class="mb-0 text-center">Investment Form</strong></h4>
@@ -109,6 +109,10 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-lg-7 order-1 order-lg-2 mb-3 mb-lg-0">
+                    <img class="img-rounded" style="max-width: 100%; height: auto;" src="{{asset('assets/front-end/img/invest.jpeg')}}" alt="investor image">
+                </div>
+
             </div>
         </div>
     </section>

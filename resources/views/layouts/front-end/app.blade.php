@@ -480,6 +480,7 @@
                     margin: 10,
                     autoplay: true,
                     autoplayTimeout: 2000,
+                    autoplayHoverPause: true,
                     smartSpeed: 500,
                     nav: true,
                     navText: [
@@ -513,6 +514,7 @@
                     smartSpeed: 500,
                     nav: true,
                     dots: false,
+                    autoplayHoverPause: true,
                     responsiveRefreshRate: 0,
                     navText: [
                         '<i title="Prev" class="fa fa-chevron-left text-white"></i>',
@@ -528,6 +530,40 @@
                         },
                         992: {
                             items: 6
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('.owl-carousel.trending-carousel').each(function() {
+
+                $(this).owlCarousel({
+                    loop: true,
+                    margin: 10,
+                    autoplay: true,
+                    autoplayTimeout: 2000,
+                    smartSpeed: 500,
+                    nav: true,
+                    dots: false,
+                    autoplayHoverPause: true,
+                    responsiveRefreshRate: 0,
+                    navText: [
+                        '<i title="Prev" class="fa fa-chevron-left"></i>',
+                        '<i title="Next" class="fa fa-chevron-right "></i>'
+                    ],
+                    responsive: {
+                        0: {
+                            margin: 10,
+                            items: 2
+                        },
+                        768: {
+                            items: 2
+                        },
+                        992: {
+                            items: 4
                         }
                     }
                 });
@@ -844,7 +880,7 @@
                     data: $('#' + form_id).serializeArray(),
                     beforeSend: function() {
                         $('#loading').show();
-                    }, 
+                    },
                     success: function(data) {
 
                         if (data.data == 1) {

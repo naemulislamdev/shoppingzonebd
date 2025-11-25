@@ -19,28 +19,73 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Svg\Tag\Path;
 
+
+
 class LandingPagesController extends Controller
 {
 
+
     public function landing_index(Request $request)
     {
-        $landing_page = DB::table('landing_pages')->get();
+        $search = $request->search;
+        $from   = $request->from;
+        $to     = $request->to;
+
+        // base query
+        $landing_page = DB::table('landing_pages');;
+
+        // search
+        if (!empty($search)) {
+            $keywords = explode(' ', $search);
+            $landing_page->where(function ($q) use ($keywords) {
+                foreach ($keywords as $value) {
+                    $q->orWhere('id', 'like', "%{$value}%")
+                        ->orWhere('title', 'like', "%{$value}%")
+                        ->orWhere('slug', 'like', "%{$value}%")
+                        ->orWhere(function ($q) use ($value) {
+                            if ($value == 'published') {
+                                $q->where('status', 1);
+                            } elseif ($value == 'unpublished') {
+                                $q->where('status', 0);
+                            }
+                        });
+                }
+            });
+        }
+
+        // date filter
+        if (!empty($from) && !empty($to)) {
+            $landing_page->whereDate('created_at', '>=', $from)
+                ->whereDate('created_at', '<=', $to);
+        }
+
+
+        $landing_page = $landing_page->latest()
+            ->paginate(20)
+            ->appends([
+                'search' => $search,
+                'from'   => $from,
+                'to'     => $to
+            ]);
+
         return view('admin-views.landingpages.landing-index', compact('landing_page'));
     }
+
+
 
     public function landing_submit(Request $request)
     {
         $this->validate($request, [
             'title' => 'required|string',
             'images' => 'required',
-            'mid_banner' => 'required',
-            'left_side_banner' => 'required',
-            'right_side_banner' => 'required',
+            'mid_banner' => 'nullablee',
+            'left_side_banner' => 'nullablee',
+            'right_side_banner' => 'nullablee',
         ], [
-            'images.required' => 'Banner image is required!',
-            'mid_banner.required'  => 'Mid banner is required!',
-            'left_side_banner.required'  => 'Left banner is required!',
-            'right_side_banner.required' => 'Right banner is required!',
+            // 'images.required' => 'Banner image is required!',
+            // 'mid_banner.required'  => 'Mid banner is required!',
+            // 'left_side_banner.required'  => 'Left banner is required!',
+            // 'right_side_banner.required' => 'Right banner is required!',
 
         ]);
 
@@ -191,9 +236,10 @@ class LandingPagesController extends Controller
 
         return response()->json();
     }
+
     public function index()
     {
-        $productLandingpage = ProductLandingPage::latest()->get();
+        $productLandingpage = ProductLandingPage::latest()->paginate(10);
         return view('admin-views.landingpages.sign_product.index', compact('productLandingpage'));
     }
     public function create()

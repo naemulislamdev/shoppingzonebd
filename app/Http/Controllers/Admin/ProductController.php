@@ -31,13 +31,14 @@ use Illuminate\Support\Facades\Storage;
 
 class ProductController extends BaseController
 {
-    public function updateProductFlatDiscount(){
+    public function updateProductFlatDiscount()
+    {
         $products = Product::where('discount_type', 'flat')->get();
-        foreach($products as $product){
+        foreach ($products as $product) {
             $product->discount = BackEndHelper::currency_to_usd($product->discount);
             $product->save();
         }
-       return response()->json(['message' => 'Flat discounts updated successfully.'], 200);
+        return response()->json(['message' => 'Flat discounts updated successfully.'], 200);
     }
     public function add_new()
     {
@@ -313,27 +314,84 @@ class ProductController extends BaseController
 
     function list(Request $request, $type)
     {
-        $query_param = [];
-        $search = $request['search'];
-        if ($type == 'in_house') {
-            $pro = Product::where(['added_by' => 'admin']);
-        } else {
-            $pro = Product::where(['added_by' => 'seller'])->where('request_status', $request->status);
-        }
+        // $query_param = [];
+        // $search = $request['search'];
+        // if ($type == 'in_house') {
+        //     $pro = Product::where(['added_by' => 'admin']);
+        // } else {
+        //     $pro = Product::where(['added_by' => 'seller'])->where('request_status', $request->status);
+        // }
 
-        if ($request->has('search')) {
-            $key = explode(' ', $request['search']);
-            $pro = $pro->where(function ($q) use ($key) {
-                foreach ($key as $value) {
-                    $q->Where('name', 'like', "%{$value}%")->orWhere('code', 'like', "%{$value}%");
+        // if ($request->has('search')) {
+        //     $key = explode(' ', $request['search']);
+        //     $pro = $pro->where(function ($q) use ($key) {
+        //         foreach ($key as $value) {
+        //             $q->Where('name', 'like', "%{$value}%")->orWhere('code', 'like', "%{$value}%");
+        //         }
+        //     });
+        //     $query_param = ['search' => $request['search']];
+        // }
+
+        // $request_status = $request['status'];
+        // $pro = $pro->orderBy('id', 'DESC')->paginate(Helpers::pagination_limit())->appends(['status' => $request['status']])->appends($query_param);
+
+
+        $search = $request->search;
+        $from   = $request->from;
+        $to     = $request->to;
+        $type   = $request->type; // add this line if not already
+
+        // base query
+        $pro = Product::query();
+
+        // ============ TYPE FILTER ADD =============
+        if ($type == 'in_house') {
+            $pro->where('added_by', 'admin');
+        } elseif ($type == 'seller') {
+            $pro->where('added_by', 'seller');
+
+            if ($request->has('status') && $request->status != null) {
+                $pro->where('request_status', $request->status);
+            }
+        }
+        // ==========================================
+
+
+        // ========== SEARCH FILTER =============
+        if (!empty($search)) {
+            $keywords = explode(' ', $search);
+
+            $pro->where(function ($q) use ($keywords) {
+                foreach ($keywords as $value) {
+                    $q->orWhere('created_at', 'like', "%{$value}%")
+                        ->orWhere('name', 'like', "%{$value}%")
+                        ->orWhere('code', 'like', "%{$value}%");
                 }
             });
-            $query_param = ['search' => $request['search']];
         }
+        // ======================================
 
-        $request_status = $request['status'];
-        $pro = $pro->orderBy('id', 'DESC')->paginate(Helpers::pagination_limit())->appends(['status' => $request['status']])->appends($query_param);
-        return view('admin-views.product.list', compact('pro', 'search', 'request_status'));
+
+        // =========== DATE FILTER ==============
+        if (!empty($from) && !empty($to)) {
+            $pro->whereDate('created_at', '>=', $from)
+                ->whereDate('created_at', '<=', $to);
+        }
+        // ======================================
+
+
+        // ========= FINAL PAGINATION ===========
+        $pro = $pro->latest()
+            ->paginate(20)
+            ->appends([
+                'search' => $search,
+                'from'   => $from,
+                'to'     => $to,
+                'type'   => $type,
+                'status' => $request->status
+            ]);
+
+        return view('admin-views.product.list', compact('pro'));
     }
 
     public function updated_product_list(Request $request)
@@ -934,6 +992,41 @@ class ProductController extends BaseController
             ];
         }
         return (new FastExcel($storage))->download('inhouse_products.xlsx');
+    }
+    public function bulk_export_stockLimit()
+    {
+        $products = Product::where(['added_by' => 'admin'])->get();
+        //export from product
+        $storage = [];
+        foreach ($products as $item) {
+            $category_name = null;
+            $category_id = 0;
+            $sub_category_id = 0;
+            $sub_sub_category_id = 0;
+            foreach (json_decode($item->category_ids, true) as $category) {
+                if ($category['position'] == 1) {
+                    $category_id = $category['id'];
+                    $category_name = Category::where('id', $category_id)->first();
+                    //dd($category_name->name);
+                } else if ($category['position'] == 2) {
+                    $sub_category_id = $category['id'];
+                } else if ($category['position'] == 3) {
+                    $sub_sub_category_id = $category['id'];
+                }
+            }
+            $storage[] = [
+                'code' => $item->code,
+                'name' => $item->name,
+                'details' => strip_tags($item->details),
+                'availability' => $item->current_stock > 0 ? 'In stock' : 'Out of stock',
+                'condition' => 'New',
+                'category name' => $category_name->name ?? '',
+                'selling_price' => BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($item->unit_price)),
+                'purchase_price' => $item->purchase_price,
+                'quantity' => $item->current_stock
+            ];
+        }
+        return (new FastExcel($storage))->download('stock_limit_products.xlsx');
     }
 
     public function barcode(Request $request, $id)
