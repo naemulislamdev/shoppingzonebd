@@ -92,10 +92,6 @@ class LandingPagesController extends Controller
         ImageManager::delete('/deal/main-banner/' . $request['image']);
         $landingPage = LandingPages::find($request['id']);
         $array = [];
-        if (count(json_decode($landingPage->main_banner)) == 2) {
-            Toastr::warning('You cannot delete all images!');
-            return back();
-        }
         foreach (json_decode($landingPage['main_banner']) as $image) {
             if ($image != $request['name']) {
                 array_push($array, $image);
@@ -125,20 +121,19 @@ class LandingPagesController extends Controller
         if ($request->mid_banner) {
             $deal->mid_banner = Helpers::updateWithCompress('deal/', $deal->mid_banner, $request->file('mid_banner'));
         }
-        if ($request->left_side_banner) {
-            $deal->left_side_banner = Helpers::updateWithCompress('deal/', $deal->left_side_banner, $request->file('left_side_banner'));
-        }
-        if ($request->right_side_banner) {
-            $deal->right_side_banner = Helpers::updateWithCompress('deal/', $deal->right_side_banner, $request->file('right_side_banner'));
-        }
+        // if ($request->left_side_banner) {
+        //     $deal->left_side_banner = Helpers::updateWithCompress('deal/', $deal->left_side_banner, $request->file('left_side_banner'));
+        // }
+        // if ($request->right_side_banner) {
+        //     $deal->right_side_banner = Helpers::updateWithCompress('deal/', $deal->right_side_banner, $request->file('right_side_banner'));
+        // }
 
         DB::table('landing_pages')->where(['id' => $deal_id])->update([
             'title' => $request['title'],
             'main_banner' => $finalImage,
             'mid_banner' => $deal->mid_banner,
-            'left_side_banner' => $deal->left_side_banner,
-            'right_side_banner' => $deal->right_side_banner,
             'slug' => Str::slug($request['title']),
+            'product_id' => $request->product_id,
             'status' => $deal->status,
             'updated_at' => now(),
         ]);

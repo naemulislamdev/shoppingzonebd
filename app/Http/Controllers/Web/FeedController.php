@@ -11,7 +11,7 @@ class FeedController extends Controller
 {
     public function facebookFeed()
     {
-        $products = Product::all(); // Fetch all products
+        $products = Product::where('status', 1)->get();
 
         $xml = new \SimpleXMLElement('<rss/>');
         $xml->addAttribute('version', '2.0');

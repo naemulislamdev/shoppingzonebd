@@ -119,7 +119,7 @@
                                     <div class="col-md-12" style="padding-top: 20px;">
                                         <label for="name">{{ \App\CPU\translate('Slider') }}
                                             {{ \App\CPU\translate('Banner') }}</label><span
-                                            class="badge badge-soft-danger"> * ( {{ \App\CPU\translate('ratio') }} 1900x500
+                                            class="badge badge-soft-danger"> ( {{ \App\CPU\translate('ratio') }} 1900x500
                                             )</span>
                                     </div>
                                 </div>
@@ -159,7 +159,32 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
+                                 <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <label for="name">{{ \App\CPU\translate('Add new product') }} <span
+                                                            class="text-danger">*</span></label>
+
+                                                    <select id="example-getting-started"
+                                                        class=" js-example-responsive form-control" name="product_id">
+                                                        <option selected disabled>Select a product</option>
+                                                        @foreach (\App\Model\Product::active()->orderBy('id', 'DESC')->get() as $key => $product)
+                                                            <option value="{{ $product->id }}">
+                                                                {{ $product['name'] }} || {{ $product['code'] }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                    @error('product_id')
+                                                        <span class="text-danger">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {{-- <div class="row">
                                     <div class="col-md-6" style="padding-top: 20px;">
                                         <label for="left_side_banner">{{ \App\CPU\translate('Left side') }}
                                             {{ \App\CPU\translate('Banner') }}</label><span
@@ -208,7 +233,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div> --}}
                             </div>
 
                             <div class=" pl-0">

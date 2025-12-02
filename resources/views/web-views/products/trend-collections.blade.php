@@ -204,7 +204,7 @@
                             <div class="product-img-container">
                                 <a href="#">
                                     <img class="card-img-top"
-                                        src="{{ asset('assets/front-end/images/product/2025-05-22-682f30619bd5a.png') }}"
+                                        src="{{ \App\CPU\ProductManager::product_image_path('thumbnail') }}/{{ $first_product['thumbnail'] }}"
                                         alt="Product Image">
                                 </a>
                                 <div class="text-center">
@@ -214,20 +214,26 @@
                             </div>
 
                             <div class="card-body">
-                                <a href="">
+                                <a href="{{ route('product', $first_product->slug) }}">
                                     <h4 class="product-title">
                                         {{ Str::limit($first_product->name, 50) }}
                                     </h4>
                                 </a>
-                                <p class="product-text">
-                                    2,650.00 <span class="fw-bold tk">৳</span>
-                                </p>
+                                @if ($first_product->discount > 0)
+                                    <span
+                                        class="product-text">৳ {{ \App\CPU\Helpers::currency_converter(
+                                            $first_product->unit_price - \App\CPU\Helpers::get_product_discount($first_product, $first_product->unit_price),
+                                        ) }}</span>
+                                    <del>৳ {{ \App\CPU\Helpers::currency_converter($first_product->unit_price) }}</del>
+                                @else
+                                    <span class="product-text">৳ {{ \App\CPU\Helpers::currency_converter($first_product->unit_price) }}</span>
+                                @endif
 
                             </div>
                             <div style="gap: 10px"
                                 class="sm-button d-flex justify-content-center justify-content-lg-between p-3 ">
-                                <a class="btn btn-sm btn-info text-white"><i class="fa fa-eye mr-2"></i>বিস্তারিত দেখুন</a>
-                                <button class="btn btn-sm btn-orange text-white"><i class="fa fa-cart-plus mr-2"></i>অর্ডার
+                                <a href="{{ route('product', $first_product->slug) }}" class="btn btn-sm btn-info text-white"><i class="fa fa-eye mr-2"></i>বিস্তারিত দেখুন</a>
+                                <button class="btn btn-sm btn-orange text-white" onclick="buy_now('form-{{ $first_product->id }}')"><i class="fa fa-cart-plus mr-2"></i>অর্ডার
                                     করুন</button>
                             </div>
                         </div>

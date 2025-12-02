@@ -5,7 +5,7 @@
     <link href="{{ asset('assets/select2/css/select2.min.css') }}" rel="stylesheet">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <style>
-        .upload-container {
+       .upload-container {
             max-width: 600px;
             margin: 0 auto;
             text-align: center;
@@ -34,7 +34,7 @@
         .image-preview-container {
             display: flex;
             flex-wrap: wrap;
-            margin-top: 20px;
+            margin-top: 50px;
             justify-content: center;
         }
 
@@ -125,7 +125,7 @@
                                         <div class="col-md-6 ml-3">
                                             <div class="form-group">
                                                 <label>{{ \App\CPU\translate('Upload product images') }}</label><small
-                                                    style="color: red">* ( {{ \App\CPU\translate('ratio') }} 1:1 )</small>
+                                                    style="color: red"> ( {{ \App\CPU\translate('ratio') }} 1:1 )</small>
                                             </div>
                                             <div class="upload-container">
                                                 <input type="file" id="image-upload" name="images[]" multiple
@@ -187,49 +187,28 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6 pt-3">
-                                        <label for="name">{{ \App\CPU\translate('Left Side') }}
-                                            {{ \App\CPU\translate('Banner') }}</label><span
-                                            class="badge badge-soft-danger">( {{ \App\CPU\translate('ratio') }} 400x650
-                                            )</span>
-                                        <div class="custom-file" style="text-align: left">
-                                            <input type="file" name="left_side_banner" id="leftImage"
-                                                class="custom-file-input"
-                                                accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*">
-                                            <label class="custom-file-label"
-                                                for="leftImage">{{ \App\CPU\translate('choose') }}
-                                                {{ \App\CPU\translate('file') }}</label>
-                                        </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <label for="name">{{ \App\CPU\translate('Add new product') }} <span
+                                                            class="text-danger">*</span></label>
 
-                                        <center>
-                                            <img style="width:70%;border: 1px solid; border-radius: 10px; max-height:200px;"
-                                                id="viewer2"
-                                                onerror="this.src='{{ asset('assets/front-end/img/image-place-holder.png') }}'"
-                                                src="{{ asset('storage/deal') }}/{{ $landing_pages->left_side_banner }}"
-                                                alt="banner image" />
-                                        </center>
-                                    </div>
-                                    <div class="col-md-6 pt-3">
-                                        <label for="name">{{ \App\CPU\translate('Right Side') }}
-                                            {{ \App\CPU\translate('Banner') }}</label><span
-                                            class="badge badge-soft-danger">( {{ \App\CPU\translate('ratio') }} 400x650
-                                            )</span>
-                                        <div class="custom-file" style="text-align: left">
-                                            <input type="file" name="right_side_banner" id="rightImage"
-                                                class="custom-file-input"
-                                                accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*">
-                                            <label class="custom-file-label"
-                                                for="rightImage">{{ \App\CPU\translate('choose') }}
-                                                {{ \App\CPU\translate('file') }}</label>
+                                                    <select id="example-getting-started"
+                                                        class=" js-example-responsive form-control" name="product_id">
+                                                        <option selected disabled>Select a product</option>
+                                                        @foreach (\App\Model\Product::active()->orderBy('id', 'DESC')->get() as $key => $product)
+                                                            <option value="{{ $product->id }}" {{$landing_pages->product_id == $product->id ? 'selected' : '' }}>
+                                                                {{ $product['name'] }} || {{ $product['code'] }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                    @error('product_id')
+                                                        <span class="text-danger">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
+                                            </div>
                                         </div>
-
-                                        <center>
-                                            <img style="width:70%;border: 1px solid; border-radius: 10px; max-height:200px;"
-                                                id="viewer3"
-                                                onerror="this.src='{{ asset('assets/front-end/img/image-place-holder.png') }}'"
-                                                src="{{ asset('storage/deal') }}/{{ $landing_pages->right_side_banner }}"
-                                                alt="banner image" />
-                                        </center>
                                     </div>
                                 </div>
                             </div>

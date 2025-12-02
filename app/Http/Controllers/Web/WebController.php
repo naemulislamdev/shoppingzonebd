@@ -70,7 +70,7 @@ class WebController extends Controller
 
             // Add Home Page
             $sitemap->add(
-                Url::create($siteURL.'/')
+                Url::create($siteURL . '/')
                     ->setLastModificationDate(now())
                     ->setChangeFrequency(Url::CHANGE_FREQUENCY_DAILY)
                     ->setPriority(0.8)
@@ -78,7 +78,7 @@ class WebController extends Controller
 
             // Add Contact Page
             $sitemap->add(
-                Url::create($siteURL.'/contact')
+                Url::create($siteURL . '/contact')
                     ->setLastModificationDate(now())
                     ->setChangeFrequency(Url::CHANGE_FREQUENCY_MONTHLY)
                     ->setPriority(0.5)
@@ -87,7 +87,7 @@ class WebController extends Controller
             // Add Category Pages
             foreach (Category::all() as $category) {
                 $sitemap->add(
-                    Url::create($siteURL.'/category/' . $category->slug)
+                    Url::create($siteURL . '/category/' . $category->slug)
                         ->setLastModificationDate($category->updated_at ?? now())
                         ->setChangeFrequency(Url::CHANGE_FREQUENCY_WEEKLY)
                         ->setPriority(0.7)
@@ -97,7 +97,7 @@ class WebController extends Controller
             // Add Product Pages
             foreach (Product::all() as $product) {
                 $sitemap->add(
-                    Url::create($siteURL. '/product/' . $product->slug)
+                    Url::create($siteURL . '/product/' . $product->slug)
                         ->setLastModificationDate($product->updated_at ?? now())
                         ->setChangeFrequency(Url::CHANGE_FREQUENCY_WEEKLY)
                         ->setPriority(0.9)
@@ -118,22 +118,21 @@ class WebController extends Controller
 
     public function trendCollections()
     {
-        $products =  LandingPages::where('status', 1)->first();
-        $first_product = Product::find($products->product_id);
-        $main_banners = json_decode($products->main_banner);
-        // dd(Product::find($products->product_id));
-        // dd(json_decode($products->product));
-        // dd($products);
+        $lpage =  LandingPages::where('status', 1)->first();
+        if ($lpage) {
+            $first_product = Product::find($lpage->product_id);
+            $main_banners = json_decode($lpage->main_banner);
 
-        // dd($products);
+            $subProducts = [];
+            foreach ($lpage->multiProducts as $i => $item) {
+                $subProducts[$i] =  Product::find($item->product_id);
+            }
 
-        $subProducts = [];
-        foreach($products->multiProducts as $i => $item) {
-           $subProducts[$i] =  Product::find($item->product_id);
+
+            return view("web-views.products.trend-collections", compact("first_product", "subProducts", "main_banners"));
+        } else {
+            return redirect()->route('home')->with('error', 'Page not available!');
         }
-
-
-        return view("web-views.products.trend-collections",compact("first_product", "subProducts", "main_banners") );
     }
 
     // for front-end viewL
@@ -143,7 +142,8 @@ class WebController extends Controller
 
         return view("web-views.blogs.blogs", compact("blogs"));
     }
-    public function blogDetails($slug) {
+    public function blogDetails($slug)
+    {
         $id = Blog::where("slug", $slug)->get()[0]->id;
         $blog = Blog::find($id);
         return view("web-views.blogs.blogDetails", compact("blog"));
@@ -1376,10 +1376,9 @@ class WebController extends Controller
     {
         $discount_offers = DiscountOffer::where('slug', $slug)->where('status', 1)->first();
         if ($discount_offers) {
-           return view('web-views.discount_offer', compact('discount_offers'));
-        }else{
+            return view('web-views.discount_offer', compact('discount_offers'));
+        } else {
             return "<h2>This Offer coming very soon !</h2>";
         }
-
     }
 }
