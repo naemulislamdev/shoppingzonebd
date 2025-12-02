@@ -197,20 +197,17 @@
                     </div>
                 </div>
             </div>
-            <div class="d-none d-lg-block pt-4">
+            <div class=" pt-4">
                 <div class="row">
                     <div class="col-lg-3 col-md-4 col-sm-12 mb-4 mx-auto">
                         <div class="card shadow-lg product-card">
                             <div class="product-img-container">
-                                <a href="#">
+                                <a href="{{ route('product', $first_product->slug) }}">
                                     <img class="card-img-top"
                                         src="{{ \App\CPU\ProductManager::product_image_path('thumbnail') }}/{{ $first_product['thumbnail'] }}"
                                         alt="Product Image">
                                 </a>
-                                <div class="text-center">
-                                    <button onclick="click()" class="btn add-to-cart"><i
-                                            class="fa fa-cart-plus mr-3"></i>কার্টে যোগ করুন</button>
-                                </div>
+
                             </div>
 
                             <div class="card-body">
@@ -220,20 +217,24 @@
                                     </h4>
                                 </a>
                                 @if ($first_product->discount > 0)
-                                    <span
-                                        class="product-text">৳ {{ \App\CPU\Helpers::currency_converter(
+                                    <span class="product-text">৳
+                                        {{ \App\CPU\Helpers::currency_converter(
                                             $first_product->unit_price - \App\CPU\Helpers::get_product_discount($first_product, $first_product->unit_price),
                                         ) }}</span>
                                     <del>৳ {{ \App\CPU\Helpers::currency_converter($first_product->unit_price) }}</del>
                                 @else
-                                    <span class="product-text">৳ {{ \App\CPU\Helpers::currency_converter($first_product->unit_price) }}</span>
+                                    <span class="product-text">৳
+                                        {{ \App\CPU\Helpers::currency_converter($first_product->unit_price) }}</span>
                                 @endif
 
                             </div>
                             <div style="gap: 10px"
                                 class="sm-button d-flex justify-content-center justify-content-lg-between p-3 ">
-                                <a href="{{ route('product', $first_product->slug) }}" class="btn btn-sm btn-info text-white"><i class="fa fa-eye mr-2"></i>বিস্তারিত দেখুন</a>
-                                <button class="btn btn-sm btn-orange text-white" onclick="buy_now('form-{{ $first_product->id }}')"><i class="fa fa-cart-plus mr-2"></i>অর্ডার
+                                <a href="{{ route('product', $first_product->slug) }}"
+                                    class="btn btn-sm btn-info text-white"><i class="fa fa-eye mr-2"></i>বিস্তারিত দেখুন</a>
+                                <button class="btn btn-sm btn-orange text-white"
+                                    onclick="buy_now('form-{{ $first_product->id }}')"><i
+                                        class="fa fa-cart-plus mr-2"></i>অর্ডার
                                     করুন</button>
                             </div>
                         </div>
@@ -243,7 +244,7 @@
             {{-- Mobile trending  --}}
             <div class="d-block d-lg-none pt-4">
                 <div class="owl-carousel trending-carousel mt-4 mt-lg-4">
-                    @foreach ([4, 3, 4, 2, 6, 6] as $i)
+                    @foreach ($subProducts as $item)
                         <div class="card shadow-lg product-card">
 
                             <div class="product-img-container">
@@ -253,11 +254,7 @@
                                         alt="Product Image">
                                 </a>
 
-                                <div class="text-center">
-                                    <button onclick="click()" class="btn add-to-cart">
-                                        <i class="fa fa-cart-plus mr-3"></i> কার্টে যোগ করুন
-                                    </button>
-                                </div>
+
                             </div>
 
                             <div class="card-body pb-0">
@@ -289,45 +286,51 @@
                 </div>
             </div>
 
-            <div class="row">
-                @foreach ($subProducts as $key => $item)
-                    <div class="col-lg-3 col-md-4 col-sm-12 mb-4">
-                        <div class="card shadow-lg product-card">
-                            <div class="product-img-container">
-                                <a href="#">
-                                    <img class="card-img-top"
-                                        src="{{ asset('assets/front-end/images/product/2025-05-22-682f30619bd5a.png') }}"
-                                        alt="Product Image">
-                                </a>
-                                <div class="text-center">
-                                    <button onclick="click()" class="btn add-to-cart"><i
-                                            class="fa fa-cart-plus mr-3"></i>কার্টে
-                                        যোগ করুন</button>
+            <div class="d-none d-lg-block">
+                <div class="row">
+                    @foreach ($subProducts as $key => $item)
+                        <div class="col-lg-3 col-md-4 col-sm-12 mb-4">
+                            <div class="card shadow-lg product-card">
+                                <div class="product-img-container">
+                                    <a href="{{ route('product', $item->slug) }}">
+                                        <img class="card-img-top"
+                                            src="{{ asset('assets/front-end/images/product/2025-05-22-682f30619bd5a.png') }}"
+                                            alt="Product Image">
+                                    </a>
+
+                                </div>
+
+                                <div class="card-body">
+                                    <a href="">
+                                        <h4 class="product-title">
+                                            {{ Str::limit($item->name, 25) }}
+                                        </h4>
+                                    </a>
+                                    @if ($item->discount > 0)
+                                        <span class="product-text">৳
+                                            {{ \App\CPU\Helpers::currency_converter(
+                                                $item->unit_price - \App\CPU\Helpers::get_product_discount($item, $item->unit_price),
+                                            ) }}</span>
+                                        <del>৳ {{ \App\CPU\Helpers::currency_converter($item->unit_price) }}</del>
+                                    @else
+                                        <span class="product-text">৳
+                                            {{ \App\CPU\Helpers::currency_converter($item->unit_price) }}</span>
+                                    @endif
+
+                                </div>
+                                <div style="gap: 10px"
+                                    class="sm-button d-flex justify-content-center justify-content-lg-between p-3 ">
+                                    <a href="{{ route('product', $item->slug) }}" class="btn btn-sm btn-info text-white"><i
+                                            class="fa fa-eye mr-2"></i>বিস্তারিত
+                                        দেখুন</a>
+                                    <button onclick="buy_now('form-{{ $item->id }}')"
+                                        class="btn btn-sm btn-orange text-white"><i class="fa fa-cart-plus mr-2"></i>অর্ডার
+                                        করুন</button>
                                 </div>
                             </div>
-
-                            <div class="card-body">
-                                <a href="">
-                                    <h4 class="product-title">
-                                        {{-- {{ Str::limit($item->name, 50) }} --}}
-                                    </h4>
-                                </a>
-                                <p class="product-text">
-                                    2,650.00 <span class="fw-bold tk">৳</span>
-                                </p>
-
-                            </div>
-                            <div style="gap: 10px"
-                                class="sm-button d-flex justify-content-center justify-content-lg-between p-3 ">
-                                <a class="btn btn-sm btn-info text-white"><i class="fa fa-eye mr-2"></i>বিস্তারিত
-                                    দেখুন</a>
-                                <button class="btn btn-sm btn-orange text-white"><i
-                                        class="fa fa-cart-plus mr-2"></i>অর্ডার
-                                    করুন</button>
-                            </div>
                         </div>
-                    </div>
-                @endforeach
+                    @endforeach
+                </div>
             </div>
         </div>
     </section>
