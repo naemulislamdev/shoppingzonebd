@@ -268,6 +268,7 @@
                                     <tr>
                                         <th>{{ \App\CPU\translate('Title') }}</th>
                                         <th>{{ \App\CPU\translate('Slug') }}</th>
+                                        <th>{{ \App\CPU\translate('dfdf') }}</th>
                                         <th>{{ \App\CPU\translate('status') }}</th>
                                         <th>{{ \App\CPU\translate('Product Add') }}</th>
                                         <th style="width: 50px">{{ \App\CPU\translate('action') }}</th>
@@ -279,7 +280,7 @@
 
                                             <td>{{ $deal->title }}</td>
                                             <td><a href="https://shop.shoppingzonebd.com.bd/{{ $deal->slug }}" target="_blank">{{ $deal->slug }}</a></td>
-
+                                            <td>dfdf</td>
                                             <td>
                                                 <label class="switch">
                                                     <input type="checkbox" class="status" id="{{ $deal->id }}"

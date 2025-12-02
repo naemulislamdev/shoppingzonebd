@@ -116,20 +116,17 @@ class WebController extends Controller
         return redirect()->route('home');
     }
 
-    public function trendCollections()
+    public function multiCollection()
     {
         $lpage =  LandingPages::where('status', 1)->first();
         if ($lpage) {
             $first_product = Product::find($lpage->product_id);
             $main_banners = json_decode($lpage->main_banner);
-
             $subProducts = [];
             foreach ($lpage->multiProducts as $i => $item) {
                 $subProducts[$i] =  Product::find($item->product_id);
             }
-
-
-            return view("web-views.products.trend-collections", compact("first_product", "subProducts", "main_banners"));
+            return view("web-views.products.collections", compact("first_product", "subProducts", "main_banners"));
         } else {
             return redirect()->route('home')->with('error', 'Page not available!');
         }
