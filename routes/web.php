@@ -89,7 +89,7 @@ Route::middleware(['maintenance_mode'])->group(function () {
     });
     // trend collections routes
     Route::controller(WebController::class)->group(function () {
-        Route::get('/trend-collections', 'trendCollections')->name('trend.collections');
+        Route::get('/collections/{slug}', 'multiCollection')->name('collections');
     });
 
 Route::controller(WebController::class)->middleware(['customer'])->group(function () {

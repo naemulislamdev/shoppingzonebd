@@ -420,7 +420,6 @@
                                         alt="Product Image">
                                 </a>
 
-
                             </div>
 
                             <div class="card-body pb-0">
