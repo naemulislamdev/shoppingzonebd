@@ -130,8 +130,14 @@ class ContactController extends Controller
     public function leadView($id)
     {
         $lead = Lead::findOrFail($id);
-        $lead->update(['status' => 0]);
+        $lead->update(['status' => 1]);
         return view('admin-views.leads.view', compact('lead'));
+    }
+    public function updateLeadRemark(Request $request, $id)
+    {
+        $investor = Lead::findOrFail($id);
+        $investor->update(['remark' => $request->remark]);
+        return back()->with('success', 'Remark added successfully');
     }
     public function leadDestroy(Request $request)
     {
@@ -167,7 +173,14 @@ class ContactController extends Controller
     //--- User Information Management ---//
     public function userInfoList(Request $request)
     {
-        $userInfos =  UserInfo::latest()->get();
+        $from = $request['from'];
+        $to = $request['to'];
+        if ($from && $to) {
+            $userInfos =  UserInfo::whereDate('created_at', '>=', $from)
+                ->whereDate('created_at', '<=', $to)->get();
+        } else {
+            $userInfos =  UserInfo::latest()->get();
+        }
         return view('admin-views.user-info.list', compact('userInfos'));
     }
 
@@ -227,6 +240,12 @@ class ContactController extends Controller
         $investor = Investor::findOrFail($id);
         $investor->update(['status' => 1]);
         return view('admin-views.investors.view', compact('investor'));
+    }
+    public function updateRemark(Request $request, $id)
+    {
+        $investor = Investor::findOrFail($id);
+        $investor->update(['remark' => $request->remark]);
+        return back()->with('success', 'Remark added successfully');
     }
     public function investorsDestroy(Request $request)
     {

@@ -50,6 +50,7 @@ class LandingPagesController extends Controller
             // 'meta_title' => $request['title'],
             // 'meta_description' => $request['meta_description'],
             'slug' => Str::slug($request['title']),
+            'product_id' => $request->product_id,
             'status' => 0,
             'created_at' => now(),
             'updated_at' => now(),

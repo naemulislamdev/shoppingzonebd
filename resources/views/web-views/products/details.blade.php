@@ -146,18 +146,18 @@
         }
 
         /* .color-label {
-            cursor: pointer;
-            margin-right: 8px;
-            border-radius: 6px;
-            overflow: hidden;
-        }
-        .color-label img {
-            border: 2px solid transparent;
-            transition: border 0.3s;
-        }
-        input[name="color"]:checked + .color-label img {
-            border: 2px solid #007bff;
-        } */
+                cursor: pointer;
+                margin-right: 8px;
+                border-radius: 6px;
+                overflow: hidden;
+            }
+            .color-label img {
+                border: 2px solid transparent;
+                transition: border 0.3s;
+            }
+            input[name="color"]:checked + .color-label img {
+                border: 2px solid #007bff;
+            } */
     </style>
     <?php
     $overallRating = \App\CPU\ProductManager::get_overall_rating($product->reviews);
@@ -278,7 +278,7 @@
                                 <h1 class="product-name mb-2">{{ $product->name }}</h1>
                                 <div>
                                     <span class="product-price">
-                                            {{ \App\CPU\Helpers::get_price_range($product) }}
+                                        {{ \App\CPU\Helpers::get_price_range($product) }}
                                     </span>
                                 </div>
 
@@ -1010,6 +1010,14 @@
                     currency: "BDT"
                 }]
             }
+        });
+    </script>
+    <script>
+        fbq('track', 'ViewContent', {
+            content_ids: ['{{ $product->id }}'],
+            content_type: 'product',
+            value: {{ \App\CPU\Helpers::currency_converter($product->unit_price) ?? 0 }},
+            currency: 'BDT'
         });
     </script>
     <script>

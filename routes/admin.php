@@ -439,6 +439,16 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('batch/product/{id}', 'discountBatchProduct')->name('batch.product');
             Route::get('batch/remove-product/{id}', 'discountBatchRemoveProduct')->name('batch.remove.product');
             Route::post('batch/status/', 'discountBatchStatus')->name('batch.status');
+            // Discount Offers Management
+            Route::get('discount-offers', 'discountOffers')->name('discount-offers');
+            Route::get('discount-offers/create', 'discountOffersCreate')->name('discount-offers.create');
+            Route::post('discount-offers/store', 'discountOffersStore')->name('discount-offers.store');
+            Route::get('discount-offers/edit/{id}', 'discountOffersEdit')->name('discount-offers.edit');
+            Route::post('discount-offers/update/{id}', 'discountOffersUpdate')->name('discount-offers.update');
+            Route::get('discount-offers/delete/{id}', 'discountOffersDelete')->name('discount-offers.delete');
+            Route::get('discount-offers/product/{id}', 'discountOffersProduct')->name('discount-offers.product');
+            Route::get('discount-offers/remove-product/{id}', 'discountOffersRemoveProduct')->name('discount-offers.remove.product');
+            Route::post('discount-offers/status/', 'discountOffersStatus')->name('discount-offers.status');
         });
 
         Route::controller(TransactionController::class)->prefix('/transaction')->as('transaction.')->middleware('module:business_section')->group(function () {
@@ -709,12 +719,14 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('list', 'investorsList')->name('list');
             Route::get('view/{id}', 'investorsView')->name('view');
             Route::post('delete', 'investorsDestroy')->name('delete');
+            Route::post('update/remark/{id}', 'updateRemark')->name('update_remark');
             Route::get('bulk-export', 'bulk_export_investors')->name('bulk-export');
         });
         Route::controller(ContactController::class)->prefix('/leads')->as('leads.')->middleware('module:support_section')->group(function () {
             Route::get('list', 'leadsList')->name('list');
             Route::post('delete', 'leadDestroy')->name('delete');
             Route::get('view/{id}', 'leadView')->name('view');
+            Route::post('update/remark/{id}', 'updateLeadRemark')->name('update_remark');
             Route::get('bulk-export', 'bulk_export_data')->name('bulk-export');
         });
         Route::controller(ContactController::class)->prefix('/user-info')->as('user-info.')->middleware('module:support_section')->group(function () {

@@ -667,6 +667,14 @@ $route = request()->route()->getName();
                                             </span>
                                         </a>
                                     </li>
+                                    <li class="nav-item {{ Request::is('admin/discount/*') ? 'active' : '' }}">
+                                        <a class="nav-link " href="{{ route('admin.discount.discount-offers') }}"
+                                            title="{{ \App\CPU\translate('Discount Offers') }}">
+                                            <span class="tio-circle nav-indicator-icon"></span>
+                                            <span class="text-truncate">{{ 'Discount Offers' }}
+                                            </span>
+                                        </a>
+                                    </li>
                                 </ul>
                             </li>
                             <li

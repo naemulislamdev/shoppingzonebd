@@ -111,7 +111,7 @@ class ProductController extends BaseController
         $p->added_by = "admin";
         $p->name = $request->name;
         $p->code = $request->code;
-        $p->slug = Str::slug($request->name);
+        $p->slug = Str::slug($request->name).'-'. $request->code;
 
         $category = [];
 
@@ -526,8 +526,9 @@ class ProductController extends BaseController
     {
 
         $product = Product::find($id);
-        // $product_slug = Str::slug($request->name) . '-'. Str::random(3);
+        $product_slug = Str::slug($request->name).'-'. $request->code;
         $product->name = $request->name;
+        $product->slug = $product_slug;
 
         $category = [];
         if ($request->category_id != null) {

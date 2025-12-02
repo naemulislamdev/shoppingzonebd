@@ -48,6 +48,7 @@ use App\Model\Branch;
 use App\Models\Career;
 use App\Model\Color;
 use App\Models\BatchDiscount;
+use App\Models\DiscountOffer;
 use App\Models\Lead;
 use App\Models\UserInfo;
 use App\ProductLandingPage;
@@ -1337,9 +1338,14 @@ class WebController extends Controller
 
         return response()->json(['success' => true]);
     }
-    public function batchOffers()
+    public function discountOffers($slug)
     {
-        $batch_offers = BatchDiscount::where('status', 1)->get();
-        return view('web-views.batch_offer', compact('batch_offers'));
+        $discount_offers = DiscountOffer::where('slug', $slug)->where('status', 1)->first();
+        if ($discount_offers) {
+           return view('web-views.discount_offer', compact('discount_offers'));
+        }else{
+            return "<h2>This Offer coming very soon !</h2>";
+        }
+
     }
 }

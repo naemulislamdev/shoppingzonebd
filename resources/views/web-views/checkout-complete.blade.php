@@ -285,7 +285,7 @@
             ecommerce: {
                 transaction_id: "{{ $order->order_id }}",
                 affiliation: "My eCommerce Store",
-                value: {{ \App\CPU\Helpers::currency_converter( $order->order_amount) ?? 0 }},
+                value: {{ \App\CPU\Helpers::currency_converter($order->order_amount) ?? 0 }},
                 tax: 0.00,
                 shipping: {{ \App\CPU\Helpers::currency_converter($order->shipping_cost) ?? 0 }},
                 currency: "BDT",
@@ -306,6 +306,22 @@
                     @endforeach
                 ]
             }
+        });
+    </script>
+    <script>
+        fbq('track', 'Purchase', {
+            contents: [
+                @foreach ($order->details as $detail)
+                    {
+                        id: '{{ $detail->product_id }}',
+                        quantity: {{ $detail->qty }},
+                        item_price: {{ \App\CPU\Helpers::currency_converter($detail->price) ?? 0 }}
+                    },
+                @endforeach
+            ],
+            content_type: 'product',
+            value: {{ \App\CPU\Helpers::currency_converter($order->order_amount) ?? 0 }},
+            currency: 'BDT'
         });
     </script>
     <script>

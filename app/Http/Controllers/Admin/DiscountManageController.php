@@ -7,8 +7,10 @@ use App\Http\Controllers\Controller;
 use App\Model\Category;
 use App\Model\Product;
 use App\Models\BatchDiscount;
+use App\Models\DiscountOffer;
 use App\Models\FlatDiscount;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class DiscountManageController extends Controller
 {
@@ -304,5 +306,158 @@ class DiscountManageController extends Controller
         $batchDiscount->save();
 
         return response()->json(['success' => true, 'status' => $batchDiscount->status]);
+    }
+    ////////-----------------------------Batch offer Ends-------------------------------------//////
+
+    // Discount Offers Function
+    public function discountOffers()
+    {
+        $discountOffers = DiscountOffer::all();
+        return view('admin-views.discount-manage.offers.index', compact('discountOffers'));
+    }
+
+    public function discountOffersCreate()
+    {
+        $products = Product::where('status', 1)->get();
+        return view('admin-views.discount-manage.offers.create', compact('products'));
+    }
+
+    public function discountOffersStore(Request $request)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'discount_amounts' => 'required|array',
+            'discount_types' => 'required|array',
+            'product_ids' => 'required|array',
+            'product_ids.*' => 'exists:products,id',
+        ]);
+        $products = $request->product_ids;
+        foreach ($products as $productId) {
+            $amount = $request->discount_amounts[$productId] ?? 0;
+            $type = $request->discount_types[$productId] ?? 'flat';
+
+            $product = Product::find($productId);
+            if ($product) {
+                $product->discount = $type == 'flat' ? BackEndHelper::currency_to_usd($amount) : $amount;
+                $product->discount_type = $type;
+                $product->save();
+            }
+        }
+
+
+        // Store the batch discount
+        DiscountOffer::create([
+            'title' => $request->title,
+            'slug' => Str::slug($request->title),
+            'discount_amount' => json_encode($request->discount_amounts),
+            'discount_type' => json_encode($request->discount_types),
+            'product_ids' => json_encode($request->product_ids),
+            'status' => true
+        ]);
+        return redirect()->route('admin.discount.discount-offers')->with('success', 'Discount offer created successfully.');
+    }
+    public function discountOffersEdit($id)
+    {
+        $discountOffer = DiscountOffer::findOrFail($id);
+        $products = Product::where('status', 1)->get();
+        return view('admin-views.discount-manage.offers.edit', compact('discountOffer', 'products'));
+    }
+    public function discountOffersUpdate(Request $request, $id)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'discount_amounts' => 'required|array',
+            'discount_types' => 'required|array',
+            'product_ids' => 'required|array',
+            'product_ids.*' => 'exists:products,id',
+        ]);
+        $products = $request->product_ids;
+        foreach ($products as $productId) {
+            $amount = $request->discount_amounts[$productId] ?? 0;
+            $type = $request->discount_types[$productId] ?? 'flat';
+
+            $product = Product::find($productId);
+            if ($product) {
+                $product->discount = $type == 'flat' ? BackEndHelper::currency_to_usd($amount) : $amount;
+                $product->discount_type = $type;
+                $product->save();
+            }
+        }
+
+
+        // Store the batch discount
+        $discountOffer = DiscountOffer::findOrFail($id);
+        $discountOffer->update([
+            'title' => $request->title,
+            'slug' => Str::slug($request->title),
+            'discount_amount' => json_encode($request->discount_amounts),
+            'discount_type' => json_encode($request->discount_types),
+            'product_ids' => json_encode($request->product_ids),
+        ]);
+        return redirect()->route('admin.discount.discount-offers')->with('success', 'Discount offer updated successfully.');
+    }
+    public function discountOffersDelete($id)
+    {
+        $discountOffer = DiscountOffer::findOrFail($id);
+
+        $productIds = json_decode($discountOffer->product_ids, true);
+        Product::whereIn('id', $productIds)->update(['discount' => 0, 'discount_type' => null]);
+
+        $discountOffer->delete();
+        return redirect()->route('admin.discount.discount-offers')->with('success', 'Discount offer deleted successfully.');
+    }
+    public function discountOffersProduct($id)
+    {
+        $discountOffer = DiscountOffer::findOrFail($id);
+
+        $productIds = json_decode($discountOffer->product_ids, true);
+        $products = Product::whereIn('id', $productIds)->get();
+        return view('admin-views.discount-manage.offers.see_product', compact('products'));
+    }
+    public function discountOffersRemoveProduct($id)
+    {
+        $product = Product::findOrFail($id);
+        $product->discount = 0;
+        $product->discount_type = null;
+        $product->save();
+
+        // Remove product from any batch discount
+        $discountOffers = DiscountOffer::all();
+
+        foreach ($discountOffers as $discountOffer) {
+            $productIds = json_decode($discountOffer->product_ids, true) ?? [];
+            $discountAmounts = json_decode($discountOffer->discount_amount, true) ?? [];
+            $discountTypes = json_decode($discountOffer->discount_type, true) ?? [];
+
+            // If product exists in this batch
+            if (in_array($id, $productIds)) {
+                // Remove product ID
+                $updatedProductIds = array_diff($productIds, [$id]);
+                $discountOffer->product_ids = json_encode(array_values($updatedProductIds));
+
+                // Remove discount amount & type
+                unset($discountAmounts[$id]);
+                unset($discountTypes[$id]);
+
+                $discountOffer->discount_amount = json_encode($discountAmounts);
+                $discountOffer->discount_type = json_encode($discountTypes);
+
+                $discountOffer->save();
+            }
+        }
+
+        return back()->with('success', 'Product removed from discount offers successfully.');
+    }
+    public function discountOffersStatus(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:discount_offers,id',
+        ]);
+
+        $discountOffer = DiscountOffer::findOrFail($request->id);
+        $discountOffer->status = !$discountOffer->status;
+        $discountOffer->save();
+
+        return response()->json(['success' => true, 'status' => $discountOffer->status]);
     }
 }

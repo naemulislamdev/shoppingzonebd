@@ -18,17 +18,15 @@
             <div class="row product-grid">
                 @php $decimal_point_settings = \App\CPU\Helpers::get_business_settings('decimal_point_settings'); @endphp
                 <!-- Your product columns go here -->
-                @foreach ($batch_offers as $batch_offer)
-                    @if ($batch_offer->product_ids != null)
+                    @if ($discount_offers->product_ids != null)
                         @php
-                            $productIds = json_decode($batch_offer->product_ids, true) ?? [];
-                            $batchOfferProducts = \App\Model\Product::whereIn('id', $productIds)->get();
+                            $productIds = json_decode($discount_offers->product_ids, true) ?? [];
+                            $discountOfferProducts = \App\Model\Product::whereIn('id', $productIds)->get();
                         @endphp
-                        @foreach ($batchOfferProducts as $product)
+                        @foreach ($discountOfferProducts as $product)
                             @include('web-views.products.product_box', ['product' => $product])
                         @endforeach
                     @endif
-                @endforeach
             </div>
         </div>
     </section>

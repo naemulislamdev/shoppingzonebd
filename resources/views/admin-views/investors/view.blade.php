@@ -20,7 +20,7 @@
             <div class="d-sm-flex align-items-center justify-content-between mb-2">
                 <h1 class="h3 mb-0 text-black-50">{{ \App\CPU\translate('View User Information') }}</h1>
                 <a href="{{ route('admin.investors.list') }}"
-                    class="btn btn-primary">{{ \App\CPU\translate('Back to Users Information') }}</a>
+                    class="btn btn-primary">{{ \App\CPU\translate('Back to Investor Information') }}</a>
             </div>
 
             <!-- Content Row -->
@@ -34,7 +34,7 @@
 
                                 <div class=" col-md-9 col-lg-9 hidden-xs hidden-sm">
                                     <strong style="margin-right: 20px">{{ $investor->name }}</strong>
-                                  
+
                                     <table class="table table-user-information">
                                         <tbody>
                                             <tr>
@@ -57,6 +57,14 @@
                                             <tr>
                                                 <td>{{ \App\CPU\translate('Investment Amount') }}:</td>
                                                 <td>{{ $investor->investment_amount }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>{{ \App\CPU\translate('Remark') }}:</td>
+                                                <td>{{ $investor->remark }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>{{ \App\CPU\translate('Status') }}:</td>
+                                                <td>{{ $investor['status'] == 0 ? 'Unseen' : 'Seen' }}</td>
                                             </tr>
 
                                         </tbody>

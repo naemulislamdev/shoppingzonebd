@@ -11,12 +11,17 @@
             </div>
             <div class="col-md-7">
                 @php $categories = \App\CPU\CategoryManager::parents(); @endphp
+                @php
+                    $discountOffer = \App\Models\DiscountOffer::where('status', 1)->first();
+                @endphp
                 <nav class="navbar">
                     <div class="menu-area">
                         <ul>
-                            <li><a href="#"><img style="height: 60px; width: auto;"
+                            @if ($discountOffer !=null)
+<li><a href="{{route('discount.offers', ['slug' => $discountOffer->slug ?? ''])}}"><img style="height: 60px; width: auto;"
                                         src="{{ asset('assets/front-end/img/11-offer.png') }}" alt="11 offer image"></a>
                             </li>
+                            @endif
                             <li><a href="{{ route('home') }}">{{ \App\CPU\translate('Home') }}</a></li>
 
                             <li class="dd-btn1"><a href="#">{{ \App\CPU\translate('Categories') }} <i

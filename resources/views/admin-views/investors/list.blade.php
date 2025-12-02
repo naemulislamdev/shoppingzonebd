@@ -50,6 +50,8 @@
                                         <th style="width: 15%;">Address</th>
                                         <th style="width: 10%;">Occupation</th>
                                         <th style="width: 10%;">Investment Amount</th>
+                                        <th style="width: 10%;">Status</th>
+                                        <th style="width: 10%;">Remark</th>
                                         <th style="width: 5%;">Action</th>
                                     </tr>
                                 </thead>
@@ -67,6 +69,17 @@
                                             <td>{{ $investor['address'] }}</td>
                                             <td>{{ $investor['occupation'] }}</td>
                                             <td>{{ $investor['investment_amount'] }}</td>
+                                            <td>{{ $investor['status'] == 0 ? 'Unseen' : 'Seen' }}</td>
+                                            <td>
+                                                @if ($investor->remark != null)
+                                                    {{ $investor->remark }}
+                                                @else
+                                                    <a href="javascript:;" class="btn btn-sm btn-primary my-2"
+                                                        data-toggle="modal"
+                                                        data-target="#remarkAddModal_{{ $investor->id }}">Add
+                                                    </a>
+                                                @endif
+                                            </td>
                                             <td>
 
                                                 <div class="d-flex justify-content-between">
@@ -83,6 +96,41 @@
                                                 </div>
                                             </td>
                                         </tr>
+                                        <div class="modal fade" id="remarkAddModal_{{ $investor->id }}" tabindex="-1"
+                                            data-backdrop="static" role="dialog" aria-labelledby="exampleModalLabel"
+                                            aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                                <form action="{{ route('admin.investors.update_remark',$investor->id) }}" method="POST">
+                                                    @csrf
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="exampleModalLabel">Update Remark
+                                                            </h5>
+                                                            <button type="button" class="close" data-dismiss="modal"
+                                                                aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div class="form-group">
+                                                                <label>Remark <span class="text-danger">*</span></label>
+                                                                <textarea name="remark" class="form-control"
+                                                                    placeholder="Enter your remark"></textarea>
+                                                                @error('remark')
+                                                                    <span class="text-danger">{{ $message }}</span>
+                                                                @enderror
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary"
+                                                                data-dismiss="modal">Close</button>
+                                                            <button type="submit" class="btn btn-primary">Save
+                                                                changes</button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
                                     @endforeach
                                 </tbody>
                             </table>

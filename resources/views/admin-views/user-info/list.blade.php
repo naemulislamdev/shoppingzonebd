@@ -22,13 +22,33 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
-
                         <div class="row justify-content-between align-items-center flex-grow-1">
                             <div class="flex-start col-lg-3 mb-3 mb-lg-0">
                                 <h5>{{ \App\CPU\translate('User') }} {{ \App\CPU\translate('Information') }}
                                     {{ \App\CPU\translate('table') }} </h5>
                                 <h5 style="color: red;">
                                     ({{ $userInfos->count() }})</h5>
+                            </div>
+                            <div class="col-12 col-md-5 mt-2 mt-sm-0">
+                                <form action="{{ url()->current() }}" id="form-data" method="GET">
+
+                                    <div class="row">
+                                        <div class="col-12 col-sm-4">
+                                            <input type="date" name="from" value="{{ $from ?? date('Y-m-d') }}"
+                                                id="from_date" class="form-control">
+                                        </div>
+                                        <div class="col-12 col-sm-4 mt-2 mt-sm-0">
+                                            <input type="date" value="{{ $to ?? date('Y-m-d') }}" name="to"
+                                                id="to_date" class="form-control">
+                                        </div>
+                                        <div class="col-12 col-sm-2 mt-2 mt-sm-0 ">
+                                            <button type="submit" class="btn btn-primary float-right float-sm-none"
+                                                onclick="formUrlChange(this)" data-action="{{ url()->current() }}">
+                                                {{ \App\CPU\translate('filter') }}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
                             </div>
                             <div class="col-lg-2">
                                 Export :

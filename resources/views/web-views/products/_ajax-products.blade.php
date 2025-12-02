@@ -3,6 +3,6 @@
          @php($product = $product->product)
      @endif
      @if (!empty($product))
-         @include('web-views.products.product_box', ['dataCategory' => 'category1'])
+         @include('web-views.products.ajax_product_box', ['dataCategory' => 'category1'])
      @endif
  @endforeach
