@@ -333,7 +333,7 @@
                 success: function(data) {
                     toastr.success(
                         '{{ \App\CPU\translate('Application_status_update_successfully') }}');
-                        
+
                 },
                 error: function(xhr) {
                     toastr.error('Something went wrong!');

@@ -602,40 +602,40 @@
 @endsection
 
 @push('script_2')
-    <script>
+      <script>
         function filter_order() {
             $.get({
-                url: '{{ route('admin.orders.inhouse-order-filter') }}',
+                url: '{{route('admin.orders.inhouse-order-filter')}}',
                 contentType: false,
                 processData: false,
-                beforeSend: function() {
+                beforeSend: function () {
                     $('#loading').show();
                 },
-                success: function(data) {
-                    toastr.success('{{ \App\CPU\translate('order_filter_success') }}');
+                success: function (data) {
+                    toastr.success('{{\App\CPU\translate('order_filter_success')}}');
                     location.reload();
                 },
-                complete: function() {
+                complete: function () {
                     $('#loading').hide();
                 },
             });
         };
     </script>
     <script>
-        $('#from_date,#to_date').change(function() {
+        $('#from_date,#to_date').change(function () {
             let fr = $('#from_date').val();
             let to = $('#to_date').val();
-            if (fr != '') {
-                $('#to_date').attr('required', 'required');
+            if(fr != ''){
+                $('#to_date').attr('required','required');
             }
-            if (to != '') {
-                $('#from_date').attr('required', 'required');
+            if(to != ''){
+                $('#from_date').attr('required','required');
             }
             if (fr != '' && to != '') {
                 if (fr > to) {
                     $('#from_date').val('');
                     $('#to_date').val('');
-                    toastr.error('{{ \App\CPU\translate('Invalid date range') }}!', Error, {
+                    toastr.error('{{\App\CPU\translate('Invalid date range')}}!', Error, {
                         CloseButton: true,
                         ProgressBar: true
                     });
@@ -646,8 +646,8 @@
     </script>
     <script>
         $(document).ready(function() {
-            $('#example').DataTable({
-            });
-        });
+            $('#example').DataTable( {
+            } );
+        } );
     </script>
 @endpush

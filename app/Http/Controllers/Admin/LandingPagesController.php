@@ -14,14 +14,19 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
+
+
 class LandingPagesController extends Controller
 {
+
 
     public function landing_index(Request $request)
     {
         $landing_page = DB::table('landing_pages')->get();
         return view('admin-views.landingpages.landing-index', compact('landing_page'));
     }
+
+
 
     public function landing_submit(Request $request)
     {
@@ -43,6 +48,7 @@ class LandingPagesController extends Controller
 
         $flash_deal_id = DB::table('landing_pages')->insertGetId([
             'title' => $request['title'],
+            'product_id' => $request['product_id'],
             'main_banner' => $images,
             'mid_banner' => Helpers::uploadWithCompress('deal/', 300, $request->file('mid_banner')),
             // 'left_side_banner' =>  Helpers::uploadWithCompress('deal/', 300, $request->file('left_side_banner')),
@@ -64,10 +70,13 @@ class LandingPagesController extends Controller
 
     public function status_update(Request $request)
     {
+        DB::table('landing_pages')
+            ->where('id', $request->id)
+            ->update(['status' => 1]);
 
-        DB::table('landing_pages')->where(['id' => $request['id']])->update([
-            'status' => $request['status'],
-        ]);
+        DB::table('landing_pages')
+            ->where('id', '!=', $request->id)
+            ->update(['status' => 0]);
         return response()->json([
             'success' => 1,
         ], 200);
@@ -180,9 +189,10 @@ class LandingPagesController extends Controller
 
         return response()->json();
     }
+
     public function index()
     {
-        $productLandingpage = ProductLandingPage::latest()->get();
+        $productLandingpage = ProductLandingPage::latest()->paginate(10);
         return view('admin-views.landingpages.sign_product.index', compact('productLandingpage'));
     }
     public function create()
@@ -285,6 +295,8 @@ class LandingPagesController extends Controller
         Toastr::success('Slider image removed successfully!');
         return back();
     }
+
+
     public function removeFeatureList(Request $request)
     {
         $landingPage = ProductLandingPage::find($request['id']);
@@ -393,7 +405,7 @@ class LandingPagesController extends Controller
             foreach ($request->new_section_title as $key => $title) {
 
                 $requestImg = $request->file('new_section_img')[$key] ?? null;
-                $sectionImg = Helpers::uploadWithCompress('landingpage/',300, $requestImg);
+                $sectionImg = Helpers::uploadWithCompress('landingpage/', 300, $requestImg);
                 ProductLandingPageSection::create([
                     'section_title' => $title,
                     'section_description' => $request->new_section_description[$key],

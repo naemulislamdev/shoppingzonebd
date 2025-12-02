@@ -64,10 +64,10 @@ class BrandController extends Controller
         $query_param = $search ? ['search' => $request['search']] : '';
 
         $br = Brand::withCount('brandAllProducts')
-            ->with(['brandAllProducts'=> function($query){
+            ->with(['brandAllProducts' => function ($query) {
                 $query->withCount('order_details');
             }])
-            ->when($request['search'], function ($q) use($request){
+            ->when($request['search'], function ($q) use ($request) {
                 $key = explode(' ', $request['search']);
                 foreach ($key as $value) {
                     $q->Where('name', 'like', "%{$value}%");
@@ -75,7 +75,7 @@ class BrandController extends Controller
             })
             ->latest()->paginate(Helpers::pagination_limit())->appends($query_param);
 
-        return view('admin-views.brand.list', compact('br','search'));
+        return view('admin-views.brand.list', compact('br', 'search'));
     }
 
     /**

@@ -3,6 +3,8 @@
 @section('title', \App\CPU\translate('Landing Pages'))
 
 @push('css_or_js')
+    <link href="{{ asset('assets/back-end/css/tags-input.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/select2/css/select2.min.css') }}" rel="stylesheet">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <style>
         .upload-container {
@@ -80,8 +82,8 @@
     <div class="content container-fluid">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">{{ \App\CPU\translate('Dashboard') }}</a>
-                </li>
+                <li class="breadcrumb-item"><a
+                        href="{{ route('admin.dashboard') }}">{{ \App\CPU\translate('Dashboard') }}</a></li>
                 <li class="breadcrumb-item" aria-current="page">{{ \App\CPU\translate('Landing Pages Add') }}</li>
                 <li class="breadcrumb-item">{{ \App\CPU\translate('Add new') }}</li>
             </ol>
@@ -113,7 +115,7 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <div class="row">
+                               <div class="row">
                                     <div class="col-md-12" style="padding-top: 20px;">
                                         <label for="name">{{ \App\CPU\translate('Slider') }}
                                             {{ \App\CPU\translate('Banner') }}</label><span
@@ -124,8 +126,7 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="upload-container">
-                                            <input type="file" id="image-upload" name="images[]" multiple
-                                                accept="image/*" class="custom-file-input">
+                                            <input type="file" id="image-upload" name="images[]" multiple accept="image/*" class="custom-file-input">
                                             <label for="image-upload" class="custom-file-label">Select Slider Images</label>
                                             <div id="image-preview" class="image-preview-container"></div>
                                         </div>
@@ -147,25 +148,8 @@
                                                 {{ \App\CPU\translate('file') }}</label>
                                         </div>
                                     </div>
-                                    <div class="col-md-12">
-                                        <label for="name">{{ \App\CPU\translate('Add new product') }} <span
-                                                class="text-danger">*</span></label>
-
-                                        <select id="example-getting-started" class=" js-example-responsive form-control"
-                                            name="product_id">
-                                            <option selected disabled>Select a product</option>
-                                            @foreach (\App\Model\Product::active()->orderBy('id', 'DESC')->get() as $key => $product)
-                                                <option value="{{ $product->id }}">
-                                                    {{ $product['name'] }} || {{ $product['code'] }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        @error('product_id')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                    </div>
                                 </div>
-                                {{-- <div class="row mt-2">
+                                <div class="row mt-2">
                                     <div class="col-md-12">
                                         <div style="text-align:center;">
                                             <img style="width:70%;border: 1px solid; border-radius: 10px; max-height:200px;"
@@ -174,8 +158,8 @@
                                                 alt="banner image" />
                                         </div>
                                     </div>
-                                </div> --}}
-                                {{-- <div class="row">
+                                </div>
+                                <div class="row">
                                     <div class="col-md-6" style="padding-top: 20px;">
                                         <label for="left_side_banner">{{ \App\CPU\translate('Left side') }}
                                             {{ \App\CPU\translate('Banner') }}</label><span
@@ -224,7 +208,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div> --}}
+                                </div>
                             </div>
 
                             <div class=" pl-0">
@@ -269,8 +253,7 @@
                                         <tr>
 
                                             <td>{{ $deal->title }}</td>
-                                            <td><a href="https://shop.shoppingzonebd.com.bd/{{ $deal->slug }}"
-                                                    target="_blank">{{ $deal->slug }}</a></td>
+                                            <td><a href="https://shop.shoppingzonebd.com.bd/{{ $deal->slug }}" target="_blank">{{ $deal->slug }}</a></td>
 
                                             <td>
                                                 <label class="switch">

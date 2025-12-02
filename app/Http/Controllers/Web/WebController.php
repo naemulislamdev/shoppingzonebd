@@ -47,15 +47,18 @@ use App\CPU\Convert;
 use App\Model\Branch;
 use App\Models\Career;
 use App\Model\Color;
+use App\Model\LandingPages;
 use App\Models\BatchDiscount;
 use App\Models\DiscountOffer;
+use App\Models\Blog;
 use App\Models\Lead;
 use App\Models\UserInfo;
 use App\ProductLandingPage;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Hash;
 use Spatie\Sitemap\Sitemap;
 use Spatie\Sitemap\Tags\Url;
 use Illuminate\Support\Facades\Cache;
-use Carbon\Carbon;
 
 class WebController extends Controller
 {
@@ -113,9 +116,40 @@ class WebController extends Controller
         return redirect()->route('home');
     }
 
+    public function trendCollections()
+    {
+        $products =  LandingPages::where('status', 1)->first();
+        $first_product = Product::find($products->product_id);
+        $main_banners = json_decode($products->main_banner);
+        // dd(Product::find($products->product_id));
+        // dd(json_decode($products->product));
+        // dd($products);
+
+        // dd($products);
+
+        $subProducts = [];
+        foreach($products->multiProducts as $i => $item) {
+           $subProducts[$i] =  Product::find($item->product_id);
+        }
+
+
+        return view("web-views.products.trend-collections",compact("first_product", "subProducts", "main_banners") );
+    }
+
+    // for front-end viewL
+    public function blogs()
+    {
+        $blogs = Blog::where("status", 1)->get();
+
+        return view("web-views.blogs.blogs", compact("blogs"));
+    }
+    public function blogDetails($slug) {
+        $id = Blog::where("slug", $slug)->get()[0]->id;
+        $blog = Blog::find($id);
+        return view("web-views.blogs.blogDetails", compact("blog"));
+    }
     public function home()
     {
-
         $home_categories = Category::where('home_status', true)->priority()->get();
         $home_categories->map(function ($data) {
             $id = '"' . $data['id'] . '"';

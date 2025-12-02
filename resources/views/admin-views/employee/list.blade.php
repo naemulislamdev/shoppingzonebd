@@ -63,7 +63,7 @@
                                 <th>Branch</th>
                                 <th>{{\App\CPU\translate('Role')}}</th>
                                 <th>{{\App\CPU\translate('Status')}}</th>
-                                <th style="width: 50px">{{\App\CPU\translate('action')}}</th>
+                                <th >{{\App\CPU\translate('action')}}</th>
                             </tr>
                             </thead>
                             <tbody>

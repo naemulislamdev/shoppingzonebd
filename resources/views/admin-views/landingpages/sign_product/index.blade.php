@@ -54,9 +54,9 @@
                                     @foreach ($productLandingpage as $k => $lPage)
                                         <tr>
 
-                                            <td>{{ Str::limit($lPage->title, 20, '...') }}</td>
+                                            <td>{{ $lPage->title }}</td>
                                             <td>
-                                                <a href="https://shoppingzonebd.com.bd/page/{{ $lPage->slug }}" target="_blank">page/{{ Str::limit($lPage->slug, 30, '...') }}</a>
+                                                <a href="https://shoppingzonebd.com.bd/page/{{ $lPage->slug }}" target="_blank">page/{{ $lPage->slug }}</a>
                                             </td>
 
                                             <td>
@@ -67,7 +67,7 @@
                                                 </label>
                                             </td>
                                             <td>
-                                                {{ Str::limit($lPage->product->name ?? '', 30, '...') }}
+                                                {{-- {{ $lPage->product->name}} --}}
                                             </td>
                                             <td>
                                                 <a title="{{ \App\CPU\translate('Edit') }}"

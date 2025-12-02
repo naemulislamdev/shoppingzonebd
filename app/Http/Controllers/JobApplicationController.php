@@ -6,6 +6,8 @@ use App\CPU\Helpers;
 use App\CPU\ImageManager;
 use App\Models\Career;
 use App\Models\JobApplication;
+use Carbon\Carbon;
+use Rap2hpoutre\FastExcel\FastExcel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -61,5 +63,33 @@ class JobApplicationController extends Controller
         ImageManager::delete('files/job_resume/' . $app['resume']);
         $app->delete();
         return response()->json();
+    }
+    public function bulk_export_applications()
+    {
+        $applications = JobApplication::latest()->get();
+
+
+        $data = [];
+
+        foreach ($applications as $item) {
+            $data[] = [
+                'Applied Date'           => Carbon::parse($item->created_at)->format('d M Y'),
+                'Name'                   => $item->name,
+                'Email'                  => $item->email,
+                'Phone'                  => $item->phone,
+                'Position'               => $item->career->position ?? 'N/A',
+                'Experience Level'       => $item->experience_level,
+                'Current Job Position'   => $item->current_position,
+                'Expected Salary'        => $item->expected_salary,
+                'CV or Resume'           => asset('storage/files/job_resume/' . $item->resume),
+                'Cover Letter'           => $item->message,
+                'Portfolio'              => $item->portfolio_link,
+                'Status'                 => $item->status,
+            ];
+        }
+
+
+        // Export to Excel
+        return (new FastExcel($data))->download('jobs_applications_info.xlsx');
     }
 }

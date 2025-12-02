@@ -1,6 +1,6 @@
 @extends('layouts.front-end.app')
 
-@section('title', 'Investor')
+@section('title', 'Wholesale')
 <style>
     @import url('https://fonts.maateen.me/solaiman-lipi/font.css');
   .bg-orange {
@@ -28,21 +28,25 @@
         border-radius: 10px 10px 0 0 !important;
     }
     .investor-card {
-        font-family: 'SolaimanLipi', sans-serif;
-    }
+    font-family: 'SolaimanLipi', sans-serif;
+}
 </style>
 @section('content')
     <section class="py-3 career">
         <div class="container " style="min-height: 100vh;">
             <div class="row align-items-center">
-                <div class="col-lg-5 order-2 order-lg-1">
+                <div class="col-lg-6 mb-3 mb-lg-0">
+                    <img class="rounded" style="max-width: 100%; height: auto;" src="{{asset('assets/front-end/img/wholesale.jpg')}}" alt="investor image">
+                </div>
+
+                <div class="col-lg-6 ">
                     <div class="card investor-card">
                          <div class="card-header py-3 bg-orange text-white">
-                                <h4 class="mb-0 text-center">Investment Form</strong></h4>
+                                <h4 class="mb-0 text-center">Wholesale Form</strong></h4>
                             </div>
                         <div class="card-body">
 
-                            <form action="{{route('investor.store')}}" method="POST">
+                            <form action="{{route('wholesale.store')}}" method="POST">
                                 @csrf
 
                                 <div class="mb-3">
@@ -58,11 +62,11 @@
 
                                 <div class="mb-3">
                                     <label class="form-label">Phone Number<span class="text-danger">*</span></label>
-                                    <input type="text" value="{{old('mobile_number')}}" name="mobile_number" class="form-control @error('mobile_number')
+                                    <input type="text" value="{{old('phone')}}" name="phone" class="form-control @error('phone')
                                         is-invalid
                                     @enderror"
                                         placeholder="আপনার মোবাইল নাম্বার লিখুন">
-                                        @error('mobile_number')
+                                        @error('phone')
                                             <div class="text-danger mt-2">{{ ucwords($message) }}</div>
                                         @enderror
                                 </div>
@@ -90,12 +94,12 @@
 
                                 <div class="mb-3">
 
-                                     <label class="form-label">Investment Amount</label>
-                                    <input type="number" value="{{old('investment_amount')}}" name="investment_amount" class="form-control @error('investment_amount')
+                                     <label class="form-label">Product Quantity</label>
+                                    <input type="number" value="{{old('product_quantity')}}" name="product_quantity" class="form-control @error('product_quantity')
                                         is-invalid
                                     @enderror"
-                                        placeholder="ইনভেস্ট পরিমাণ লিখুন">
-                                        @error('investment_amount')
+                                        placeholder="পণ্যের পরিমাণ লিখুন">
+                                        @error('product_quantity')
                                             <div class="text-danger mt-2">{{ ucwords($message) }}</div>
                                         @enderror
                                 </div>
@@ -109,11 +113,9 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-7 order-1 order-lg-2 mb-3 mb-lg-0">
-                    <img class="img-rounded" style="max-width: 100%; height: auto;" src="{{asset('assets/front-end/img/invest.jpeg')}}" alt="investor image">
-                </div>
 
             </div>
         </div>
     </section>
 @endsection
+

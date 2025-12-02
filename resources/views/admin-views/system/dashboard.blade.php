@@ -186,8 +186,7 @@
                                 <div class="card-body">
                                     <div class="flex-between gx-2 gx-lg-3 mb-2">
                                         <div>
-                                            <h4 style="color:rgb(13, 13, 13)"><i style="font-size: 30px"
-                                                    class="tio-chart-line-up"></i>{{ \App\CPU\translate('admin_wallet') }}
+                                            <h4 style="color:rgb(13, 13, 13)"><img style="height: 40px" src="{{asset('assets/back-end/img/chart-line-up.gif')}}" alt="order line up">{{ \App\CPU\translate('admin_wallet') }}
                                             </h4>
                                         </div>
                                     </div>

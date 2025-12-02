@@ -17,7 +17,7 @@ class InvestorController extends Controller
             'name'              => 'required|string|max:255|min:2',
             'mobile_number'     => 'required|string|max:11',
             'address'           => 'nullable|string',
-            'occupation'        => 'nullable|max:255',
+            'occupation'        => 'nullable|string|max:255',
             'investment_amount' => 'nullable|numeric|min:1',
         ]);
         Investor::create([

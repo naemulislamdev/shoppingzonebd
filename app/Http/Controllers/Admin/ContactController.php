@@ -13,6 +13,7 @@ use App\Models\UserInfo;
 use Brian2694\Toastr\Facades\Toastr;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -45,6 +46,7 @@ class ContactController extends Controller
     {
         $query_param = [];
         $search = $request['search'];
+
         if ($request->has('search')) {
             $key = explode(' ', $request['search']);
             $contacts = Contact::where(function ($q) use ($key) {
@@ -146,7 +148,7 @@ class ContactController extends Controller
 
         return response()->json();
     }
-    public function bulk_export_data()
+    public function bulk_export_LeadsData()
     {
         $leads = Lead::latest()->get();
         //export from leads
@@ -183,6 +185,7 @@ class ContactController extends Controller
         }
         return view('admin-views.user-info.list', compact('userInfos'));
     }
+
 
     public function userInfoView($id)
     {
@@ -238,7 +241,7 @@ class ContactController extends Controller
     public function investorsView($id)
     {
         $investor = Investor::findOrFail($id);
-        $investor->update(['status' => 1]);
+        $investor->update(['status' => 0]);
         return view('admin-views.investors.view', compact('investor'));
     }
     public function updateRemark(Request $request, $id)
@@ -271,5 +274,17 @@ class ContactController extends Controller
         $headings = ['Date', 'Name', 'Phone', 'Address', 'Occupation', 'Investment Amount'];
 
         return Excel::download(new DynamicExport($headings, $data), 'investors_info.xlsx');
+    }
+    public function remarkStatus(Request $request)
+    {
+
+        if ($request->ajax()) {
+            $invest = Investor::find($request->id);
+            $invest->remark = auth('admin')->name . ': ' . $request->remark;
+            $invest->status =  0;
+            $invest->save();
+            $data = $request->remark;
+            return response()->json($data);
+        }
     }
 }

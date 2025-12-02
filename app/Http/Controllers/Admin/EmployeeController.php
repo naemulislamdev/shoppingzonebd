@@ -11,6 +11,8 @@ use App\Model\Branch;
 use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+use Rap2hpoutre\FastExcel\FastExcel;
 
 class EmployeeController extends Controller
 {
@@ -67,15 +69,38 @@ class EmployeeController extends Controller
         $search = $request['search'];
         $key = explode(' ', $request['search']);
         $em = Admin::with(['role'])->whereNotIn('id', [1])
-                    ->when($search!=null, function($query) use($key){
-                        foreach ($key as $value) {
-                            $query->where('name', 'like', "%{$value}%")
-                                ->orWhere('phone', 'like', "%{$value}%")
-                                ->orWhere('email', 'like', "%{$value}%");
-                        }
-                    })
-                    ->paginate(Helpers::pagination_limit());
-        return view('admin-views.employee.list', compact('em','search'));
+            ->when($search != null, function ($query) use ($key) {
+                foreach ($key as $value) {
+                    $query->where('name', 'like', "%{$value}%")
+                        ->orWhere('phone', 'like', "%{$value}%")
+                        ->orWhere('email', 'like', "%{$value}%");
+                }
+            })
+            ->paginate(Helpers::pagination_limit());
+        return view('admin-views.employee.list', compact('em', 'search'));
+    }
+
+    public function bulk_export_employee()
+    {
+        $em = Admin::latest()->get();
+        //export from userInfos
+        $data = [];
+        foreach ($em as $item) {
+            //  ->orWhere('admin', 'like', "%{$value}%")
+            //             ->orWhere('email', 'like', "%{$value}%")
+            //             ->orWhere('phone', 'like', "%{$value}%")
+            //             ->orWhere('branch', 'like', "%{$value}%")
+            //             ->orWhere('role', 'like', "%{$value}%");
+            $data[] = [
+                'Date' => Carbon::parse($item->created_at)->format('d M Y'),
+                'Name' => $item->name,
+                'Phone' => $item->phone,
+                'Email' => $item->email,
+                'Branch' => $item->branch,
+                'Role' => $item->role['name'],
+            ];
+        }
+        return (new FastExcel($data))->download('employee_info.xlsx');
     }
 
     public function edit($id)

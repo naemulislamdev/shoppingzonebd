@@ -36,12 +36,14 @@
                     <ul>
                         <li><a href="{{ route('about-us') }}">{{ \App\CPU\translate('About') }}</a></li>
                         <li><a href="{{ route('helpTopic') }}">{{ \App\CPU\translate('FAQ') }}</a></li>
+                        <li><a href="{{route('blogs')}}">{{ \App\CPU\translate('Blogs') }}</a></li>
                         <li><a href="{{ route('terms') }}">{{ \App\CPU\translate('Terms & Conditions') }}</a></li>
                         <li><a href="{{ route('privacy-policy') }}">{{ \App\CPU\translate('Privacy Policy') }}</a>
                         </li>
                         <li><a href="{{ route('outlets') }}">{{ \App\CPU\translate('Our Outlets') }}</a></li>
                         <li><a href="{{ route('contacts') }}">{{ \App\CPU\translate('Contact Us') }}</a></li>
                         <li><a href="{{ route('customer.complain') }}">{{ \App\CPU\translate('Complain') }}</a></li>
+
                     </ul>
                 </div>
             </div>
@@ -60,6 +62,9 @@
                         </li>
                         <li>
                             <a href="{{ route('investor.crate') }}">Investor</a>
+                        </li>
+                        <li>
+                            <a href="{{ route('wholesale.crate') }}">Wholesale</a>
                         </li>
                     </ul>
                 </div>
