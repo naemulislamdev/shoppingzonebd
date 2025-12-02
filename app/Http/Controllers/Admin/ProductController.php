@@ -290,86 +290,28 @@ class ProductController extends BaseController
 
     function list(Request $request, $type)
     {
-        // $query_param = [];
-        // $search = $request['search'];
-        // if ($type == 'in_house') {
-        //     $pro = Product::where(['added_by' => 'admin']);
-        // } else {
-        //     $pro = Product::where(['added_by' => 'seller'])->where('request_status', $request->status);
-        // }
-
-        // if ($request->has('search')) {
-        //     $key = explode(' ', $request['search']);
-        //     $pro = $pro->where(function ($q) use ($key) {
-        //         foreach ($key as $value) {
-        //             $q->Where('name', 'like', "%{$value}%")->orWhere('code', 'like', "%{$value}%");
-        //         }
-        //     });
-        //     $query_param = ['search' => $request['search']];
-        // }
-
-        // $request_status = $request['status'];
-        // $pro = $pro->orderBy('id', 'DESC')->paginate(Helpers::pagination_limit())->appends(['status' => $request['status']])->appends($query_param);
-
-
-        $search = $request->search;
-        $from   = $request->from;
-        $to     = $request->to;
-        $type   = $request->type; // add this line if not already
-
-        // base query
-        $pro = Product::query();
-
-        // ============ TYPE FILTER ADD =============
+        $query_param = [];
+        $search = $request['search'];
         if ($type == 'in_house') {
-            $pro->where('added_by', 'admin');
-        } elseif ($type == 'seller') {
-            $pro->where('added_by', 'seller');
-
-            if ($request->has('status') && $request->status != null) {
-                $pro->where('request_status', $request->status);
-            }
+            $pro = Product::where(['added_by' => 'admin']);
+        } else {
+            $pro = Product::where(['added_by' => 'seller'])->where('request_status', $request->status);
         }
-        // ==========================================
 
-
-        // ========== SEARCH FILTER =============
-        if (!empty($search)) {
-            $keywords = explode(' ', $search);
-
-            $pro->where(function ($q) use ($keywords) {
-                foreach ($keywords as $value) {
-                    $q->orWhere('created_at', 'like', "%{$value}%")
-                        ->orWhere('name', 'like', "%{$value}%")
-                        ->orWhere('code', 'like', "%{$value}%");
+        if ($request->has('search')) {
+            $key = explode(' ', $request['search']);
+            $pro = $pro->where(function ($q) use ($key) {
+                foreach ($key as $value) {
+                    $q->Where('name', 'like', "%{$value}%")->orWhere('code', 'like', "%{$value}%");
                 }
             });
+            $query_param = ['search' => $request['search']];
         }
-        // ======================================
 
-
-        // =========== DATE FILTER ==============
-        if (!empty($from) && !empty($to)) {
-            $pro->whereDate('created_at', '>=', $from)
-                ->whereDate('created_at', '<=', $to);
-        }
-        // ======================================
-
-
-        // ========= FINAL PAGINATION ===========
-        $pro = $pro->latest()
-            ->paginate(20)
-            ->appends([
-                'search' => $search,
-                'from'   => $from,
-                'to'     => $to,
-                'type'   => $type,
-                'status' => $request->status
-            ]);
-
-        return view('admin-views.product.list', compact('pro'));
+        $request_status = $request['status'];
+        $pro = $pro->orderBy('id', 'DESC')->paginate(Helpers::pagination_limit())->appends(['status' => $request['status']])->appends($query_param);
+        return view('admin-views.product.list', compact('pro', 'search', 'request_status'));
     }
-
     public function updated_product_list(Request $request)
     {
         $query_param = [];

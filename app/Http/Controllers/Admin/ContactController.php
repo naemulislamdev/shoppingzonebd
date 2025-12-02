@@ -111,57 +111,22 @@ class ContactController extends Controller
     //---Leads Management ---//
     public function leadsList(Request $request)
     {
-        $search = $request->search;
-        $from   = $request->from;
-        $to     = $request->to;
-
-        // base query
-        $leads = Lead::query();
-
-        // search
-        if (!empty($search)) {
-            $keywords = explode(' ', $search);
-
-            $leads->where(function ($q) use ($keywords) {
-
-                foreach ($keywords as $value) {
-                    $q->orWhere('created_at', 'like', "%{$value}%")
-                        ->orWhere('name', 'like', "%{$value}%")
-                        ->orWhere('phone', 'like', "%{$value}%")
-                        ->orWhere('address', 'like', "%{$value}%")
-                        ->orWhere('upazila', 'like', "%{$value}%")
-                        ->orWhere('district', 'like', "%{$value}%")
-                        ->orWhere('division', 'like', "%{$value}%")
-                        ->orWhere('showroom_size', 'like', "%{$value}%")
-                        ->orWhere('showroom_location', 'like', "%{$value}%");
-                    if ($value === 'seen') {
-                        $q->orWhere('status', 1);
-                    }
-
-                    if ($value === 'unseen') {
-                        $q->orWhere('status', 0);
-                    }
-
+        $query_param = [];
+        $search = $request['search'];
+        if ($request->has('search')) {
+            $key = explode(' ', $request['search']);
+            $leads = Lead::where(function ($q) use ($key) {
+                foreach ($key as $value) {
+                    $q->orWhere('name', 'like', "%{$value}%")
+                        ->orWhere('phone', 'like', "%{$value}%");
                 }
             });
+            $query_param = ['search' => $request['search']];
+        } else {
+            $leads = new Lead();
         }
-
-
-        // date filter
-        if (!empty($from) && !empty($to)) {
-            $leads->whereDate('created_at', '>=', $from)
-                ->whereDate('created_at', '<=', $to);
-        }
-
-
-        $leads = $leads->latest()
-            ->paginate(20)
-            ->appends([
-                'search' => $search,
-                'from'   => $from,
-                'to'     => $to
-            ]);
-        return view('admin-views.leads.list', compact('leads'));
+        $leads = $leads->latest()->paginate(Helpers::pagination_limit())->appends($query_param);
+        return view('admin-views.leads.list', compact('leads', 'search'));
     }
 
     public function leadView($id)
@@ -204,63 +169,26 @@ class ContactController extends Controller
     //--- User Information Management ---//
     public function userInfoList(Request $request)
     {
-        $search = $request->search;
-        $from   = $request->from;
-        $to     = $request->to;
-
-        // base query
-        $userInfos = UserInfo::query();
-
-        // search
-        if (!empty($search)) {
-            $keywords = explode(' ', $search);
-
-            $userInfos->where(function ($q) use ($keywords) {
-
-                foreach ($keywords as $value) {
-
-                    // normal fields
-                    $q->orWhere('id', 'like', "%{$value}%")
-                        ->orWhere('name', 'like', "%{$value}%")
-                        ->orWhere('email', 'like', "%{$value}%")
-                        ->orWhere('phone', 'like', "%{$value}%")
+        $query_param = [];
+        $search = $request['search'];
+        if ($request->has('search')) {
+            $key = explode(' ', $request['search']);
+            $userInfos = UserInfo::where(function ($q) use ($key) {
+                foreach ($key as $value) {
+                    $q->orWhere('name', 'like', "%{$value}%")
                         ->orWhere('address', 'like', "%{$value}%")
+                        ->orWhere('product', 'like', "%{$value}%")
                         ->orWhere('type', 'like', "%{$value}%")
-                        ->orWhere('product_details', 'like', "%{$value}%")
-                        ->orWhere('order_note', 'like', "%{$value}%")
-                        ->orWhere('order_process', 'like', "%{$value}%");
-                    // order_status keyword
-                    if ($value === 'confirm' || $value === 'cancel') {
-                        $q->orWhere('order_status', $value);
-                    } else {
-                        $q->orWhere('order_status', 'like', "%{$value}%");
-                    }
-
-                    // seen/unseen
-                    if ($value === 'seen' || $value === 'unseen') {
-                        $q->orWhere('status', $value === 'seen' ? 1 : 0);
-                    }
+                        ->orWhere('phone', 'like', "%{$value}%");
                 }
             });
+            $query_param = ['search' => $request['search']];
+        } else {
+            $userInfos = new UserInfo();
         }
+        $userInfos =  UserInfo::latest()->paginate(10);
+        return view('admin-views.user-info.list', compact('userInfos', 'search'));
 
-
-        // date filter
-        if (!empty($from) && !empty($to)) {
-            $userInfos->whereDate('created_at', '>=', $from)
-                ->whereDate('created_at', '<=', $to);
-        }
-
-
-        $userInfos = $userInfos->latest()
-            ->paginate(20)
-            ->appends([
-                'search' => $search,
-                'from'   => $from,
-                'to'     => $to
-            ]);
-
-        return view('admin-views.user-info.list', compact('userInfos'));
     }
 
 
@@ -311,54 +239,7 @@ class ContactController extends Controller
     //--- Investment Management ---//
     public function investorsList(Request $request)
     {
-        $search = $request->search;
-        $from   = $request->from;
-        $to     = $request->to;
-
-        // base query
-        $investors = Investor::query();
-
-        // search
-        if (!empty($search)) {
-            $keywords = explode(' ', $search);
-
-            $investors->where(function ($q) use ($keywords) {
-
-                foreach ($keywords as $value) {
-                    $q->orWhere('created_at', 'like', "%{$value}%")
-                        ->orWhere('name', 'like', "%{$value}%")
-                        ->orWhere('mobile_number', 'like', "%{$value}%")
-                        ->orWhere('address', 'like', "%{$value}%")
-                        ->orWhere('occupation', 'like', "%{$value}%")
-                        ->orWhere('investment_amount', 'like', "%{$value}%")
-                        ->orWhere('remark', 'like', "%{$value}%")
-                        ->orWhere('status', 'like', "%{$value}%");
-                    if ($value === 'seen') {
-                        $q->orWhere('status', 0);
-                    }
-
-                    if ($value === 'unseen') {
-                        $q->orWhere('status', 1);
-                    }
-                }
-            });
-        }
-
-
-        // date filter
-        if (!empty($from) && !empty($to)) {
-            $investors->whereDate('created_at', '>=', $from)
-                ->whereDate('created_at', '<=', $to);
-        }
-
-
-        $investors = $investors->latest()
-            ->paginate(20)
-            ->appends([
-                'search' => $search,
-                'from'   => $from,
-                'to'     => $to
-            ]);
+        $investors =  Investor::latest()->get();
         return view('admin-views.investors.list', compact('investors'));
     }
 

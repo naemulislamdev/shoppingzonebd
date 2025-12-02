@@ -2,6 +2,7 @@
 
 namespace App\Model;
 
+use App\ProductLandingPage;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -12,5 +13,9 @@ class LandingPages extends Model
     public function product()
     {
         return $this->belongsTo(Product::class);
+    }
+    public function multiProducts()
+    {
+        return $this->hasMany(landing_pages_product::class, 'landing_id');
     }
 }

@@ -1,236 +1,255 @@
 @extends('layouts.back-end.app')
 
-@section('title', \App\CPU\translate('Products'))
-<style>
-    .avatar-lg {
-        transition: all 0.3s ease;
-    }
-    .avatar-lg:hover {
-        transform: scale(4.1);
-    }
-</style>
+@section('title', \App\CPU\translate('Product List'))
+
 @push('css_or_js')
+<style>
+    .product-list-img {
+    transition: transform 0.3s ease-in-out;
+    transform-origin: center;
+}
+
+.product-list-img:hover {
+    transform: scale(5.1);
+}
+
+</style>
 @endpush
 
 @section('content')
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.2/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.4/css/buttons.dataTables.min.css">
-    <div class="content container-fluid px-0">
-        <nav aria-label="breadcrumb pl-3">
-            <ol class="breadcrumb pl-3">
-                <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">{{ \App\CPU\translate('Dashboard') }}</a>
-                </li>
-                <li class="breadcrumb-item" aria-current="page">{{ \App\CPU\translate('Products') }}</li>
-            </ol>
-        </nav>
-        <!-- Page Header -->
-        <div class="page-header mb-1 pl-3">
-            <div class="flex-between align-items-center">
-                <div>
-                    <span class="h1"> <span class="page-header-title"></span> {{ \App\CPU\translate('Products') }}
-                        {{ \App\CPU\translate('List') }}</span>
-                    <span class="badge badge-soft-dark mx-2">{{ $pro->total() }}</span>
-                </div>
+<div class="content container-fluid">  <!-- Page Heading -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{route('admin.dashboard')}}">{{\App\CPU\translate('Dashboard')}}</a></li>
+            <li class="breadcrumb-item" aria-current="page">{{\App\CPU\translate('Products')}}</li>
+        </ol>
+    </nav>
 
-            </div>
-        </div>
-        <!-- End Page Header -->
-
-        <!-- Card -->
-        <div class="card p-3">
-            <!-- Header -->
-            <div class="card-header ">
-                <div class="row flex-between justify-content-between flex-grow-1">
-
-                    <div class="col-6 col-md-5 mt-2 mt-sm-0">
-                        <form action="{{ url()->current() }}" id="form-data" method="GET">
-
-                            <div class="row">
-                                <div class="col-12 col-sm-4">
-                                    <input type="date" name="from" value="{{ $from ?? date('Y-m-d') }}" id="from_date"
-                                        class="form-control">
+    <div class="row" style="margin-top: 20px">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row flex-between justify-content-between align-items-center flex-grow-1">
+                        <div class="col-12 mb-1 col-md-4">
+                            <h5 class="flex-between">
+                                <div>{{\App\CPU\translate('product_table')}} ({{ $pro->total() }})</div>
+                            </h5>
+                        </div>
+                        <div class="col-12 mb-1 col-md-5" style="width: 40vw">
+                            <!-- Search -->
+                            <form action="{{ url()->current() }}" method="GET">
+                                <div class="input-group input-group-merge input-group-flush">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text">
+                                            <i class="tio-search"></i>
+                                        </div>
+                                    </div>
+                                    <input id="datatableSearch_" type="search" name="search" class="form-control"
+                                           placeholder="{{\App\CPU\translate('Search Product Name')}}" aria-label="Search orders"
+                                           value="{{ $search }}" required>
+                                    <input type="hidden" value="{{ $request_status }}" name="status">
+                                    <button type="submit" class="btn btn-primary">{{\App\CPU\translate('search')}}</button>
                                 </div>
-                                <div class="col-12 col-sm-4 mt-2 mt-sm-0">
-                                    <input type="date" value="{{ $to ?? date('Y-m-d') }}" name="to" id="to_date"
-                                        class="form-control">
-                                </div>
-                                <div class="col-12 col-sm-2 mt-2 mt-sm-0  ">
-                                    <button type="submit" class="btn btn-primary float-right float-sm-none"
-                                        onclick="formUrlChange(this)" data-action="{{ url()->current() }}">
-                                        {{ \App\CPU\translate('filter') }}
-                                    </button>
-                                </div>
-                                <div class="col-12 col-sm-2 mt-2 mt-sm-0  ">
-                                    <button type="submit" class="btn btn-success float-right float-sm-none"
-                                        onclick="formUrlChange(this)"
-                                        data-action="{{ route('admin.product.bulk-export') }}">
-                                        {{ \App\CPU\translate('export') }}
-                                    </button>
-                                </div>
-
-                            </div>
-                        </form>
-                    </div>
-                    <div class="col-6">
-                        @if (!isset($request_status))
+                            </form>
+                            <!-- End Search -->
+                        </div>
+                        <div class="col-12 col-md-3">
+                            @if (!isset($request_status))
                                 <a href="{{route('admin.product.add-new')}}" class="btn btn-primary  float-right">
                                     <i class="tio-add-circle"></i>
                                     <span class="text">{{\App\CPU\translate('Add new product')}}</span>
                                 </a>
                             @endif
-                    </div>
-                </div>
-                <!-- End Row -->
-            </div>
-            <!-- End Header -->
-
-            <!-- Table -->
-            <table id="example" class="display" style="width:100%">
-                <thead class="thead-light">
-                    <tr>
-                        <th>{{ \App\CPU\translate('SL#') }}</th>
-                        <th>{{ \App\CPU\translate('Image') }}</th>
-                        <th>{{ \App\CPU\translate('Product Name') }}</th>
-                        <th>{{ \App\CPU\translate('Code') }}</th>
-                        <th>{{ \App\CPU\translate('purchase_price') }}</th>
-                        <th>{{ \App\CPU\translate('selling_price') }}</th>
-                        <th>{{ \App\CPU\translate('featured') }}</th>
-                        <th>{{ \App\CPU\translate('New Arrival') }}</th>
-                        <th>{{ \App\CPU\translate('Active') }} {{ \App\CPU\translate('status') }}</th>
-                        <th style="width: 5px" class="text-center">{{ \App\CPU\translate('Action') }}</th>
-
-                    </tr>
-                </thead>
-
-                <tbody>
-                    @foreach ($pro as $k => $p)
-                        <tr>
-                            <th scope="row">{{ $pro->firstItem() + $k }}</th>
-                            <td>
-                                <img onerror="this.src='{{ asset('assets/front-end/img/image-place-holder.png') }}'"
-                                    src="{{ asset('storage/product/thumbnail') }}/{{ $p['thumbnail'] }}"
-                                    class="avatar avatar-lg product-list-img">
-                            </td>
-                            <td>
-                                <a href="{{ route('admin.product.view', [$p['id']]) }}">
-                                    {{ \Illuminate\Support\Str::limit($p['name'], 20) }}
-                                </a>
-                            </td>
-                            <td>
-                                {{ $p->code }}
-                            </td>
-                            <td>
-                                {{ \App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($p['purchase_price'])) }}
-                            </td>
-                            <td>
-                                {{ \App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($p['unit_price'])) }}
-                            </td>
-                            <td>
-                                <label class="switch">
-                                    <input type="checkbox" onclick="featured_status('{{ $p['id'] }}')"
-                                        {{ $p->featured == 1 ? 'checked' : '' }}>
-                                    <span class="slider round"></span>
-                                </label>
-                            </td>
-                            <td>
-                                <label class="switch">
-                                    <input type="checkbox" onclick="arrival_status('{{ $p['id'] }}')"
-                                        {{ $p->arrival == 1 ? 'checked' : '' }}>
-                                    <span class="slider round"></span>
-                                </label>
-                            </td>
-                            <td>
-                                <label class="switch switch-status">
-                                    <input type="checkbox" class="status" id="{{ $p['id'] }}"
-                                        {{ $p->status == 1 ? 'checked' : '' }}>
-                                    <span class="slider round"></span>
-                                </label>
-                            </td>
-                            <td style="display: flex; flex-direction: column; gap: 5px; align-items: center; justify-content: center">
-                                <a class="btn btn-warning btn-sm" title="{{ \App\CPU\translate('barcode') }}"
-                                    href="{{ route('admin.product.barcode', [$p['id']]) }}">
-                                    <i class="tio-barcode"></i>
-                                </a>
-
-                                <a class="btn btn-info btn-sm" title="{{ \App\CPU\translate('view') }}"
-                                    href="{{ route('admin.product.view', [$p['id']]) }}">
-                                    <i class="tio-visible"></i>
-                                </a>
-                                <a class="btn btn-primary btn-sm" title="{{ \App\CPU\translate('Edit') }}"
-                                    href="{{ route('admin.product.edit', [$p['id']]) }}">
-                                    <i class="tio-edit"></i>
-                                </a>
-                                <a class="btn btn-danger btn-sm" href="javascript:"
-                                    title="{{ \App\CPU\translate('Delete') }}"
-                                    onclick="form_alert('product-{{ $p['id'] }}','Want to delete this item ?')">
-                                    <i class="tio-add-to-trash"></i>
-                                </a>
-                                <form action="{{ route('admin.product.delete', [$p['id']]) }}" method="post"
-                                    id="product-{{ $p['id'] }}">
-                                    @csrf @method('delete')
-                                </form>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-            <!-- End Table -->
-
-            <!-- Footer -->
-            <div class="card-footer">
-                <!-- Pagination -->
-                <div class="row table-responsive">
-                    <div class="">
-                        <div class="">
-                            <!-- Pagination -->
-                            {{-- {!! $investors->links() !!} --}}
                         </div>
                     </div>
                 </div>
-                <!-- End Pagination -->
-            </div>
-            <!-- End Footer -->
-        </div>
-        <!-- End Card -->
-    </div>
+                <div class="card-body" style="padding: 0">
+                    <div class="table-responsive">
+                        <table id="datatable" style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};"
+                               class="table table-hover table-borderless table-thead-bordered table-nowrap table-align-middle card-table"
+                               style="width: 100%">
+                            <thead class="thead-light">
+                            <tr>
+                                <th>{{\App\CPU\translate('SL#')}}</th>
+                                <th>{{\App\CPU\translate('Image')}}</th>
+                                <th>{{\App\CPU\translate('Product Name')}}</th>
+                                <th>{{\App\CPU\translate('Code')}}</th>
+                                <th>{{\App\CPU\translate('purchase_price')}}</th>
+                                <th>{{\App\CPU\translate('selling_price')}}</th>
+                                <th>{{\App\CPU\translate('featured')}}</th>
+                                <th>{{\App\CPU\translate('New Arrival')}}</th>
+                                <th>{{\App\CPU\translate('Active')}} {{\App\CPU\translate('status')}}</th>
+                                <th style="width: 5px" class="text-center">{{\App\CPU\translate('Action')}}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach($pro as $k=>$p)
+                                <tr>
+                                    <th scope="row">{{$pro->firstItem()+$k}}</th>
+                                    <td>
+                                        <img onerror="this.src='{{asset('assets/front-end/img/image-place-holder.png')}}'" src="{{asset('storage/product/thumbnail')}}/{{$p['thumbnail']}}"
+                                             class="avatar avatar-lg product-list-img">
+                                    </td>
+                                    <td>
+                                        <a href="{{route('admin.product.view',[$p['id']])}}">
+                                            {{\Illuminate\Support\Str::limit($p['name'],20)}}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        {{$p->code}}
+                                    </td>
+                                    <td>
+                                        {{\App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($p['purchase_price']))}}
+                                    </td>
+                                    <td>
+                                        {{\App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($p['unit_price']))}}
+                                    </td>
+                                    <td>
+                                        <label class="switch">
+                                            <input type="checkbox"
+                                                   onclick="featured_status('{{$p['id']}}')" {{$p->featured == 1?'checked':''}}>
+                                            <span class="slider round"></span>
+                                        </label>
+                                    </td>
+                                    <td>
+                                        <label class="switch">
+                                            <input type="checkbox"
+                                                   onclick="arrival_status('{{$p['id']}}')" {{$p->arrival == 1?'checked':''}}>
+                                            <span class="slider round"></span>
+                                        </label>
+                                    </td>
+                                    <td>
+                                        <label class="switch switch-status">
+                                            <input type="checkbox" class="status"
+                                                   id="{{$p['id']}}" {{$p->status == 1?'checked':''}}>
+                                            <span class="slider round"></span>
+                                        </label>
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-warning btn-sm" title="{{ \App\CPU\translate('barcode') }}"
+                                                    href="{{ route('admin.product.barcode', [$p['id']]) }}">
+                                                    <i class="tio-barcode"></i>
+                                                </a>
 
+                                        <a class="btn btn-info btn-sm"
+                                            title="{{\App\CPU\translate('view')}}"
+                                           href="{{route('admin.product.view',[$p['id']])}}">
+                                            <i class="tio-visible"></i>
+                                        </a>
+                                        <a class="btn btn-primary btn-sm"
+                                            title="{{\App\CPU\translate('Edit')}}"
+                                            href="{{route('admin.product.edit',[$p['id']])}}">
+                                            <i class="tio-edit"></i>
+                                        </a>
+                                        <a class="btn btn-danger btn-sm" href="javascript:"
+                                            title="{{\App\CPU\translate('Delete')}}"
+                                           onclick="form_alert('product-{{$p['id']}}','Want to delete this item ?')">
+                                            <i class="tio-add-to-trash"></i>
+                                        </a>
+                                        <form action="{{route('admin.product.delete',[$p['id']])}}"
+                                              method="post" id="product-{{$p['id']}}">
+                                            @csrf @method('delete')
+                                        </form>
+                                    </td>
+                                </tr>
+                            @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    {{$pro->links()}}
+                </div>
+                @if(count($pro)==0)
+                    <div class="text-center p-4">
+                        <img class="mb-3" src="{{asset('assets/back-end')}}/svg/illustrations/sorry.svg" alt="Image Description" style="width: 7rem;">
+                        <p class="mb-0">{{\App\CPU\translate('No data to show')}}</p>
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
-@push('script_2')
+@push('script')
+    <!-- Page level plugins -->
+    <script src="{{asset('assets/back-end')}}/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="{{asset('assets/back-end')}}/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+    <!-- Page level custom scripts -->
     <script>
-        $('#from_date,#to_date').change(function() {
-            let fr = $('#from_date').val();
-            let to = $('#to_date').val();
-            if (fr != '') {
-                $('#to_date').attr('required', 'required');
-            }
-            if (to != '') {
-                $('#from_date').attr('required', 'required');
-            }
-            if (fr != '' && to != '') {
-                if (fr > to) {
-                    $('#from_date').val('');
-                    $('#to_date').val('');
-                    toastr.error('{{ \App\CPU\translate('Invalid date range') }}!', Error, {
-                        CloseButton: true,
-                        ProgressBar: true
-                    });
-                }
-            }
+        // Call the dataTables jQuery plugin
+        $(document).ready(function () {
+            $('#dataTable').DataTable();
+        });
 
-        })
-    </script>
-    <script>
-        $(document).ready(function() {
-            $('#example').DataTable({
-                dom: 'Bfrtip',
-                buttons: [
-                    'copyHtml5',
-                    'excelHtml5',
-                    'csvHtml5',
-                    'pdfHtml5'
-                ]
+        $(document).on('change', '.status', function () {
+            var id = $(this).attr("id");
+            if ($(this).prop("checked") == true) {
+                var status = 1;
+            } else if ($(this).prop("checked") == false) {
+                var status = 0;
+            }
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                }
+            });
+            $.ajax({
+                url: "{{route('admin.product.status-update')}}",
+                method: 'POST',
+                data: {
+                    id: id,
+                    status: status
+                },
+                success: function (data) {
+                    if(data.success == true) {
+                        toastr.success('{{\App\CPU\translate('Status updated successfully')}}');
+                    }
+                    else if(data.success == false) {
+                        toastr.error('{{\App\CPU\translate('Status updated failed. Product must be approved')}}');
+                        setTimeout(function(){
+                            location.reload();
+                        }, 2000);
+                    }
+                }
             });
         });
+
+        function featured_status(id) {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                }
+            });
+            $.ajax({
+                url: "{{route('admin.product.featured-status')}}",
+                method: 'POST',
+                data: {
+                    id: id
+                },
+                success: function () {
+                    toastr.success('{{\App\CPU\translate('Featured status updated successfully')}}');
+                }
+            });
+        }
+        function arrival_status(id) {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                }
+            });
+            $.ajax({
+                url: "{{route('admin.product.arrival-status')}}",
+                method: 'POST',
+                data: {
+                    id: id
+                },
+                success: function () {
+                    toastr.success('{{\App\CPU\translate('Arrival status updated successfully')}}');
+                }
+            });
+        }
+
     </script>
 @endpush

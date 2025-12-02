@@ -12,4 +12,7 @@ class landing_pages_product extends Model
     {
         return $this->belongsTo(Product::class);
     }
+    public function landingPage(){
+        return $this->belongsTo(LandingPages::class);
+    }
 }

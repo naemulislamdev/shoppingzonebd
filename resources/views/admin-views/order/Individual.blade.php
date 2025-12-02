@@ -7,8 +7,6 @@
 @endpush
 
 @section('content')
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.2/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.4/css/buttons.dataTables.min.css">
     <div class="content container-fluid">
         <!-- Page Header -->
         <div class="page-header mb-1">
@@ -345,53 +343,73 @@
         <!-- End Page Header -->
 
         <!-- Card -->
-       <div class="card p-3">
+        <div class="card">
             <!-- Header -->
             <div class="card-header">
                 <div class="row flex-between justify-content-between flex-grow-1">
-
+                    <div class="col-12 col-md-4">
+                        <form action="" method="GET">
+                            <!-- Search -->
+                            <div class="input-group input-group-merge input-group-flush">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">
+                                        <i class="tio-search"></i>
+                                    </div>
+                                </div>
+                                <input id="datatableSearch_" type="search" name="search" class="form-control"
+                                       placeholder="{{\App\CPU\translate('Search orders')}}" aria-label="Search orders" value="{{ $search }}"
+                                       required>
+                                <button type="submit" class="btn btn-primary">{{\App\CPU\translate('search')}}</button>
+                            </div>
+                            <!-- End Search -->
+                        </form>
+                    </div>
                     <div class="col-12 col-md-5 mt-2 mt-sm-0">
                         <form action="{{ url()->current() }}" id="form-data" method="GET">
 
                             <div class="row">
                                 <div class="col-12 col-sm-4">
-                                    <input type="date" name="from" value="{{ $from ?? date('Y-m-d') }}" id="from_date"
-                                        class="form-control">
+                                    <input type="date" name="from" value="{{$from}}" id="from_date"
+                                            class="form-control">
                                 </div>
                                 <div class="col-12 col-sm-4 mt-2 mt-sm-0">
-                                    <input type="date" value="{{ $to ?? date('Y-m-d') }}" name="to" id="to_date"
-                                        class="form-control">
+                                    <input type="date" value="{{$to}}" name="to" id="to_date"
+                                            class="form-control">
                                 </div>
                                 <div class="col-12 col-sm-2 mt-2 mt-sm-0  ">
-                                    <button type="submit" class="btn btn-primary float-right float-sm-none"
-                                        onclick="formUrlChange(this)" data-action="{{ url()->current() }}">
-                                        {{ \App\CPU\translate('filter') }}
+                                    <button type="submit" class="btn btn-primary float-right float-sm-none" onclick="formUrlChange(this)" data-action="{{ url()->current() }}">
+                                        {{\App\CPU\translate('filter')}}
                                     </button>
                                 </div>
                                 <div class="col-12 col-sm-2 mt-2 mt-sm-0  ">
-                                    <button type="submit" class="btn btn-success float-right float-sm-none"
-                                        onclick="formUrlChange(this)"
-                                        data-action="{{ route('admin.orders.order-bulk-export', ['status' => $status]) }}">
-                                        {{ \App\CPU\translate('export') }}
+                                    <button type="submit" class="btn btn-success float-right float-sm-none" onclick="formUrlChange(this)" data-action="{{ route('admin.orders.order-bulk-export', ['status' => $status]) }}">
+                                        {{\App\CPU\translate('export')}}
                                     </button>
-
-
                                 </div>
-
                             </div>
                         </form>
                     </div>
-
-
+                    <div class="col-12 col-md-3 mt-2 mt-md-0">
+                        <div class="float-right">
+                            <label> {{\App\CPU\translate('inhouse_orders_only')}} : </label>
+                            <label class="switch ml-3">
+                                <input type="checkbox" class="status"
+                                       onclick="filter_order()" {{session()->has('show_inhouse_orders') && session('show_inhouse_orders')==1?'checked':''}}>
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </div>
                 </div>
                 <!-- End Row -->
             </div>
             <!-- End Header -->
 
             <!-- Table -->
-            <table id="example" class="display" style="width:100%">
-                <thead class="thead-light">
-                        <tr>
+            <div class="table-responsive datatable-custom">
+                <table class="table table-hover table-borderless table-thead-bordered table-nowrap table-align-middle card-table"
+                       style="width: 100%; text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}}">
+                    <thead class="thead-light">
+                    <tr>
                         <th class="">
                             {{\App\CPU\translate('SL')}}#
                         </th>
@@ -408,10 +426,10 @@
                         <!--<th>{{\App\CPU\translate('Order')}} {{\App\CPU\translate('Status')}} </th>-->
                         <!--<th>{{\App\CPU\translate('Action')}}</th>-->
                     </tr>
-                </thead>
+                    </thead>
 
-                <tbody>
-                     @foreach($OrderDetails as $key=>$order)
+                    <tbody>
+                    @foreach($OrderDetails as $key=>$order)
 
                         <tr class="status-{{$order['order_status']}} class-all">
                             <td class="">
@@ -496,8 +514,9 @@
                             <!--</td>-->
                         </tr>
                     @endforeach
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
             <!-- End Table -->
 
             <!-- Footer -->
@@ -507,7 +526,7 @@
                     <div class="">
                         <div class="">
                             <!-- Pagination -->
-                            {{-- {!! $investors->links() !!} --}}
+                            {!! $orders->links() !!}
                         </div>
                     </div>
                 </div>
@@ -539,21 +558,21 @@
             });
         };
     </script>
-   <script>
-        $('#from_date,#to_date').change(function() {
+    <script>
+        $('#from_date,#to_date').change(function () {
             let fr = $('#from_date').val();
             let to = $('#to_date').val();
-            if (fr != '') {
-                $('#to_date').attr('required', 'required');
+            if(fr != ''){
+                $('#to_date').attr('required','required');
             }
-            if (to != '') {
-                $('#from_date').attr('required', 'required');
+            if(to != ''){
+                $('#from_date').attr('required','required');
             }
             if (fr != '' && to != '') {
                 if (fr > to) {
                     $('#from_date').val('');
                     $('#to_date').val('');
-                    toastr.error('{{ \App\CPU\translate('Invalid date range') }}!', Error, {
+                    toastr.error('{{\App\CPU\translate('Invalid date range')}}!', Error, {
                         CloseButton: true,
                         ProgressBar: true
                     });
@@ -561,18 +580,5 @@
             }
 
         })
-    </script>
-    <script>
-        $(document).ready(function() {
-            $('#example').DataTable({
-                dom: 'Bfrtip',
-                buttons: [
-                    'copyHtml5',
-                    'excelHtml5',
-                    'csvHtml5',
-                    'pdfHtml5'
-                ]
-            });
-        });
     </script>
 @endpush

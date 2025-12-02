@@ -22,47 +22,7 @@ class LandingPagesController extends Controller
 
     public function landing_index(Request $request)
     {
-        $search = $request->search;
-        $from   = $request->from;
-        $to     = $request->to;
-
-        // base query
-        $landing_page = DB::table('landing_pages');;
-
-        // search
-        if (!empty($search)) {
-            $keywords = explode(' ', $search);
-            $landing_page->where(function ($q) use ($keywords) {
-                foreach ($keywords as $value) {
-                    $q->orWhere('id', 'like', "%{$value}%")
-                        ->orWhere('title', 'like', "%{$value}%")
-                        ->orWhere('slug', 'like', "%{$value}%")
-                        ->orWhere(function ($q) use ($value) {
-                            if ($value == 'published') {
-                                $q->where('status', 1);
-                            } elseif ($value == 'unpublished') {
-                                $q->where('status', 0);
-                            }
-                        });
-                }
-            });
-        }
-
-        // date filter
-        if (!empty($from) && !empty($to)) {
-            $landing_page->whereDate('created_at', '>=', $from)
-                ->whereDate('created_at', '<=', $to);
-        }
-
-
-        $landing_page = $landing_page->latest()
-            ->paginate(20)
-            ->appends([
-                'search' => $search,
-                'from'   => $from,
-                'to'     => $to
-            ]);
-
+        $landing_page = DB::table('landing_pages')->get();
         return view('admin-views.landingpages.landing-index', compact('landing_page'));
     }
 
@@ -88,6 +48,7 @@ class LandingPagesController extends Controller
 
         $flash_deal_id = DB::table('landing_pages')->insertGetId([
             'title' => $request['title'],
+            'product_id' => $request['product_id'],
             'main_banner' => $images,
             'mid_banner' => Helpers::uploadWithCompress('deal/', 300, $request->file('mid_banner')),
             // 'left_side_banner' =>  Helpers::uploadWithCompress('deal/', 300, $request->file('left_side_banner')),
@@ -108,10 +69,13 @@ class LandingPagesController extends Controller
 
     public function status_update(Request $request)
     {
+        DB::table('landing_pages')
+            ->where('id', $request->id)
+            ->update(['status' => 1]);
 
-        DB::table('landing_pages')->where(['id' => $request['id']])->update([
-            'status' => $request['status'],
-        ]);
+        DB::table('landing_pages')
+            ->where('id', '!=', $request->id)
+            ->update(['status' => 0]);
         return response()->json([
             'success' => 1,
         ], 200);
@@ -330,6 +294,8 @@ class LandingPagesController extends Controller
         Toastr::success('Slider image removed successfully!');
         return back();
     }
+
+
     public function removeFeatureList(Request $request)
     {
         $landingPage = ProductLandingPage::find($request['id']);
@@ -438,7 +404,7 @@ class LandingPagesController extends Controller
             foreach ($request->new_section_title as $key => $title) {
 
                 $requestImg = $request->file('new_section_img')[$key] ?? null;
-                $sectionImg = Helpers::uploadWithCompress('landingpage/',300, $requestImg);
+                $sectionImg = Helpers::uploadWithCompress('landingpage/', 300, $requestImg);
                 ProductLandingPageSection::create([
                     'section_title' => $title,
                     'section_description' => $request->new_section_description[$key],

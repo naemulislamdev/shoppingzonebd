@@ -1,13 +1,22 @@
 @extends('layouts.back-end.app')
-
-@section('title', \App\CPU\translate('Blogs'))
-
+@section('title', \App\CPU\translate('Blog Category'))
 @push('css_or_js')
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <style>
+        .avatar-lg {
+            transition: all 0.3s ease;
+        }
+
+        .avatar-lg:hover {
+            transform: scale(2.5);
+        }
+        .modal-body p {
+            font-size: 17px;
+        }
+    </style>
 @endpush
 
 @section('content')
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.2/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.4/css/buttons.dataTables.min.css">
     <div class="content container-fluid">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
@@ -16,198 +25,187 @@
                 <li class="breadcrumb-item" aria-current="page">{{ \App\CPU\translate('Blogs') }}</li>
             </ol>
         </nav>
-        <!-- Page Header -->
-        <div class="page-header mb-1">
-            <div class="flex-between align-items-center">
-                <div>
-                    <span class="h1"> <span class="page-header-title"></span>
-                        {{ \App\CPU\translate('Blogs') }}</span>
-                    <span class="badge badge-soft-dark mx-2">{{ $blogsCatgories->total() }}</span>
-                </div>
+        <!-- Page Heading -->
 
-            </div>
-        </div>
-        <!-- End Page Header -->
+        <!-- Content Row -->
 
-        <!-- Card -->
-        <div class="card p-3">
-            <!-- Header -->
-           <div class="card-header">
-                <div class="row flex-between justify-content-between flex-grow-1">
-
-                    <div class="col-6 col-md-5 mt-2 mt-sm-0">
-                        <form action="{{ url()->current() }}" id="form-data" method="GET">
-
-                            <div class="row">
-                                <div class="col-12 col-sm-4">
-                                    <input type="date" name="from" value="{{ $from ?? date('Y-m-d') }}" id="from_date"
-                                        class="form-control">
+        <div class="row" style="margin-top: 20px" id="banner-table">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="flex-between row justify-content-between align-items-center flex-grow-1 mx-1">
+                            <div>
+                                <div class="d-flex">
+                                    <div>
+                                        <h5>{{ \App\CPU\translate('blogs_table') }}</h5>
+                                    </div>
+                                    <div class="mx-1">
+                                        <h5 style="color: red;">{{ $blogsCatgories->count() }}</h5>
+                                    </div>
                                 </div>
-                                <div class="col-12 col-sm-4 mt-2 mt-sm-0">
-                                    <input type="date" value="{{ $to ?? date('Y-m-d') }}" name="to" id="to_date"
-                                        class="form-control">
+                                <div style="width: 30vw" class="mt-4">
+                                    <!-- Search -->
+                                    <form action="{{ url()->current() }}" method="GET">
+                                        <div class="input-group input-group-merge input-group-flush">
+                                            <div class="input-group-prepend">
+                                                <div class="input-group-text">
+                                                    <i class="tio-search"></i>
+                                                </div>
+                                            </div>
+                                            <input id="datatableSearch_" type="search" name="search" class="form-control"
+                                                placeholder="{{ \App\CPU\translate('Search_blogs') }}"
+                                                aria-label="Search orders" value="" required>
+                                            <button type="submit"
+                                                class="btn btn-primary">{{ \App\CPU\translate('Search') }}</button>
+                                        </div>
+                                    </form>
+                                    <!-- End Search -->
                                 </div>
-                                <div class="col-12 col-sm-2 mt-2 mt-sm-0  ">
-                                    <button type="submit" class="btn btn-primary float-right float-sm-none"
-                                        onclick="formUrlChange(this)" data-action="{{ url()->current() }}">
-                                        {{ \App\CPU\translate('filter') }}
-                                    </button>
-                                </div>
-                                <div class="col-12 col-sm-2 mt-2 mt-sm-0  ">
-                                    <button type="submit" class="btn btn-success float-right float-sm-none"
-                                        onclick="formUrlChange(this)"
-                                        data-action="{{ route('admin.business-settings.blog.bulk-export') }}">
-                                        {{ \App\CPU\translate('export') }}
-                                    </button>
-
-
-                                </div>
-
                             </div>
-                        </form>
-                    </div>
-                    <div class="col-6  text-right">
-                         <div id="banner-btn">
+                            <div id="banner-btn">
                                 <a href="{{ route('admin.business-settings.blog.create') }}" class="btn btn-primary"><i
                                         class="tio-add-circle"></i>
                                     {{ \App\CPU\translate('Add_Blog') }}</a>
                             </div>
+                        </div>
                     </div>
+                    <div class="card-body" style="padding: 0">
+                        <div class="table-responsive">
+                            <table id="columnSearchDatatable" class="table table-striped table-bordered">
+                                <thead class="thead-light">
 
-                </div>
-                <!-- End Row -->
-            </div>
-            <!-- End Header -->
+                                    <tr>
+                                        <th style="width: 5%">{{ \App\CPU\translate('sl#') }}</th>
+                                        <th style="width: 10%">{{ \App\CPU\translate('image') }}</th>
+                                        <th style="width: 10%">{{ \App\CPU\translate('Category') }}</th>
+                                        <th style="width: 20%">{{ \App\CPU\translate('Title') }}</th>
+                                        <th style="width: 10%">{{ \App\CPU\translate('views') }}</th>
+                                        <th style="width: 10%">{{ \App\CPU\translate('Upload Date') }}</th>
+                                        <th style="width: 10%">{{ \App\CPU\translate('published') }}</th>
+                                        <th style="width: 15%">{{ \App\CPU\translate('actions') }}</th>
+                                    </tr>
+                                </thead>
 
-            <!-- Table -->
-            <table id="example" class="display" style="width:100%">
-                <thead class="thead-light">
-                    <tr>
-                        <th style="width: 5%">{{ \App\CPU\translate('sl#') }}</th>
-                        <th style="width: 10%">{{ \App\CPU\translate('image') }}</th>
-                        <th style="width: 10%">{{ \App\CPU\translate('Category') }}</th>
-                        <th style="width: 25%">{{ \App\CPU\translate('Title') }}</th>
-                        <th style="width: 10%">{{ \App\CPU\translate('views') }}</th>
-                        <th style="width: 10%">{{ \App\CPU\translate('Upload Date') }}</th>
-                        <th style="width: 10%">{{ \App\CPU\translate('published') }}</th>
-                        <th style="width: 20%">{{ \App\CPU\translate('actions') }}</th>
-                    </tr>
-                </thead>
+                                <tbody>
+                                    @foreach ($blogsCatgories as $i => $blogCat)
+                                        <tr>
+                                            <td style="width: 5%">{{ ++$i }}</td>
 
-                <tbody>
-                    @foreach ($blogsCatgories as $i => $blogCat)
-                        <tr>
-                            <td style="width: 5%">{{ ++$i }}</td>
+                                            <td style="width: 10%">
+                                                <img onerror="this.src='{{ asset('assets/front-end/img/image-place-holder.png') }}'"
+                                                    src="{{ asset('storage/blogs') }}/{{ $blogCat['image'] }}"
+                                                    class="avatar avatar-lg product-list-img">
+                                            </td>
 
-                            <td style="width: 10%">
-                                <img onerror="this.src='{{ asset('assets/front-end/img/image-place-holder.png') }}'"
-                                    src="{{ asset('storage/blogs') }}/{{ $blogCat['image'] }}"
-                                    class="avatar avatar-lg product-list-img">
-                            </td>
+                                            <td style="width: 15%">{{ $blogCat->blogCategory->name }}</td>
 
-                            <td style="width: 15%">{{ $blogCat->blogCategory->name }}</td>
+                                            <td style="width: 10%; ">{{ $blogCat->title }}</td>
 
-                            <td style="width: 10%; ">{{ $blogCat->title }}</td>
+                                            <td style="width: 10%">{{ $blogCat->views }}</td>
 
-                            <td style="width: 10%">{{ $blogCat->views }}</td>
+                                            <td style="width: 15%">{{ $blogCat->created_at->format('d-M-Y') }}</td>
 
-                            <td style="width: 15%">{{ $blogCat->created_at->format('d-M-Y') }}</td>
+                                            <td style="width: 10%">
+                                                <label class="switch">
+                                                    <input name="status" type="checkbox" class="status"
+                                                        id="{{ $blogCat->id }}"
+                                                        {{ $blogCat->status == 1 ? 'checked' : '' }}>
+                                                    <span class="slider round"></span>
+                                                </label>
+                                            </td>
 
-                            <td style="width: 10%">
-                                <label class="switch">
-                                    <input name="status" type="checkbox" class="status" id="{{ $blogCat->id }}"
-                                        {{ $blogCat->status == 1 ? 'checked' : '' }}>
-                                    <span class="slider round"></span>
-                                </label>
-                            </td>
+                                            <td style="width: 15%">
+                                                <a href="#" data-toggle="modal"
+                                                    data-target="#viewBlogModal_{{ $blogCat->id }}"
+                                                    class="btn btn-info btn-sm edit">
+                                                    <i class="tio-visible"></i>
+                                                </a>
+                                                <a class="btn btn-primary btn-sm edit"
+                                                    href="{{ route('admin.business-settings.blog.edit', $blogCat->slug) }}">
+                                                    <i class="tio-edit"></i>
+                                                </a>
 
-                            <td style="width: 15%">
-                                <a href="#" data-toggle="modal" data-target="#viewBlogModal_{{ $blogCat->id }}"
-                                    class="btn btn-info btn-sm edit">
-                                    <i class="tio-visible"></i>
-                                </a>
-                                <a class="btn btn-primary btn-sm edit"
-                                    href="{{ route('admin.business-settings.blog.edit', $blogCat->slug) }}">
-                                    <i class="tio-edit"></i>
-                                </a>
+                                                <a class="btn btn-danger btn-sm delete" id="{{ $blogCat->id }}">
+                                                    <i class="tio-add-to-trash"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        {{-- View blog Modal Body Start  --}}
+                                        <div class="modal fade w-100" id="viewBlogModal_{{ $blogCat->id }}" tabindex="-1"
+                                            aria-labelledby="viewBlogModal_{{ $blogCat->id }}" aria-hidden="true"
+                                            static="backdrop">
+                                            <div class=" modal-dialog modal-dialog-centered modal-lg">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h3 class="modal-title text-info" id="viewBlogModal_{{ $blogCat->id }}">
+                                                            {{ \App\CPU\translate('View_Blog') }}</h3>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="p-3 ">
 
-                                <a class="btn btn-danger btn-sm delete" id="{{ $blogCat->id }}">
-                                    <i class="tio-add-to-trash"></i>
-                                </a>
-                            </td>
-                        </tr>
-                        {{-- View blog Modal Body Start  --}}
-                        <div class="modal fade w-100" id="viewBlogModal_{{ $blogCat->id }}" tabindex="-1"
-                            aria-labelledby="viewBlogModal_{{ $blogCat->id }}" aria-hidden="true" static="backdrop">
-                            <div class=" modal-dialog modal-dialog-centered modal-lg">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h3 class="modal-title text-info" id="viewBlogModal_{{ $blogCat->id }}">
-                                            {{ \App\CPU\translate('View_Blog') }}</h3>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <div class="p-3 ">
-                                            <p><strong>Title:</strong> {{ $blogCat->title }}</p>
 
-                                            <p><strong>Category:</strong>
-                                                {{ $blogCat->blogCategory->name }}</p>
 
-                                            <p><strong>Description:</strong></p>
-                                            <div class="border p-2 rounded bg-white"
-                                                style="max-height: 200px; overflow-y: auto;">
-                                                {!! $blogCat->description !!}
-                                            </div>
+                                                            <p><strong>Title:</strong> {{ $blogCat->title }}</p>
 
-                                            <p class="mt-3">
-                                                <strong>Total Views:</strong> {{ $blogCat->views }}
-                                            </p>
+                                                            <p><strong>Category:</strong>
+                                                                {{ $blogCat->blogCategory->name }}</p>
 
-                                            <p>
-                                                <strong>Upload Date:</strong>
-                                                {{ $blogCat->created_at->format('d M, Y h:i A') }}
-                                            </p>
-                                            <div class="modal-footer border-t-5 p-0 m-0 mt-4">
-                                                <button type="button" class="btn btn-primary mt-3 px-5"
-                                                    data-dismiss="modal">{{ \App\CPU\translate('Ok') }}</button>
+                                                            <p><strong>Description:</strong></p>
+                                                            <div class="border p-2 rounded bg-white"
+                                                                style="max-height: 200px; overflow-y: auto;">
+                                                                {!! $blogCat->description !!}
+                                                            </div>
 
+                                                            <p class="mt-3">
+                                                                <strong>Total Views:</strong> {{ $blogCat->views }}
+                                                            </p>
+
+                                                            <p>
+                                                                <strong>Upload Date:</strong>
+                                                                {{ $blogCat->created_at->format('d M, Y h:i A') }}
+                                                            </p>
+                                                            <div class="modal-footer border-t-5 p-0 m-0 mt-4">
+                                                                <button type="button" class="btn btn-primary mt-3 px-5"
+                                                                    data-dismiss="modal">{{ \App\CPU\translate('Ok') }}</button>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-
-
-                                </div>
-                            </div>
-                        </div>
-                        {{-- AView blog Modal Body End  --}}
-                    @endforeach
-                </tbody>
-            </table>
-            <!-- End Table -->
-
-            <!-- Footer -->
-            <div class="card-footer">
-                <!-- Pagination -->
-                <div class="row table-responsive">
-                    <div class="">
-                        <div class="">
-                            <!-- Pagination -->
-                            {!! $blogsCatgories->links() !!}
+                                        {{-- AView blog Modal Body End  --}}
+                                    @endforeach
+                                </tbody>
+                            </table>
                         </div>
                     </div>
+                    <div class="card-footer">
+                        {{ $blogsCatgories->links() }}
+                    </div>
+                    @if ($blogsCatgories->count() <= 0)
+                        <div class="text-center p-4">
+                            <img class="mb-3" src="{{ asset('assets/back-end') }}/svg/illustrations/sorry.svg"
+                                alt="Image Description" style="width: 7rem;">
+                            <p class="mb-0">{{ \App\CPU\translate('No_data_to_show') }}</p>
+                        </div>
+                    @endif
                 </div>
-                <!-- End Pagination -->
             </div>
-            <!-- End Footer -->
         </div>
-        <!-- End Card -->
     </div>
+
 
 @endsection
 
-@push('script_2')
+
+@push('script')
     <!-- include summernote css/js -->
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
@@ -255,42 +253,6 @@
 
         $("#customFileEg").change(function() {
             readURL(this);
-        });
-    </script>
-    <script>
-        $('#from_date,#to_date').change(function() {
-            let fr = $('#from_date').val();
-            let to = $('#to_date').val();
-            if (fr != '') {
-                $('#to_date').attr('required', 'required');
-            }
-            if (to != '') {
-                $('#from_date').attr('required', 'required');
-            }
-            if (fr != '' && to != '') {
-                if (fr > to) {
-                    $('#from_date').val('');
-                    $('#to_date').val('');
-                    toastr.error('{{ \App\CPU\translate('Invalid date range') }}!', Error, {
-                        CloseButton: true,
-                        ProgressBar: true
-                    });
-                }
-            }
-
-        })
-    </script>
-    <script>
-        $(document).ready(function() {
-            $('#example').DataTable({
-                dom: 'Bfrtip',
-                buttons: [
-                    'copyHtml5',
-                    'excelHtml5',
-                    'csvHtml5',
-                    'pdfHtml5'
-                ]
-            });
         });
     </script>
     <script>

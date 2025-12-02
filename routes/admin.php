@@ -747,7 +747,7 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('list', 'leadsList')->name('list');
             Route::post('delete', 'leadDestroy')->name('delete');
             Route::get('view/{id}', 'leadView')->name('view');
-            Route::get('bulk-export', 'bulk_export_LeadsData')->name('bulk-export-data');
+            Route::get('bulk-export', 'bulk_export_LeadsData')->name('bulk-export');
         });
         // wholesale routes
         Route::controller(WholesaleController::class)->prefix('/wholesale')->as('wholesale.')->middleware('module:support_section')->group(function () {

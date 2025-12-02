@@ -1,10 +1,10 @@
 <header id="header">
     <div class="container">
-        <div class="row main_row align-items-lg-center">
+        <div class="row main_row align-items-lg-center py-2">
             <div class="col-md-3 d-none d-lg-block">
                 <!-- <a class="navbar-brand" href="index.html">Shopping Zone BD</a> -->
                 <a href="{{ route('home') }}">
-                    <img class="header-logo" src="{{ asset('storage/company') . '/' . $web_config['web_logo']->value }}"
+                    <img style="height: 50px" class="header-logo" src="{{ asset('storage/company') . '/' . $web_config['web_logo']->value }}"
                         onerror="this.src='{{ asset('assets/front-end/img/image-place-holder.png') }}'"
                         alt="{{ $web_config['name']->value }}">
                 </a>
@@ -14,9 +14,10 @@
                 <nav class="navbar">
                     <div class="menu-area">
                         <ul>
-                            <li><a href="#"><img style="height: 60px; width: auto;"
+                            {{-- <li><a href="#"><img style="height: 60px; width: auto;"
                                         src="{{ asset('assets/front-end/img/11-offer.png') }}" alt="11 offer image"></a>
-                            </li>
+                            </li> --}}
+
                             <li><a href="{{ route('home') }}">{{ \App\CPU\translate('Home') }}</a></li>
 
                             <li class="dd-btn1"><a href="#">{{ \App\CPU\translate('Categories') }} <i

@@ -47,6 +47,7 @@ use App\CPU\Convert;
 use App\Model\Branch;
 use App\Models\Career;
 use App\Model\Color;
+use App\Model\LandingPages;
 use App\Models\BatchDiscount;
 use App\Models\Blog;
 use App\Models\Lead;
@@ -116,10 +117,25 @@ class WebController extends Controller
 
     public function trendCollections()
     {
-        return view("web-views.products.trend-collections");
+        $products =  LandingPages::where('status', 1)->first();
+        $first_product = Product::find($products->product_id);
+        $main_banners = json_decode($products->main_banner);
+        // dd(Product::find($products->product_id));
+        // dd(json_decode($products->product));
+        // dd($products);
+
+        // dd($products);
+
+        $subProducts = [];
+        foreach($products->multiProducts as $i => $item) {
+           $subProducts[$i] =  Product::find($item->product_id);
+        }
+     
+
+        return view("web-views.products.trend-collections",compact("first_product", "subProducts", "main_banners") );
     }
 
-    // for front-end view
+    // for front-end viewL
     public function blogs()
     {
         $blogs = Blog::where("status", 1)->get();

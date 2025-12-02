@@ -150,6 +150,43 @@
 </style>
 
 @section('content')
+    {{-- =========================== Banner Section Start ===================== --}}
+    @if ($main_banners)
+        <section class="header-slider-section mt-1 mt-lg-3">
+            <div id="carouselExampleIndicators" class="carousel slide position-relative container " data-ride="carousel"
+                data-interval="3000">
+                <ol class="carousel-indicators">
+                    @foreach ($main_banners as $key => $banner)
+                        <li data-target="#carouselExampleIndicators" data-slide-to="{{ $key }}"
+                            class="{{ $key == 0 ? 'active' : '' }}"></li>
+                    @endforeach
+                </ol>
+                <div class="carousel-inner">
+                    @foreach ($main_banners as $key => $banner)
+                        <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
+                            <div class="main-slider  ">
+                                <a href="">
+                                    <img class="d-block w-100 rounded-0 rounded-lg"
+                                        onerror="this.src='{{ asset('assets/front-end/img/image-place-holder.png') }}'"
+                                        src="{{ asset('storage/deal/main-banner') }}/{{ $banner }}" alt="">
+                                </a>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+                <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </div>
+        </section>
+    @endif
+
+    {{-- =========================== Banner Section End ===================== --}}
     <section class="my-3 trending career">
         <div class="container " style="max-width: 1200px; ">
             <div class="row ">
@@ -162,43 +199,39 @@
             </div>
             <div class="d-none d-lg-block pt-4">
                 <div class="row">
-                    @foreach ([2, 2, 3, 4, 4] as $i)
-                        <div class="col-lg-3 col-md-4 col-sm-12 mb-4">
-                            <div class="card shadow-lg product-card">
-                                <div class="product-img-container">
-                                    <a href="#">
-                                        <img class="card-img-top"
-                                            src="{{ asset('assets/front-end/images/product/2025-05-22-682f30619bd5a.png') }}"
-                                            alt="Product Image">
-                                    </a>
-                                    <div class="text-center">
-                                        <button onclick="click()" class="btn add-to-cart"><i
-                                                class="fa fa-cart-plus mr-3"></i>কার্টে যোগ করুন</button>
-                                    </div>
-                                </div>
-
-                                <div class="card-body">
-                                    <a href="">
-                                        <h4 class="product-title">
-                                            {{ Str::limit('Ready Three Piece – Luxury Cotton Collection | Shopping Zone BD | Style #G1899LF', 50) }}
-                                        </h4>
-                                    </a>
-                                    <p class="product-text">
-                                        2,650.00 <span class="fw-bold tk">৳</span>
-                                    </p>
-
-                                </div>
-                                <div style="gap: 10px"
-                                    class="sm-button d-flex justify-content-center justify-content-lg-between p-3 ">
-                                    <a class="btn btn-sm btn-info text-white"><i class="fa fa-eye mr-2"></i>বিস্তারিত দেখুন</a>
-                                    <button class="btn btn-sm btn-orange text-white"><i class="fa fa-cart-plus mr-2"></i>অর্ডার
-                                        করুন</button>
+                    <div class="col-lg-3 col-md-4 col-sm-12 mb-4 mx-auto">
+                        <div class="card shadow-lg product-card">
+                            <div class="product-img-container">
+                                <a href="#">
+                                    <img class="card-img-top"
+                                        src="{{ asset('assets/front-end/images/product/2025-05-22-682f30619bd5a.png') }}"
+                                        alt="Product Image">
+                                </a>
+                                <div class="text-center">
+                                    <button onclick="click()" class="btn add-to-cart"><i
+                                            class="fa fa-cart-plus mr-3"></i>কার্টে যোগ করুন</button>
                                 </div>
                             </div>
+
+                            <div class="card-body">
+                                <a href="">
+                                    <h4 class="product-title">
+                                        {{ Str::limit($first_product->name, 50) }}
+                                    </h4>
+                                </a>
+                                <p class="product-text">
+                                    2,650.00 <span class="fw-bold tk">৳</span>
+                                </p>
+
+                            </div>
+                            <div style="gap: 10px"
+                                class="sm-button d-flex justify-content-center justify-content-lg-between p-3 ">
+                                <a class="btn btn-sm btn-info text-white"><i class="fa fa-eye mr-2"></i>বিস্তারিত দেখুন</a>
+                                <button class="btn btn-sm btn-orange text-white"><i class="fa fa-cart-plus mr-2"></i>অর্ডার
+                                    করুন</button>
+                            </div>
                         </div>
-                    @endforeach
-
-
+                    </div>
                 </div>
             </div>
             {{-- Mobile trending  --}}
@@ -240,7 +273,7 @@
                                 </a>
 
                                 <button class="btn btn-sm btn-orange text-white w-100 mt-2 mr-3">
-                                    <i class="fa fa-cart-plus"></i> অর্ডার করুন 
+                                    <i class="fa fa-cart-plus"></i> অর্ডার করুন
                                 </button>
 
                             </div>
@@ -250,7 +283,46 @@
                 </div>
             </div>
 
+            <div class="row">
+                @foreach ($subProducts as $key => $item)
+                    <div class="col-lg-3 col-md-4 col-sm-12 mb-4">
+                        <div class="card shadow-lg product-card">
+                            <div class="product-img-container">
+                                <a href="#">
+                                    <img class="card-img-top"
+                                        src="{{ asset('assets/front-end/images/product/2025-05-22-682f30619bd5a.png') }}"
+                                        alt="Product Image">
+                                </a>
+                                <div class="text-center">
+                                    <button onclick="click()" class="btn add-to-cart"><i
+                                            class="fa fa-cart-plus mr-3"></i>কার্টে
+                                        যোগ করুন</button>
+                                </div>
+                            </div>
 
+                            <div class="card-body">
+                                <a href="">
+                                    <h4 class="product-title">
+                                        {{-- {{ Str::limit($item->name, 50) }} --}}
+                                    </h4>
+                                </a>
+                                <p class="product-text">
+                                    2,650.00 <span class="fw-bold tk">৳</span>
+                                </p>
+
+                            </div>
+                            <div style="gap: 10px"
+                                class="sm-button d-flex justify-content-center justify-content-lg-between p-3 ">
+                                <a class="btn btn-sm btn-info text-white"><i class="fa fa-eye mr-2"></i>বিস্তারিত
+                                    দেখুন</a>
+                                <button class="btn btn-sm btn-orange text-white"><i
+                                        class="fa fa-cart-plus mr-2"></i>অর্ডার
+                                    করুন</button>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
         </div>
     </section>
 

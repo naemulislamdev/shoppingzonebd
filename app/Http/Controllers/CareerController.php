@@ -15,51 +15,25 @@ class CareerController extends Controller
 {
     public function index(Request $request)
     {
-        $search = $request->search;
-        $from   = $request->from;
-        $to     = $request->to;
-
-        // base query
-        $careers = Career::query();
-
-        // search
-        if (!empty($search)) {
-            $keywords = explode(' ', $search);
-
-            $careers->where(function ($q) use ($keywords) {
-
-                foreach ($keywords as $value) {
-
-                    // normal fields
-                    $q->orWhere('id', 'like', "%{$value}%")
+        $query_param = [];
+        $search = $request['search'];
+        if ($request->has('search')) {
+            $key = explode(' ', $request['search']);
+            $banners = Career::where(function ($q) use ($key) {
+                foreach ($key as $value) {
+                    $q->Where('type', 'like', "%{$value}%")
                         ->orWhere('position', 'like', "%{$value}%")
                         ->orWhere('department', 'like', "%{$value}%")
-                        ->orWhere('location', 'like', "%{$value}%")
-                        ->orWhere('type', 'like', "%{$value}%")
-                        ->orWhere('salary', 'like', "%{$value}%")
-                        ->orWhere('deadline', 'like', "%{$value}%")
-                        ->orWhere('status', 'like', "%" . ($value == 'published' ? 1 : ($value == 'unpublished' ? 0 : '')) . "%");
+                        ->orWhere('status', 'like', "%{$value}%");
                 }
-            });
+            })->orderBy('id', 'desc');
+            $query_param = ['search' => $request['search']];
+        } else {
+            $banners = Career::orderBy('id', 'desc');
         }
+        $careers = $banners->paginate(Helpers::pagination_limit())->appends($query_param);
 
-
-        // date filter
-        if (!empty($from) && !empty($to)) {
-            $careers->whereDate('created_at', '>=', $from)
-                ->whereDate('created_at', '<=', $to);
-        }
-
-
-        $careers = $careers->latest()
-            ->paginate(20)
-            ->appends([
-                'search' => $search,
-                'from'   => $from,
-                'to'     => $to
-            ]);
-
-        return view("admin-views.career.view", compact("careers"));
+        return view("admin-views.career.view", compact("careers", "search"));
     }
     public function bulk_export_dataJobsInfo()
     {

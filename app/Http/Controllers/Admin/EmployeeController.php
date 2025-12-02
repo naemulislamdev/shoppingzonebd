@@ -66,44 +66,18 @@ class EmployeeController extends Controller
 
     function list(Request $request)
     {
-        $search = $request->search;
-        $from   = $request->from;
-        $to     = $request->to;
-
-        // base query
-        $em = Admin::query();
-
-        // search
-        if (!empty($search)) {
-            $keywords = explode(' ', $search);
-            $em->where(function ($q) use ($keywords) {
-                foreach ($keywords as $value) {
-                    $q->orWhere('created_at', 'like', "%{$value}%")
-                        ->orWhere('admin', 'like', "%{$value}%")
-                        ->orWhere('email', 'like', "%{$value}%")
+        $search = $request['search'];
+        $key = explode(' ', $request['search']);
+        $em = Admin::with(['role'])->whereNotIn('id', [1])
+            ->when($search != null, function ($query) use ($key) {
+                foreach ($key as $value) {
+                    $query->where('name', 'like', "%{$value}%")
                         ->orWhere('phone', 'like', "%{$value}%")
-                        ->orWhere('branch', 'like', "%{$value}%")
-                        ->orWhere('role', 'like', "%{$value}%");
+                        ->orWhere('email', 'like', "%{$value}%");
                 }
-            });
-        }
-
-
-        // date filter
-        if (!empty($from) && !empty($to)) {
-            $em->whereDate('created_at', '>=', $from)
-                ->whereDate('created_at', '<=', $to);
-        }
-
-
-        $em = $em->latest()
-            ->paginate(20)
-            ->appends([
-                'search' => $search,
-                'from'   => $from,
-                'to'     => $to
-            ]);
-        return view('admin-views.employee.list', compact('em','search'));
+            })
+            ->paginate(Helpers::pagination_limit());
+        return view('admin-views.employee.list', compact('em', 'search'));
     }
 
     public function bulk_export_employee()
