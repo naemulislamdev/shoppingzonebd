@@ -264,6 +264,20 @@ class LandingPagesController extends Controller
             'success' => 1,
         ], 200);
     }
+    public function LandingPageWithSlide(Request $request)
+    {
+
+
+        DB::table("landing_pages")->where('id', $request['id'])->update([
+            'with_slide' => $request['with_slide'],
+        ]);
+
+        return response()->json([
+            'success' => 1,
+        ], 200);
+
+    }
+
     public function SingleProductEdit($id)
     {
         $productLandingpage = ProductLandingPage::find($id);

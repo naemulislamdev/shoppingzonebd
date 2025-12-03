@@ -115,7 +115,7 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                               <div class="row">
+                                <div class="row">
                                     <div class="col-md-12" style="padding-top: 20px;">
                                         <label for="name">{{ \App\CPU\translate('Slider') }}
                                             {{ \App\CPU\translate('Banner') }}</label><span
@@ -126,7 +126,8 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="upload-container">
-                                            <input type="file" id="image-upload" name="images[]" multiple accept="image/*" class="custom-file-input">
+                                            <input type="file" id="image-upload" name="images[]" multiple
+                                                accept="image/*" class="custom-file-input">
                                             <label for="image-upload" class="custom-file-label">Select Slider Images</label>
                                             <div id="image-preview" class="image-preview-container"></div>
                                         </div>
@@ -159,7 +160,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                 <div class="row">
+                                <div class="row">
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <div class="row">
@@ -184,56 +185,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                {{-- <div class="row">
-                                    <div class="col-md-6" style="padding-top: 20px;">
-                                        <label for="left_side_banner">{{ \App\CPU\translate('Left side') }}
-                                            {{ \App\CPU\translate('Banner') }}</label><span
-                                            class="badge badge-soft-danger">( {{ \App\CPU\translate('ratio') }} 400x650
-                                            )</span>
-                                        <div class="custom-file mb-3" style="text-align: left">
-                                            <input type="file" name="left_side_banner" id="customFileUpload2"
-                                                class="custom-file-input"
-                                                accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*">
-                                            <label class="custom-file-label"
-                                                for="customFileUpload2">{{ \App\CPU\translate('choose') }}
-                                                {{ \App\CPU\translate('file') }}</label>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div style="text-align:center;">
-                                                    <img style="width:70%;border: 1px solid; border-radius: 10px; max-height:200px;"
-                                                        id="viewer2"
-                                                        src="{{ asset('public\assets\back-end\img\1920x400\img1.jpg') }}"
-                                                        alt="banner image" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6" style="padding-top: 20px;">
-                                        <label for="right_side_banner">{{ \App\CPU\translate('Right side') }}
-                                            {{ \App\CPU\translate('Banner') }}</label><span
-                                            class="badge badge-soft-danger">( {{ \App\CPU\translate('ratio') }} 400x650
-                                            )</span>
-                                        <div class="custom-file mb-3" style="text-align: left">
-                                            <input type="file" name="right_side_banner" id="customFileUpload3"
-                                                class="custom-file-input"
-                                                accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*">
-                                            <label class="custom-file-label"
-                                                for="customFileUpload3">{{ \App\CPU\translate('choose') }}
-                                                {{ \App\CPU\translate('file') }}</label>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div style="text-align:center;">
-                                                    <img style="width:70%;border: 1px solid; border-radius: 10px; max-height:200px;"
-                                                        id="viewer3"
-                                                        src="{{ asset('public\assets\back-end\img\1920x400\img1.jpg') }}"
-                                                        alt="banner image" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> --}}
+                             
                             </div>
 
                             <div class=" pl-0">
@@ -268,19 +220,28 @@
                                     <tr>
                                         <th>{{ \App\CPU\translate('Title') }}</th>
                                         <th>{{ \App\CPU\translate('Slug') }}</th>
-                                        <th>{{ \App\CPU\translate('dfdf') }}</th>
+                                        <th>{{ \App\CPU\translate('With Slide') }}</th>
                                         <th>{{ \App\CPU\translate('status') }}</th>
                                         <th>{{ \App\CPU\translate('Product Add') }}</th>
                                         <th style="width: 50px">{{ \App\CPU\translate('action') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
+
                                     @foreach ($landing_page as $k => $deal)
                                         <tr>
 
                                             <td>{{ $deal->title }}</td>
-                                            <td><a href="https://shop.shoppingzonebd.com.bd/{{ $deal->slug }}" target="_blank">{{ $deal->slug }}</a></td>
-                                            <td>dfdf</td>
+                                            <td><a href="https://shop.shoppingzonebd.com.bd/collections/{{ $deal->slug }}"
+                                                    target="_blank">{{ $deal->slug }}</a></td>
+                                            <td>
+                                                <label class="switch">
+                                                    <input name="with_slide" type="checkbox" class="with_slide"
+                                                        id="{{ $deal->id }}"
+                                                        {{ $deal->with_slide == 1 ? 'checked' : '' }}>
+                                                    <span class="slider round"></span>
+                                                </label>
+                                            </td>
                                             <td>
                                                 <label class="switch">
                                                     <input type="checkbox" class="status" id="{{ $deal->id }}"
@@ -420,6 +381,27 @@
                 success: function() {
                     toastr.success('{{ \App\CPU\translate('Status updated successfully') }}');
                     location.reload();
+                }
+            });
+        });
+        // withSlide
+        $(document).on('change', '.with_slide', function() {
+            var id = $(this).attr("id");
+            var with_slide = $(this).prop("checked") ? 1 : 0;
+
+            $.ajax({
+                url: "{{ route('admin.landingpages.withSlideStatus') }}",
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    id: id,
+                    with_slide: with_slide
+                },
+                success: function() {
+                    toastr.success('withSlide updated successfully');
+                    // location.reload();
                 }
             });
         });

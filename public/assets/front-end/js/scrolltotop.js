@@ -6,7 +6,7 @@ var scrolltotop = {
         fadeduration: [500, 100],
     },
     controlHTML:
-        '<img src="https://lh3.googleusercontent.com/pw/AM-JKLWF0SkwAJSfHjgL7nFpLotncCE2yZnPbAdorAhRKtGtVSMlfY4L1CPgYzjkj2N10JvLEylWv_k8dLedKrXuesFaBcTca3Wn9GNbQIumzZ3kDY3A_PKhPgph1kn0cr2ZWRDYcTW0LwqiC_AarXeJE4_K=s60-no" />',
+        '<i style="height: 40px; width: 40px; border-radius: 50%; background: #ff5d00; text-align: center; color: #fff; line-height: 40px; box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;" class=" fa fa-arrow-up"></i>',
     controlattrs: { offsetx: 5, offsety: 5 },
     anchorkeyword: "#top",
     state: { isvisible: !1, shouldvisible: !1 },

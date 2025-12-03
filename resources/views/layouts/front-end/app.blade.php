@@ -857,6 +857,8 @@
         }
 
         function addToCart(form_id, redirect_to_checkout = false) {
+            
+
             if (form_id) {
                 $.ajaxSetup({
                     headers: {
@@ -949,6 +951,8 @@
         }
 
         function buy_now(form_id) {
+
+
             addToCart(form_id, true);
         }
         $('.new-av-product').on('click', function() {

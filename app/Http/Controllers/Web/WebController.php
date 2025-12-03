@@ -126,7 +126,11 @@ class WebController extends Controller
             foreach ($lpage->multiProducts as $i => $item) {
                 $subProducts[$i] =  Product::find($item->product_id);
             }
-            return view("web-views.products.collections", compact("first_product", "subProducts", "main_banners"));
+            $withSlide = $lpage->with_slide;
+
+
+            return view("web-views.products.collections", compact("first_product", "subProducts", "main_banners", "withSlide"));
+
         } else {
             return redirect()->route('home')->with('error', 'Page not available!');
         }

@@ -2043,4 +2043,7 @@
   'User-info' => 'User-info',
   'Search ....' => 'Search ....',
   'dfdf' => 'Dfdf',
+  'With Slide' => 'With Slide',
+  'With-slide status updated successfully' => 'With-slide status updated successfully',
+  'withSlide updated successfully' => 'WithSlide updated successfully',
 );

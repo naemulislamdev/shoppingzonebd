@@ -170,6 +170,7 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('/edit{id}', 'SingleProductEdit')->name('edit');
             Route::post('/product-landing-page/update/{id}', 'SingleProductUpdate')->name('single.update');
             Route::post('status', 'LandingPageStatus')->name('status');
+            Route::post('withSlideStatus', 'LandingPageWithSlide')->name('withSlideStatus');
             Route::get('remove/slider', 'removeImage')->name('remove_image');
             Route::get('remove/feature-list', 'removeFeatureList')->name('remove_feature_list');
             Route::get('remove/landing-page/section', 'removePageSection')->name('remove_page_section');
