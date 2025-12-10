@@ -87,7 +87,7 @@ Route::middleware(['maintenance_mode'])->group(function () {
         Route::get('/blogs', 'blogs')->name('blogs');
         Route::get('/blogs/{slug}', 'blogDetails')->name('blog.details');
     });
-    // trend collections routes
+    //  collections routes
     Route::controller(WebController::class)->group(function () {
         Route::get('/collections/{slug}', 'multiCollection')->name('collections');
     });

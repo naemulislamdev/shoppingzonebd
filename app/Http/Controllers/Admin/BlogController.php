@@ -72,9 +72,12 @@ class BlogController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            "title"       => 'required|unique:blogs,title',
+            "title"       => 'required|string|unique:blogs,title',
             "category_id" => 'required',
-            "description" => 'nullable',
+            "meta_title" => 'nullable|string',
+            "meta_keywords" => 'nullable|string',
+            "meta_description" => 'nullable|string',
+            "description" => 'nullable|string',
             "image"       => "nullable|image|mimes:jpg,jpeg,png,gif,bmp,tif,tiff,webp|max:4096",
         ], [
             "category_id.required" => "Please select a category.",
@@ -84,7 +87,11 @@ class BlogController extends Controller
         $blog = new Blog();
         $blog->title       = $request->title;
         $blog->slug        = Str::slug($request->title);
+        $blog->uploader    = auth("admin")->name;
         $blog->description = $request->description;
+        $blog->meta_title = $request->meta_title;
+        $blog->meta_keywords = $request->meta_keywords;
+        $blog->meta_description = $request->meta_description;
         $blog->category_id = $request->category_id;
 
         if ($request->hasFile('image')) {
@@ -94,7 +101,7 @@ class BlogController extends Controller
 
         $blog->save();
 
-        return redirect()->route('admin.business-settings.blog.index')->with("success", "Blog inserted successfully!");
+        return redirect()->route('admin.blog.index')->with("success", "Blog inserted successfully!");
     }
     public function edit($slug)
     {
@@ -105,9 +112,12 @@ class BlogController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            "title"       => 'required',
+            "title"       => 'required|string',
             "category_id" => 'required',
-            "description" => 'nullable',
+            "meta_title" => 'nullable|string',
+            "meta_keywords" => 'nullable|string',
+            "meta_description" => 'nullable|string',
+            "description" => 'nullable|string',
             "image"       => "nullable|image|mimes:jpg,jpeg,png,gif,bmp,tif,tiff,webp|max:4096",
         ], [
             "category_id.required" => "Please select a category.",
@@ -117,6 +127,9 @@ class BlogController extends Controller
         $blog->title       = $request->title;
         $blog->slug        = Str::slug($request->title);
         $blog->description = $request->description;
+        $blog->meta_title = $request->meta_title;
+        $blog->meta_keywords = $request->meta_keywords;
+        $blog->meta_description = $request->meta_description;
         $blog->category_id = $request->category_id;
 
         if ($request->hasFile('image')) {
@@ -130,7 +143,7 @@ class BlogController extends Controller
 
         $blog->save();
 
-        return redirect()->route('admin.business-settings.blog.index')->with("success", "Blog Updated successfully!");
+        return redirect()->route('admin.blog.index')->with("success", "Blog Updated successfully!");
     }
     public function status(Request $request)
     {

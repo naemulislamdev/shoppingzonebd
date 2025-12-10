@@ -22,7 +22,7 @@ class LandingPagesController extends Controller
 
     public function landing_index(Request $request)
     {
-        $landing_page = DB::table('landing_pages')->get();
+        $landing_page = DB::table('landing_pages')->latest()->get();
         return view('admin-views.landingpages.landing-index', compact('landing_page'));
     }
 
@@ -187,7 +187,8 @@ class LandingPagesController extends Controller
 
     public function index()
     {
-        $productLandingpage = ProductLandingPage::latest()->paginate(10);
+        $productLandingpage =  ProductLandingPage::latest('created_at')->get();
+
         return view('admin-views.landingpages.sign_product.index', compact('productLandingpage'));
     }
     public function create()
@@ -266,8 +267,6 @@ class LandingPagesController extends Controller
     }
     public function LandingPageWithSlide(Request $request)
     {
-
-
         DB::table("landing_pages")->where('id', $request['id'])->update([
             'with_slide' => $request['with_slide'],
         ]);

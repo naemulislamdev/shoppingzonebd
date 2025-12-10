@@ -30,6 +30,9 @@
     <link rel="stylesheet" href="{{ asset('assets/front-end/css/user_account.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/front-end/css/custome.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/front-end') }}/css/responsive.css">
+    <meta name="meta_title" content="@yield('title')">
+    <meta name="keywords" content="@yield('meta_keywords')">
+    <meta name="description" content="@yield('meta_description')">
     {{-- dont touch this --}}
     @stack('css_or_js')
     <meta name="_token" content="{{ csrf_token() }}">
@@ -472,17 +475,55 @@
     @endif
     {{-- owl carosel  --}}
     <script>
+        // $(document).ready(function() {
+        //     $('.new-arrivals-section .owl-carousel').each(function() {
+
+        //         $(this).owlCarousel({
+        //             loop: true,
+        //             margin: 10,
+        //             autoplay: false,
+        //             autoplayTimeout: 2000,
+        //             autoplayHoverPause: true,
+        //             smartSpeed: 500,
+        //             nav: true,
+        //             navText: [
+        //                 '<i class="fa fa-chevron-left text-white"></i>',
+        //                 '<i class="fa fa-chevron-right text-white"></i>'
+        //             ],
+        //             responsive: {
+        //                 0: {
+        //                     items: 2
+        //                 },
+        //                 768: {
+        //                     items: 3
+        //                 },
+        //                 992: {
+        //                     items: 6
+        //                 }
+        //             }
+        //         });
+        //     });
+        // });
+
         $(document).ready(function() {
             $('.new-arrivals-section .owl-carousel').each(function() {
 
-                $(this).owlCarousel({
-                    loop: true,
+                let $owl = $(this);
+                let total = $owl.find('.item').length;
+
+                // Determine itemsToShow based on device width
+                let itemsToShow = window.innerWidth < 768 ? 2 :
+                    window.innerWidth < 992 ? 3 : 6;
+
+                // If not enough items → no slide + hide nav
+                let enableSlide = total > itemsToShow;
+
+                $owl.owlCarousel({
+                    loop: enableSlide,
+                    autoplay: enableSlide,
                     margin: 10,
-                    autoplay: false,
-                    autoplayTimeout: 2000,
-                    autoplayHoverPause: true,
                     smartSpeed: 500,
-                    nav: true,
+                    nav: enableSlide,
                     navText: [
                         '<i class="fa fa-chevron-left text-white"></i>',
                         '<i class="fa fa-chevron-right text-white"></i>'
@@ -496,6 +537,11 @@
                         },
                         992: {
                             items: 6
+                        }
+                    },
+                    onInitialized: function() {
+                        if (!enableSlide) {
+                            $owl.find('.owl-nav').hide(); // force hide nav
                         }
                     }
                 });
@@ -857,7 +903,7 @@
         }
 
         function addToCart(form_id, redirect_to_checkout = false) {
-            
+
 
             if (form_id) {
                 $.ajaxSetup({

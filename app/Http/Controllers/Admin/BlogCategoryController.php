@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\CPU\Helpers;
 use App\Http\Controllers\Controller;
-use App\Models\Blog;
 use App\Models\BlogCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -45,7 +44,7 @@ class BlogCategoryController extends Controller
 
         return redirect()->back()->with("success", "Blog category inserted successfully!");
     }
- 
+
     public function update(Request $request, $id) {
         $request->validate([
             "name" => 'required|unique:blog_categories,name,' . $id

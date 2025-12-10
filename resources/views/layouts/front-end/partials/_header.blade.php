@@ -4,7 +4,8 @@
             <div class="col-md-3 d-none d-lg-block">
                 <!-- <a class="navbar-brand" href="index.html">Shopping Zone BD</a> -->
                 <a href="{{ route('home') }}">
-                    <img style="height: 50px" class="header-logo" src="{{ asset('storage/company') . '/' . $web_config['web_logo']->value }}"
+                    <img style="height: 50px" class="header-logo"
+                        src="{{ asset('storage/company') . '/' . $web_config['web_logo']->value }}"
                         onerror="this.src='{{ asset('assets/front-end/img/image-place-holder.png') }}'"
                         alt="{{ $web_config['name']->value }}">
                 </a>
@@ -17,10 +18,12 @@
                 <nav class="navbar">
                     <div class="menu-area">
                         <ul>
-                            @if ($discountOffer !=null)
-<li><a href="{{route('discount.offers', ['slug' => $discountOffer->slug ?? ''])}}"><img style="height: 60px; width: auto;"
-                                        src="{{ asset('assets/front-end/img/11-offer.png') }}" alt="11 offer image"></a>
-                            </li>
+                            @if ($discountOffer != null)
+                                <li><a href="{{ route('discount.offers', ['slug' => $discountOffer->slug ?? '']) }}"><img
+                                            style="height: 60px; width: auto;"
+                                            src="{{ asset('storage/offer') }}/{{ $discountOffer['image'] }}"
+                                            alt="offer image"></a>
+                                </li>
                             @endif
                             <li><a href="{{ route('home') }}">{{ \App\CPU\translate('Home') }}</a></li>
 
@@ -116,8 +119,14 @@
             </div>
             <div class="col-md-2 ms-auto">
                 <div class="header-icon ms-5 align-items-center">
-                    <a class="d-block d-lg-none" href="#"><img style="height: 50px; width: auto;"
-                            src="{{ asset('assets/front-end/img/11-offer.png') }}" alt="offer image"></a>
+                    @if ($discountOffer != null)
+                        <a class="d-block d-lg-none"
+                            href="{{ route('discount.offers', ['slug' => $discountOffer->slug ?? '']) }}"><img
+                                style="height: 60px; width: auto;"
+                                src="{{ asset('storage/offer') }}/{{ $discountOffer['image'] }}"
+                                alt="offer image"></a>
+                    @endif
+
 
                     <a data-bs-toggle="offcanvas" href="#searchOffcanvas" role="button"
                         aria-controls="searchOffcanvas"><i class="fa fa-search" aria-hidden="true"></i></a>

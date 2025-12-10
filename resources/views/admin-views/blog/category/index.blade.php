@@ -112,7 +112,7 @@
                                                 </div>
                                                 <div class="modal-body">
                                                     <div>
-                                                        <form action="{{ route('admin.business-settings.blogCategory.update', $category->id) }}"
+                                                        <form action="{{ route('admin.blogCategory.update', $category->id) }}"
                                                             method="POST">
                                                             @csrf
                                                             @method('PUT')
@@ -180,7 +180,7 @@
                 </div>
                 <div class="modal-body">
                     <div>
-                        <form action="{{ route('admin.business-settings.blogCategory.store') }}" method="POST">
+                        <form action="{{ route('admin.blogCategory.store') }}" method="POST">
                             @csrf
                             <div class="form-group" id="name">
                                 <label class="input-label" for="name">
@@ -230,7 +230,7 @@
                 }
             });
             $.ajax({
-                url: "{{ route('admin.business-settings.blogCategory.status') }}",
+                url: "{{ route('admin.blogCategory.status') }}",
                 method: 'POST',
                 data: {
                     id: id,
@@ -266,7 +266,7 @@
                         }
                     });
                     $.ajax({
-                        url: "{{ route('admin.business-settings.blogCategory.delete') }}",
+                        url: "{{ route('admin.blogCategory.delete') }}",
                         method: 'DELETE',
                         data: {
                             id: id

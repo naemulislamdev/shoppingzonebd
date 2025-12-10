@@ -185,7 +185,7 @@
                                         </div>
                                     </div>
                                 </div>
-                             
+
                             </div>
 
                             <div class=" pl-0">
@@ -230,10 +230,15 @@
 
                                     @foreach ($landing_page as $k => $deal)
                                         <tr>
-
                                             <td>{{ $deal->title }}</td>
-                                            <td><a href="https://shop.shoppingzonebd.com.bd/collections/{{ $deal->slug }}"
-                                                    target="_blank">{{ $deal->slug }}</a></td>
+                                            <td>
+                                                @if ($deal->status)
+                                                    <a href="{{ route('collections', $deal->slug) }}"
+                                                        target="_blank">{{ $deal->slug }}</a>
+                                                @else
+                                                    link deactivated
+                                                @endif
+                                            </td>
                                             <td>
                                                 <label class="switch">
                                                     <input name="with_slide" type="checkbox" class="with_slide"
@@ -361,11 +366,8 @@
 
         $(document).on('change', '.status', function() {
             var id = $(this).attr("id");
-            if ($(this).prop("checked") == true) {
-                var status = 1;
-            } else if ($(this).prop("checked") == false) {
-                var status = 0;
-            }
+            var status = $(this).prop("checked") ? 1 : 0;
+
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')

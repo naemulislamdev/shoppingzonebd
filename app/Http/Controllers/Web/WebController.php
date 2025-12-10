@@ -116,9 +116,9 @@ class WebController extends Controller
         return redirect()->route('home');
     }
 
-    public function multiCollection()
+    public function multiCollection($slug)
     {
-        $lpage =  LandingPages::where('status', 1)->first();
+        $lpage =  LandingPages::where('status', 1)->where("slug", $slug)->first();
         if ($lpage) {
             $first_product = Product::find($lpage->product_id);
             $main_banners = json_decode($lpage->main_banner);
@@ -130,24 +130,41 @@ class WebController extends Controller
 
 
             return view("web-views.products.collections", compact("first_product", "subProducts", "main_banners", "withSlide"));
-
         } else {
             return redirect()->route('home')->with('error', 'Page not available!');
         }
     }
 
-    // for front-end viewL
+    // blog front-end view
     public function blogs()
     {
-        $blogs = Blog::where("status", 1)->get();
+        $blogs = Blog::where('status', 1)->latest()->get();
 
-        return view("web-views.blogs.blogs", compact("blogs"));
+        if ($blogs) {
+            return view("web-views.blogs.blogs", compact("blogs"));
+        } else {
+            return redirect()->route('/')->with("error", "file not found!");
+        }
     }
     public function blogDetails($slug)
     {
-        $id = Blog::where("slug", $slug)->get()[0]->id;
-        $blog = Blog::find($id);
-        return view("web-views.blogs.blogDetails", compact("blog"));
+        // insert views start
+        $blog = Blog::where('slug', $slug)->firstOrFail();
+        $cookieName = 'blog_viewed_' . $blog->id;
+        if (!request()->hasCookie($cookieName)) {
+            $blog->increment('views');
+            cookie()->queue($cookieName, true, 60 * 24 * 30);
+        }
+        // insert views end
+
+        $blog = Blog::find($blog->id);
+
+        $latest_blogs = Blog::latest("created_at")
+            ->inRandomOrder()
+            ->take(3)
+            ->where("status", 1)
+            ->get();
+        return view("web-views.blogs.blogDetails", compact("blog", "latest_blogs"));
     }
     public function home()
     {

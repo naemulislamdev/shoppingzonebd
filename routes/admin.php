@@ -629,25 +629,25 @@ Route::prefix('/admin')->as('admin.')->group(function () {
                 Route::post('analytics-update-google-tag', 'google_tag_analytics_update')->name('analytics-update-google-tag');
             });
 
-            // Blogs Mangement
+        });
 
-            Route::controller(BlogCategoryController::class)->middleware('module:web_&_app_settings')->prefix("blog/category/")->as('blogCategory.')->group(function () {
-                Route::get("list", 'list')->name("index");
-                Route::post("store", 'store')->name("store");
-                Route::put("update/{id}", 'update')->name("update");
-                Route::delete('delete', 'destroy')->name('delete');
-                Route::post('status', 'status')->name('status');
-            });
-            Route::controller(BlogController::class)->middleware('module:web_&_app_settings')->prefix("blogs/")->as('blog.')->group(function () {
-                Route::get("list", 'list')->name("index");
-                Route::get("create", 'create')->name("create");
-                Route::post("store", 'store')->name("store");
-                Route::get("edit/{slug}", 'edit')->name("edit");
-                Route::put("update/{id}", 'update')->name("update");
-                Route::delete('delete', 'destroy')->name('delete');
-                Route::post('status', 'status')->name('status');
-                Route::get('bulk-export', 'bulk_export_blog')->name('bulk-export');
-            });
+        // Blogs Mangement
+        Route::controller(BlogCategoryController::class)->middleware('module:web_&_app_settings')->prefix("blog/category/")->as('blogCategory.')->group(function () {
+            Route::get("list", 'list')->name("index");
+            Route::post("store", 'store')->name("store");
+            Route::put("update/{id}", 'update')->name("update");
+            Route::delete('delete', 'destroy')->name('delete');
+            Route::post('status', 'status')->name('status');
+        });
+        Route::controller(BlogController::class)->middleware('module:web_&_app_settings')->prefix("blogs/")->as('blog.')->group(function () {
+            Route::get("list", 'list')->name("index");
+            Route::get("create", 'create')->name("create");
+            Route::post("store", 'store')->name("store");
+            Route::get("edit/{slug}", 'edit')->name("edit");
+            Route::put("update/{id}", 'update')->name("update");
+            Route::delete('delete', 'destroy')->name('delete');
+            Route::post('status', 'status')->name('status');
+            Route::get('bulk-export', 'bulk_export_blog')->name('bulk-export');
         });
         //order management
         Route::controller(OrderController::class)->prefix('/orders')->as('orders.')->middleware('module:order_management')->group(function () {
@@ -773,9 +773,8 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('list', 'userInfoList')->name('list');
             Route::post('delete', 'userInfoDestroy')->name('delete');
             Route::get('view/{id}', 'userInfoView')->name('view');
-            Route::get('bulk-export', 'bulk_export_dataUserInfo')->name('bulk-export');
             Route::post('status', 'status')->name('status');
-
+            Route::get('ajax-search', 'ajaxSearch')->name('ajax-search');
         });
 
         Route::controller(DeliveryManController::class)->prefix('/delivery-man')->as('delivery-man.')->group(function () {
