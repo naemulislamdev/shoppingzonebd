@@ -19,7 +19,6 @@
             <h1 class="h3 mb-0 text-black-50">{{ \App\CPU\translate('User-info') }}
                 {{ \App\CPU\translate('List') }}</h1>
         </div>
-
         <div class="row" style="margin-top: 20px">
             <div class="col-md-12">
                 <div class="card">

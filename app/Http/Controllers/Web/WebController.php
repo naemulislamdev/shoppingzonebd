@@ -182,21 +182,30 @@ class WebController extends Controller
         //end
 
         //feature products finding based on selling
-        $featured_products = Product::with(['reviews'])->active()
+        // $featured_products = Product::with(['reviews'])->active()
+        //     ->where('featured', 1)
+        //     ->withCount(['order_details'])->orderBy('order_details_count', 'DESC')
+        //     ->take(12)
+        //     ->get();
+        $featured_products = Product::with(['reviews'])
+            ->active()
             ->where('featured', 1)
-            ->withCount(['order_details'])->orderBy('order_details_count', 'DESC')
+            ->withCount(['order_details'])
+            ->latest() // created_at DESC
             ->take(12)
             ->get();
+
         //end
         //Arrival products finding based on selling
-        $arrival_products = Product::with(['reviews'])->active()
+        $arrival_products = Product::with(['reviews'])
+            ->active()
             ->where('arrival', 1)
-            ->withCount(['order_details'])->orderBy('order_details_count', 'DESC')
+            ->withCount(['order_details'])
+            ->latest() // created_at DESC
             ->take(12)
             ->get();
-        //end
-
         $latest_products = Product::with(['reviews'])->active()->orderBy('id', 'desc')->take(8)->get();
+        
         $categories = Category::where('position', 0)->where('home_status', true)->priority()->take(11)->get();
 
 
