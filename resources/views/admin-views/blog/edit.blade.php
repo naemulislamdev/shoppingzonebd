@@ -41,7 +41,7 @@
 
                             </div>
                             <div id="banner-btn">
-                                <a href="{{route('admin.business-settings.blog.index')}}" class="btn btn-primary"><i
+                                <a href="{{route('admin.blog.index')}}" class="btn btn-primary"><i
                                         class="tio-arrow-backward"></i>
                                     {{ \App\CPU\translate('Blog_list') }}</a>
                             </div>
@@ -49,7 +49,7 @@
                     </div>
                     <div class="card-body">
                         <div>
-                            <form action="{{route('admin.business-settings.blog.update', $blog->id)}}" method="POST"
+                            <form action="{{route('admin.blog.update', $blog->id)}}" method="POST"
                                 enctype="multipart/form-data">
                                 @csrf
                                 @method('PUT')
@@ -82,7 +82,49 @@
                                             class="text-danger">*</span></label>
                                     <textarea name="description" id="summernote_{{ $blog->id }}" class="editor" cols="30" rows="10">{{ $blog->description }}</textarea>
                                 </div>
-
+                                <div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group" id="meta_title">
+                                                <label class="input-label" for="meta_title">
+                                                    {{ \App\CPU\translate('meta_title') }}<span class="text-secondary">
+                                                        (Optional)</span>
+                                                </label>
+                                                <input type="text" name="meta_title" id="meta_title"
+                                                    value="{{$blog->meta_title}}"
+                                                    class="form-control @error('meta_title') is-invalid @enderror"
+                                                    placeholder="Enter Meta Title">
+                                                @error('meta_title')
+                                                    <div class="text-danger mt-2">{{ ucwords($message) }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group" id="meta_keywords">
+                                                <label class="input-label" for="meta_keywords">
+                                                    {{ \App\CPU\translate('meta_keywords') }}<span class="text-secondary">
+                                                        (optional)</span>
+                                                </label>
+                                                <input type="text" name="meta_keywords" id="meta_keywords"
+                                                    value="{{ $blog->meta_keywords }}"
+                                                    class="form-control @error('meta_keywords') is-invalid @enderror"
+                                                    placeholder="Enter Meta Keywors">
+                                                @error('meta_keywords')
+                                                    <div class="text-danger mt-2">{{ ucwords($message) }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="input-label"
+                                            for="meta_description">{{ \App\CPU\translate('meta_description') }}<span
+                                                class="text-secondary"> (optional)</span></label>
+                                        <textarea name="meta_description" class="form-control" style="resize: none" cols="6" rows="3">{{ $blog->meta_description }}</textarea>
+                                        @error('meta_description')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                </div>
                                 <!-- Image -->
                                 <div class="form-group">
                                     <label>{{ \App\CPU\translate('image') }} (1:1)</label>

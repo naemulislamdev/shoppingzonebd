@@ -1356,7 +1356,7 @@ $route = request()->route()->getName();
                             </li>
                             {{-- Blogs--}}
                             <li
-                                class="navbar-vertical-aside-has-menu {{ Request::is('admin/business-settings/blog*') ? 'active' : '' }}">
+                                class="navbar-vertical-aside-has-menu {{ Request::is('admin/blog*') ? 'active' : '' }}">
                                 <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle"
                                     href="javascript:">
                                     <i class="tio-message-add nav-icon"></i>
@@ -1365,10 +1365,10 @@ $route = request()->route()->getName();
                                     </span>
                                 </a>
                                 <ul class="js-navbar-vertical-aside-submenu nav nav-sub"
-                                    style="display: {{ Request::is('admin/business-settings/blog*') ? 'block' : 'none' }}">
+                                    style="display: {{ Request::is('admin/blog*') ? 'block' : 'none' }}">
 
-                                    <li class="nav-item {{ Request::is('admin/business-settings/blog/category*') ? 'active' : '' }}">
-                                        <a class="nav-link" href="{{ route('admin.business-settings.blogCategory.index') }}" title="">
+                                    <li class="nav-item {{ Request::is('admin/blog/category*') ? 'active' : '' }}">
+                                        <a class="nav-link" href="{{ route('admin.blogCategory.index') }}" title="">
                                             <span class="tio-circle nav-indicator-icon"></span>
                                             <span class="text-truncate">
                                                 {{ \App\CPU\translate('Blog Category') }}
@@ -1378,8 +1378,8 @@ $route = request()->route()->getName();
                                             </span>
                                         </a>
                                     </li>
-                                    <li class="nav-item {{ Request::is('admin/business-settings/blogs') ? 'active' : '' }}">
-                                        <a class="nav-link" href="{{route('admin.business-settings.blog.index')}}"
+                                    <li class="nav-item {{ Request::is('admin/blogs') ? 'active' : '' }}">
+                                        <a class="nav-link" href="{{route('admin.blog.index')}}"
                                             title="">
                                             <span class="tio-circle nav-indicator-icon"></span>
                                             <span class="text-truncate">
@@ -1393,7 +1393,7 @@ $route = request()->route()->getName();
 
                                 </ul>
                             </li>
-
+                            {{-- End Blogs --}}
                             <li
                                 class="navbar-vertical-aside-has-menu {{ Request::is('admin/business-settings/order-settings*') ? 'active' : '' }}">
                                 <a class="js-navbar-vertical-aside-menu-link nav-link"

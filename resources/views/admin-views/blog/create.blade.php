@@ -41,7 +41,7 @@
 
                             </div>
                             <div id="banner-btn">
-                                <a href="{{route('admin.business-settings.blog.index')}}" class="btn btn-primary"><i
+                                <a href="{{ route('admin.blog.index') }}" class="btn btn-primary"><i
                                         class="tio-arrow-backward"></i>
                                     {{ \App\CPU\translate('Blog_list') }}</a>
                             </div>
@@ -49,68 +49,112 @@
                     </div>
                     <div class="card-body">
                         <div>
-                            <form action="{{ route('admin.business-settings.blog.store') }}" method="POST"
-                            enctype="multipart/form-data">
-                            @csrf
+                            <form action="{{ route('admin.blog.store') }}" method="POST"
+                                enctype="multipart/form-data">
+                                @csrf
 
-                            <div class="form-group" id="title">
-                                <label class="input-label" for="title">
-                                    {{ \App\CPU\translate('blog_title') }}<span class="text-danger">*</span>
-                                </label>
-                                <input type="text" name="title" id="title" value="{{ old('title') }}"
-                                    class="form-control @error('title') is-invalid @enderror"
-                                    placeholder="Enter Blog Title" >
-                                @error('title')
-                                    <div class="text-danger mt-2">{{ ucwords($message) }}</div>
-                                @enderror
-                            </div>
-                            <div class="form-group">
-                                <label class="input-label" for="exampleFormControlSelect1">
-                                    {{ \App\CPU\translate('select_blog_category') }}
-                                    <span class="text-danger">*</span></label>
-                                <select  name="category_id" class="form-control" >
-                                    <option selected value="" disabled>---select---</option>
-                                    @foreach ($categories as $cat)
-                                        <option value="{{ $cat->id }}">{{ $cat->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            {{-- description --}}
-                            <div class="form-group pt-4">
-                                <label class="input-label" for="description">{{ \App\CPU\translate('description') }}<span
-                                        class="text-danger">*</span></label>
-                                <textarea  name="description" class="editor" id="summernote" cols="30" rows="80">{{ old('description') }}</textarea>
-                                @error('description')
-                                    <span class="text-danger">{{ $message }}</span>
-                                @enderror
-                            </div>
-                            <div>
-                                <label>{{ \App\CPU\translate('image') }}</label><small style="color: red">
-                                    ( {{ \App\CPU\translate('ratio') }} 1:1 )</small>
-                                <div class="custom-file" style="text-align: left">
-                                    <input type="file" name="image" id="customFileEg" class="custom-file-input"
-                                        accept="image/*,.jpg,.jpeg,.png,.gif,.bmp,.tif,.tiff, webp">
-
-                                    <label class="custom-file-label"
-                                        for="customFileEg1">{{ \App\CPU\translate('choose') }}
-                                        {{ \App\CPU\translate('file') }}</label>
+                                <div class="form-group" id="title">
+                                    <label class="input-label" for="title">
+                                        {{ \App\CPU\translate('blog_title') }}<span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" name="title" id="title" value="{{ old('title') }}"
+                                        class="form-control @error('title') is-invalid @enderror"
+                                        placeholder="Enter Blog Title">
+                                    @error('title')
+                                        <div class="text-danger mt-2">{{ ucwords($message) }}</div>
+                                    @enderror
                                 </div>
-                            </div>
-                            <div>
                                 <div class="form-group">
-                                    <hr>
-                                    <center>
-                                        <img style="width: 20%;border: 1px solid; border-radius: 10px;" id="viewer"
-                                            src="" alt="" />
-                                    </center>
+                                    <label class="input-label" for="exampleFormControlSelect1">
+                                        {{ \App\CPU\translate('select_blog_category') }}
+                                        <span class="text-danger">*</span></label>
+                                    <select name="category_id" class="form-control">
+                                        <option selected value="" disabled>---select---</option>
+                                        @foreach ($categories as $cat)
+                                            <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
-                            </div>
-                            <div class="modal-footer border-t-0 flex-start">
+                                {{-- description --}}
+                                <div class="form-group pt-4">
+                                    <label class="input-label"
+                                        for="description">{{ \App\CPU\translate('description') }}<span
+                                            class="text-danger">*</span></label>
+                                    <textarea name="description" class="editor" id="summernote" cols="30" rows="80">{{ old('description') }}</textarea>
+                                    @error('description')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group" id="meta_title">
+                                                <label class="input-label" for="meta_title">
+                                                    {{ \App\CPU\translate('meta_title') }}<span class="text-secondary">
+                                                        (Optional)</span>
+                                                </label>
+                                                <input type="text" name="meta_title" id="meta_title"
+                                                    value="{{ old('meta_title') }}"
+                                                    class="form-control @error('meta_title') is-invalid @enderror"
+                                                    placeholder="Enter Meta Title">
+                                                @error('meta_title')
+                                                    <div class="text-danger mt-2">{{ ucwords($message) }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group" id="meta_keywords">
+                                                <label class="input-label" for="meta_keywords">
+                                                    {{ \App\CPU\translate('meta_keywords') }}<span class="text-secondary">
+                                                        (optional)</span>
+                                                </label>
+                                                <input type="text" name="meta_keywords" id="meta_keywords"
+                                                    value="{{ old('meta_keywords') }}"
+                                                    class="form-control @error('meta_keywords') is-invalid @enderror"
+                                                    placeholder="Enter Meta Keywors">
+                                                @error('meta_keywords')
+                                                    <div class="text-danger mt-2">{{ ucwords($message) }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="input-label"
+                                            for="meta_description">{{ \App\CPU\translate('meta_description') }}<span
+                                                class="text-secondary"> (optional)</span></label>
+                                        <textarea name="meta_description" class="form-control" style="resize: none" cols="6" rows="3">{{ old('meta_description') }}</textarea>
+                                        @error('meta_description')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div>
+                                    <label>{{ \App\CPU\translate('image') }}</label><small style="color: red">
+                                        ( {{ \App\CPU\translate('ratio') }} 1:1 )</small>
+                                    <div class="custom-file" style="text-align: left">
+                                        <input type="file" name="image" id="customFileEg" class="custom-file-input"
+                                            accept="image/*,.jpg,.jpeg,.png,.gif,.bmp,.tif,.tiff, webp">
 
-                                <button type="submit" class="btn btn-primary">{{ \App\CPU\translate('submit') }}
-                                </button>
-                            </div>
-                        </form>
+                                        <label class="custom-file-label"
+                                            for="customFileEg1">{{ \App\CPU\translate('choose') }}
+                                            {{ \App\CPU\translate('file') }}</label>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="form-group">
+                                        <hr>
+                                        <center>
+                                            <img style="width: 20%;border: 1px solid; border-radius: 10px;" id="viewer"
+                                                src="" alt="" />
+                                        </center>
+                                    </div>
+                                </div>
+                                <div class="modal-footer border-t-0 flex-start">
+
+                                    <button type="submit" class="btn btn-primary">{{ \App\CPU\translate('submit') }}
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     </div>
 

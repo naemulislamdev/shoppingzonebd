@@ -4,6 +4,7 @@
         data-interval="3000">
         <ol class="carousel-indicators">
             @foreach ($main_banner as $key => $banner)
+            
                 <li data-target="#carouselExampleIndicators" data-slide-to="{{ $key }}"
                     class="{{ $key == 0 ? 'active' : '' }}"></li>
             @endforeach
@@ -15,7 +16,7 @@
                         <a href="{{ $banner['url'] }}">
                             <img class="d-block w-100 rounded-0 rounded-lg"
                                 onerror="this.src='{{ asset('assets/front-end/img/image-place-holder.png') }}'"
-                                src="{{ asset('storage/banner') }}/{{ $banner['photo'] }}" alt="">
+                                src="{{ asset('storage/banner') }}/{{ $banner['photo'] }}" alt="slider image">
                         </a>
                     </div>
                 </div>

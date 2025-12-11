@@ -9,6 +9,167 @@
     span.tk {
         font-family: 'SolaimanLipi', sans-serif;
     }
+
+    .btn-orange {
+        background: #ff5d00 !important;
+        color: #fff !important;
+    }
+
+    .btn.btn-orange:focus {
+        outline: 0;
+        box-shadow: 0 0 0 .2rem rgba(255, 93, 0, .25);
+    }
+
+    .product-img-container {
+        height: 390px;
+        overflow: hidden;
+        position: relative;
+        /* box-sizing: content-box */
+    }
+
+    .product-img-container img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: contain;
+        position: absolute;
+        border-radius: 10px 10px 0 0;
+        transition: transform 0.4s ease;
+    }
+
+    .product-card {
+        border: none;
+        box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+        border-radius: 10px !important;
+        transition: 0.5s ease;
+    }
+
+    .product-card.card {
+        border: none !important;
+    }
+
+    .product-title {
+        font-size: 18px;
+        font-weight: 600;
+        line-height: 1.3;
+        margin-bottom: 10px;
+        color: #1a1a1a;
+    }
+
+    .product-text {
+        color: #ff5d00;
+        font-size: 18px;
+        font-weight: 600;
+        line-height: 1.5;
+        text-align: center;
+        overflow: hidden;
+    }
+
+    .product-img-container .add-to-cart {
+        position: absolute;
+        left: 0;
+        bottom: -32px;
+        width: 100%;
+        border: none;
+        padding: 4px;
+        background: #ff5d00;
+        color: #fff;
+        cursor: pointer;
+        transition: all 0.4s ease;
+    }
+
+    .product-card:hover {
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    }
+
+    .product-card:hover .product-img-container img {
+        transform: scale(1.1);
+    }
+
+    .product-card:hover .product-img-container .add-to-cart {
+        bottom: 0;
+    }
+
+    .product-card:hover .product-title {
+        color: #ff5d00;
+    }
+
+    .owl-nav button:focus {
+        outline: 0;
+        box-shadow: 0 0 0 .2rem rgba(255, 93, 0, .25);
+    }
+
+    .owl-nav button {
+        position: absolute;
+        top: 45%;
+        transform: translateY(-50%);
+        background: #ff5d00 !important;
+        color: #fff !important;
+        border: none;
+        outline: none;
+        border-radius: 5px;
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.3s;
+    }
+
+    .owl-carousel .owl-nav button.owl-next {
+        right: 0;
+        top: 50%;
+    }
+
+    .owl-carousel .owl-nav button.owl-prev {
+        left: 0;
+        top: 50%;
+    }
+
+    .first-image-col {
+        max-width: 20% !important;
+    }
+
+
+    @media (max-width: 768px) {
+        .product-title {
+            color: #ff5d00;
+            font-size: 15px;
+        }
+
+        .product-img-container img {
+            object-fit: cover;
+        }
+
+        .product-img-container {
+            height: 280px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .product-text {
+            font-size: 15px;
+        }
+
+        .twin-btn {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .first-image-col {
+            max-width: 100% !important;
+        }
+
+    }
+
+    .product-box-col-2 {
+        height: 440px !important;
+    }
+
+    .product-box-col-2 {
+        height: 440px !important;
+        border-radius: 10px
+    }
 </style>
 
 @section('content')
@@ -27,10 +188,11 @@
                     @foreach ($main_banners as $key => $banner)
                         <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
                             <div class="main-slider  ">
-                                <a href="">
+
+                                <a href="#">
                                     <img class="d-block w-100 rounded-0 rounded-lg"
-                                        onerror="this.src='{{ asset('assets/front-end/img/image-place-holder.png') }}'"
-                                        src="{{ asset('storage/deal/main-banner') }}/{{ $banner }}" alt="">
+                                        src="{{ asset('storage/deal/main-banner') }}/{{ $banner }}"
+                                        alt="banner image">
                                 </a>
                             </div>
                         </div>
@@ -61,10 +223,8 @@
             </div>
             <div class=" pt-4">
                 <div class="row">
-                    {{-- product --}}
-                    <div class="col-lg-4 col-sm-6 product-column mx-auto" data-category="{{ $dataCategory ?? '' }}">
-                        <div class="product-box product-box-col-2 card shadow-lg product-card"
-                            data-category="{{ $dataCategory ?? '' }}">
+                    <div class="col-lg-4 product-column mx-auto first-image-col" data-category="{{ $dataCategory ?? '' }}">
+                        <div class="product-box product-box-col-2" data-category="{{ $dataCategory ?? '' }}">
                             <input type="hidden" name="quantity" value="{{ $first_product->minimum_order_qty ?? 1 }}"
                                 min="{{ $first_product->minimum_order_qty ?? 1 }}" max="100">
                             <div class="product-image2 product-image2-col-2" data-category="{{ $dataCategory ?? '' }}">
@@ -81,34 +241,28 @@
                                 @endif
                                 <a href="{{ route('product', $first_product->slug) }}">
                                     <!-- ✅ Lazy Loading Image -->
-                                    <img class="img-fluid lazy-image" loading="lazy"
+                                    <img style="object-fit: contain; transform: scale(1.3)" class="img-fluid lazy-image"
+                                        loading="lazy"
                                         src="data:image/svg+xml,%3Csvg width='300' height='300' xmlns='http://www.w3.org/2000/svg'%3E%3C/svg%3E"
                                         data-src="{{ \App\CPU\ProductManager::product_image_path('thumbnail') }}/{{ $first_product['thumbnail'] }}"
                                         alt="{{ $first_product['name'] }}">
                                 </a>
-                                <ul class="social">
-                                    <li><a href="{{ route('product', $first_product->slug) }}" data-tip="Quick View"><i
-                                                class="fa fa-eye"></i></a></li>
 
-                                    <li><a style="cursor: pointer" data-toggle="modal"
-                                            data-target="#addToCartModal_{{ $first_product->id }}"
-                                            data-tip="Add to Cart"><i class="fa fa-shopping-cart"></i></a>
-                                    </li>
-                                </ul>
                             </div>
                             <div class="product-content">
                                 <h3 class="title"><a
-                                        href="{{ route('product', $first_product->slug) }}">{{ Str::limit($first_product['name'], 50) }}</a>
+                                        href="{{ route('product', $first_product->slug) }}">{{ Str::limit($first_product['name'], 21) }}</a>
                                 </h3>
                                 <div class="price d-flex justify-content-center align-content-center">
                                     @if ($first_product->discount > 0)
-                                        <span
-                                            class="mr-2">{{ \App\CPU\Helpers::currency_converter(
+                                        <span class="mr-2">৳
+                                            {{ \App\CPU\Helpers::currency_converter(
                                                 $first_product->unit_price - \App\CPU\Helpers::get_product_discount($first_product, $first_product->unit_price),
                                             ) }}</span>
                                         <del>{{ \App\CPU\Helpers::currency_converter($first_product->unit_price) }}</del>
                                     @else
-                                        <span>{{ \App\CPU\Helpers::currency_converter($first_product->unit_price) }}</span>
+                                        <span>৳
+                                            {{ \App\CPU\Helpers::currency_converter($first_product->unit_price) }}</span>
                                     @endif
                                 </div>
                                 <button type="button" style="cursor: pointer;" class="btn btn-primary"
@@ -116,6 +270,7 @@
                             </div>
                         </div>
                     </div>
+                    <!-- AddToCart Modal -->
                     <div class="modal fade" id="addToCartModal_{{ $first_product->id }}" tabindex="-1" role="dialog"
                         aria-labelledby="exampleModalLabel" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -220,7 +375,8 @@
                                         </div>
                                     </div>
                                     <div class="modal-footer">
-                                        <a href="{{ route('product', $first_product->slug) }}" class="btn btn-secondary">View
+                                        <a href="{{ route('product', $first_product->slug) }}"
+                                            class="btn btn-secondary">View
                                             Details</a>
                                         <button type="button" class="btn btn-danger"
                                             onclick="addToCart('form-{{ $first_product->id }}')">Add To Cart</button>
@@ -229,13 +385,12 @@
                             </form>
                         </div>
                     </div>
-
-
                 </div>
             </div>
             {{-- Mobile trending  --}}
+            {{-- Mobile trending  --}}
             @if ($withSlide)
-                <div class="d-block d-lg-none pt-4">
+                <div class="d-block d-lg-none mt-3">
                     <div class="owl-carousel trending-carousel mt-4 mt-lg-4">
                         @foreach ($subProducts as $product)
                             <div class="product-box product-box-col-2 card shadow-lg product-card"
@@ -265,76 +420,43 @@
                                 </div>
                                 <div class="product-content">
                                     <h3 class="title"><a
-                                            href="{{ route('product', $product->slug) }}">{{ Str::limit($product['name'], 50) }}</a>
+                                            href="{{ route('product', $product->slug) }}">{{ Str::limit($product['name'], 21) }}</a>
                                     </h3>
                                     <div class="price d-flex justify-content-center align-content-center">
                                         @if ($product->discount > 0)
                                             <span
-                                                class="mr-2">{{ \App\CPU\Helpers::currency_converter(
+                                                class="mr-2">৳{{ \App\CPU\Helpers::currency_converter(
                                                     $product->unit_price - \App\CPU\Helpers::get_product_discount($product, $product->unit_price),
                                                 ) }}</span>
                                             <del>{{ \App\CPU\Helpers::currency_converter($product->unit_price) }}</del>
                                         @else
-                                            <span>{{ \App\CPU\Helpers::currency_converter($product->unit_price) }}</span>
+                                            <span>৳{{ \App\CPU\Helpers::currency_converter($product->unit_price) }}</span>
                                         @endif
                                     </div>
                                     <button type="button" style="cursor: pointer;" class="btn btn-primary"
                                         onclick="buy_now('form-{{ $product->id }}')">অর্ডার করুন</button>
                                 </div>
                             </div>
-
-                            {{-- <div class="card shadow-lg product-card">
-
-                            <div class="product-img-container">
-                                <a href="#">
-                                    <img class="card-img-top"
-                                        src="{{ asset('assets/front-end/images/product/2025-05-22-682f30619bd5a.png') }}"
-                                        alt="Product Image">
-                                </a>
-
-                            </div>
-
-                            <div class="card-body pb-0">
-                                <a href="#">
-                                    <h4 class="product-title">
-                                        {{ Str::limit('Ready Three Piece – Luxury Cotton Collection | Shopping Zone BD | Style #G1899LF', 50) }}
-                                    </h4>
-                                </a>
-
-                                <p class="product-text">
-                                    2,650.00 <span class="fw-bold">৳</span>
-                                </p>
-                            </div>
-
-                            <div class="sm-button text-center d-flex flex-column gap-2 mx-4 pb-3">
-
-                                <a class="btn btn-sm btn-info text-white w-100 mr-2">
-                                    <i class="fa fa-eye"></i> বিস্তারিত দেখুন
-                                </a>
-
-                                <button class="btn btn-sm btn-orange text-white w-100 mt-2 mr-3">
-                                    <i class="fa fa-cart-plus"></i> অর্ডার করুন
-                                </button>
-
-                            </div>
-
-                        </div> --}}
                         @endforeach
                     </div>
                 </div>
             @else
+<<<<<<< HEAD
                 <div class="d-block d-lg-none">
+=======
+                <div class="d-block d-lg-none mt-3">
+>>>>>>> 7e68790a1683aae39b4f2098af9276293bad2812
                     <div class="row">
                         @foreach ($subProducts as $key => $product)
-                            @include('web-views.products.product_box', ['classBox' => 'col-md-3'])
+                            @include('web-views.products.product_box_2', ['classBox' => 'col-md-2'])
                         @endforeach
                     </div>
                 </div>
             @endif
-            <div class="d-none d-lg-block">
+            <div class="d-none d-lg-block mt-4">
                 <div class="row">
                     @foreach ($subProducts as $key => $product)
-                        @include('web-views.products.product_box', ['classBox' => 'col-md-3'])
+                        @include('web-views.products.product_box_2', ['classBox' => 'col-md-2'])
                     @endforeach
                 </div>
             </div>

@@ -1,6 +1,14 @@
 @extends('layouts.front-end.app')
-@section('title', 'Blog Details')
+@section('title', $blog->title)
+@section('meta_title', $blog->meta_title ?? $blog->title)
+@section('meta_keywords', $blog->meta_keywords)
+@section('meta_description', $blog->meta_description)
+
 <style>
+    .text-orange {
+        color: #ff5d00 !important;
+    }
+
     .blog-card {
         border-radius: 10px;
         background: #fff;
@@ -50,9 +58,7 @@
 
     .blog-card:hover .blog-img img {
         transform: scale(1.1);
-
     }
-
     .blog-card .category-btn {
         border-radius: 6px;
         border: 2px solid #ff5d00;
@@ -64,32 +70,86 @@
         padding: 3px 12px;
         font-weight: 500;
     }
-
     .category-btn.btn:focus {
         outline: 0;
         box-shadow: 0 0 0 .2rem rgba(255, 93, 0, 0.25);
 
     }
+    .details-img {
+        width: 100%;
+    }
+
+    @media (min-width: 992px) {
+        .details-img {
+            width: 60%;
+        }
+    }
 </style>
 @section('content')
     <section class="py-3 career">
-        <div class="container " style="min-height: 100vh;">
-            <div class="row mb-3">
-                <div class="col text-center">
-                    <div class="section-heading-title">
-                        <h3>Blogs Details</h3>
-                        <div class="heading-border"></div>
+        <div class="container-fluid " style="min-height: 100vh;">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent">
+                    <li class="breadcrumb-item"><a style="color: #ff5d00;" href="/">Home</a></li>
+                    <li class="breadcrumb-item"><a style="color: #ff5d00;" href="{{ route('blogs') }}">Blogs</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Blog Details</li>
+                </ol>
+            </nav>
+            <div class="row">
+                <div class="col-lg-9">
+                    <img class="rounded img-thumbnail details-img" src="{{ asset('storage/blogs') }}/{{ $blog->image }}"
+                        onerror="this.src='{{ asset('assets/front-end/img/image-place-holder.png') }}'"
+                        alt="{{ $blog->title }}">
+                    <div class="blog-content-body mt-4 border-right">
+                        <h3 class="text-orange h3">{{ $blog->title }}</h3>
+                        <div class="upload-info my-4">
+                            <span class="text-muted fw-bold border-right mr-2">📅 {{ $blog->created_at->format('d M Y') }}
+                            </span>
+                            <span class="text-muted fw-bold border-right border-right-2 mr-2"> <i
+                                    class="fa fa-user text-orange mr-1" aria-hidden="true"></i>
+                                {{ ucfirst($blog->uploader) }}
+                            </span>
+                            <span class="text-muted fw-bold"> <i class="fa fa-table text-orange mr-1"
+                                    aria-hidden="true"></i> {{ $blog->blogCategory->name }}
+                            </span>
+                        </div>
+                        <div class="text-muted">{!! $blog->description !!}</div>
                     </div>
                 </div>
-            </div>
-            <div class="row">
+                <div class="col-lg-3">
+                    <aside class=" p-2">
+                        <div>
+                            <h5 class="border-bottom pb-2 mb-2 fw-normal">Categories</h5>
+                            <div class="d-flex align-items-center mt-3">
+                                <span style="width: 15px; height: 15px;"
+                                    class="rounded d-inline-block border border-2 lead mr-2"></span>
+                                {{ $blog->blogCategory->name }}
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <h5 class="border-bottom pb-2 mb-2 fw-lighter">Latest Posts</h5>
 
-                <div class="col-lg-6">
-                     <img src="{{ asset('storage/blogs') }}/{{ $blog->image }}"
-                                            onerror="this.src='{{ asset('assets/front-end/img/image-place-holder.png') }}'">
-                </div>
-                <div class="col-lg-6">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolor facere enim, porro temporibus placeat recusandae omnis ratione sequi quidem dolorem necessitatibus, atque rerum tempore sed esse quisquam magni maiores rem consequatur quaerat? Similique nisi soluta nihil nulla iusto cupiditate maxime minima vero nobis accusamus dolorum possimus, repellendus quasi corrupti aliquam eveniet placeat. Impedit voluptates dolor, error tempora alias minus eligendi omnis eveniet quis, veniam voluptatem voluptate distinctio? Fuga quia ea in voluptatem fugiat nam! Culpa fugit perspiciatis eius suscipit dignissimos dolore nihil consequuntur! Temporibus corrupti ducimus iusto quas rerum atque, non accusantium provident maiores reprehenderit, placeat doloribus porro assumenda quaerat?
+                            @foreach ($latest_blogs as $lBlog)
+                                <div class="row mt-4">
+                                    <div class="col-4">
+                                        <a href="{{ route('blog.details', $lBlog->slug) }}">
+                                            <img class="rounded" style="max-width: 100%;"
+                                                src="{{ asset('storage/blogs') }}/{{ $lBlog->image }}"
+                                                alt="{{ $lBlog->title }}">
+                                        </a>
+                                    </div>
+                                    <div class="col-8 pl-0 ml-0">
+                                        <a class="text-dark" href="{{ route('blog.details', $lBlog->slug) }}">
+                                            <h6>{{ $lBlog->title }}</h6>
+                                        </a>
+                                        <span class=" mr-2">📅 {{ $lBlog->created_at->format('d M Y') }}
+                                        </span>
+                                    </div>
+                                </div>
+                                {{-- end item --}}
+                            @endforeach
+                        </div>
+                    </aside>
                 </div>
             </div>
         </div>

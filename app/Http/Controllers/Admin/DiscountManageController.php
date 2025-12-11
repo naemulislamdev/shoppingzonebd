@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\CPU\BackEndHelper;
+use App\CPU\ImageManager;
 use App\Http\Controllers\Controller;
 use App\Model\Category;
 use App\Model\Product;
@@ -326,6 +327,7 @@ class DiscountManageController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255',
+            'image' => 'required|mimetypes:image/*|max:5120',
             'discount_amounts' => 'required|array',
             'discount_types' => 'required|array',
             'product_ids' => 'required|array',
@@ -346,9 +348,11 @@ class DiscountManageController extends Controller
 
 
         // Store the batch discount
+        $imageExt = $request->file('image')->getClientOriginalExtension();
         DiscountOffer::create([
             'title' => $request->title,
             'slug' => Str::slug($request->title),
+            'image' => ImageManager::upload('offer/', $imageExt, $request->file('image')),
             'discount_amount' => json_encode($request->discount_amounts),
             'discount_type' => json_encode($request->discount_types),
             'product_ids' => json_encode($request->product_ids),
@@ -372,6 +376,7 @@ class DiscountManageController extends Controller
             'product_ids.*' => 'exists:products,id',
         ]);
         $products = $request->product_ids;
+
         foreach ($products as $productId) {
             $amount = $request->discount_amounts[$productId] ?? 0;
             $type = $request->discount_types[$productId] ?? 'flat';
@@ -387,13 +392,27 @@ class DiscountManageController extends Controller
 
         // Store the batch discount
         $discountOffer = DiscountOffer::findOrFail($id);
-        $discountOffer->update([
+
+
+        $data = [
             'title' => $request->title,
             'slug' => Str::slug($request->title),
             'discount_amount' => json_encode($request->discount_amounts),
             'discount_type' => json_encode($request->discount_types),
             'product_ids' => json_encode($request->product_ids),
-        ]);
+        ];
+
+        if ($request->hasFile('image')) {
+            $data['image'] = ImageManager::update(
+                'offer/',
+                $discountOffer->image,
+                $request->file('image')->extension(),
+                $request->file('image')
+            );
+        }
+
+        $discountOffer->update($data);
+
         return redirect()->route('admin.discount.discount-offers')->with('success', 'Discount offer updated successfully.');
     }
     public function discountOffersDelete($id)
@@ -402,6 +421,10 @@ class DiscountManageController extends Controller
 
         $productIds = json_decode($discountOffer->product_ids, true);
         Product::whereIn('id', $productIds)->update(['discount' => 0, 'discount_type' => null]);
+        if ($discountOffer) {
+            $fullPath = 'offer/' . $discountOffer->image;
+            ImageManager::delete($fullPath);
+        }
 
         $discountOffer->delete();
         return redirect()->route('admin.discount.discount-offers')->with('success', 'Discount offer deleted successfully.');

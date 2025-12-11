@@ -18,7 +18,8 @@
                     <li class="breadcrumb-item" aria-current="page">{{ \App\CPU\translate('Discount Offers Create') }}</li>
                 </ol>
             </nav>
-            <a href="{{ route('admin.discount.discount-offers') }}" class="btn btn-primary">{{ \App\CPU\translate('Back') }}</a>
+            <a href="{{ route('admin.discount.discount-offers') }}"
+                class="btn btn-primary">{{ \App\CPU\translate('Back') }}</a>
         </div>
 
         <!-- Content Row -->
@@ -30,7 +31,8 @@
                         {{ \App\CPU\translate('Batch Discount Form') }}
                     </div>
                     <div class="card-body">
-                        <form action="{{ route('admin.discount.discount-offers.store') }}" method="post">
+                        <form action="{{ route('admin.discount.discount-offers.store') }}" method="post"
+                            enctype="multipart/form-data">
                             @csrf
                             <div class="form-group">
                                 <div class="row">
@@ -45,13 +47,48 @@
                                         </div>
                                     </div>
                                     <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>{{ \App\CPU\translate('Upload Offer Image') }}</label><small
+                                                        style="color: red">*
+                                                        ( {{ \App\CPU\translate('ratio') }} 1:1 )</small>
+                                                    <div class="custom-file" style="text-align: left">
+                                                        <input type="file" name="image" id="customFileEg1"
+                                                            class="custom-file-input" accept="image/*"
+                                                            onchange="previewImage(event)">
+
+                                                        <label class="custom-file-label"
+                                                            for="customFileEg1">{{ \App\CPU\translate('choose') }}
+                                                            {{ \App\CPU\translate('file') }}</label>
+                                                    </div>
+                                                    @error('image')
+                                                        <span class="text-danger">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+
+                                                        <img onerror="this.src='{{ asset('assets/front-end/img/image-place-holder.png') }}'"
+                                                            style="width: 100px;height:auto;border: .0625rem solid; border-radius: .625rem;"
+                                                            id="preview" src="" alt="image" />
+
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
                                         <div class="form-group">
                                             <label>Product <span class="text-danger">*</span></label>
                                             <select name="product_ids[]" id="productSelect"
                                                 class="js-example-responsive form-control" multiple>
                                                 @foreach ($products as $product)
                                                     <option value="{{ $product->id }}" data-name="{{ $product->name }}"
-                                                        data-code="{{ $product->code }}" data-price="{{\App\CPU\BackEndHelper::usd_to_currency($product['unit_price'])}}"> {{ $product->code }}
+                                                        data-code="{{ $product->code }}"
+                                                        data-price="{{ \App\CPU\BackEndHelper::usd_to_currency($product['unit_price']) }}">
+                                                        {{ $product->code }}
                                                     </option>
                                                 @endforeach
                                             </select>
@@ -91,7 +128,6 @@
 @endsection
 
 @push('script')
-
     <script src="{{ asset('assets/back-end') }}/js/select2.min.js"></script>
     <script>
         $(".js-example-theme-single").select2({
@@ -154,5 +190,36 @@
                 });
             });
         });
+    </script>
+
+    <script>
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function(e) {
+                    $('#viewer').attr('src', e.target.result);
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        $("#customFileEg1").change(function() {
+            readURL(this);
+        });
+    </script>
+    <script>
+        function previewImage(event) {
+            const reader = new FileReader();
+            const preview = document.getElementById('preview');
+
+            reader.onload = function() {
+                preview.src = reader.result;
+                preview.style.display = 'block';
+            }
+
+            reader.readAsDataURL(event.target.files[0]);
+        }
     </script>
 @endpush

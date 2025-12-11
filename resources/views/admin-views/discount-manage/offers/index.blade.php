@@ -42,6 +42,7 @@
                                 <thead class="thead-light">
                                     <tr>
                                         <th>{{ \App\CPU\translate('SL') }}</th>
+                                        <th>{{ \App\CPU\translate('Image') }}</th>
                                         <th>{{ \App\CPU\translate('Title') }}</th>
                                         <th>{{ \App\CPU\translate('slug') }}</th>
                                         <th>{{ \App\CPU\translate('Total Products') }}</th>
@@ -57,6 +58,10 @@
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
                                             <td>
+                                                 <img onerror="this.src='{{asset('assets/front-end/img/image-place-holder.png')}}'" src="{{ asset('storage/offer') }}/{{ $discount['image'] }}"
+                                             class="avatar avatar-lg product-list-img">
+                                            </td>
+                                            <td>
                                                 {{ $discount->title }}
                                             </td>
                                             <td>
@@ -70,8 +75,8 @@
                                             </td>
                                             <td>
                                                 <label class="switch">
-                                                    <input type="checkbox" class="status"
-                                                        id="{{ $discount->id }}" {{ $discount->status == 1 ? 'checked' : '' }}>
+                                                    <input type="checkbox" class="status" id="{{ $discount->id }}"
+                                                        {{ $discount->status == 1 ? 'checked' : '' }}>
                                                     <span class="slider round"></span>
                                                 </label>
                                             </td>

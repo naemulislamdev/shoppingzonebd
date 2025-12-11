@@ -175,15 +175,44 @@ class ContactController extends Controller
     //--- User Information Management ---//
     public function userInfoList(Request $request)
     {
-        $from = $request['from'];
-        $to = $request['to'];
-        if ($from && $to) {
-            $userInfos =  UserInfo::whereDate('created_at', '>=', $from)
-                ->whereDate('created_at', '<=', $to)->get();
-        } else {
-            $userInfos =  UserInfo::latest()->get();
-        }
+        // $from = $request['from'];
+        // $to = $request['to'];
+        // if ($from && $to) {
+        //     $userInfos =  UserInfo::whereDate('created_at', '>=', $from)
+        //         ->whereDate('created_at', '<=', $to)->get();
+        // } else {
+        //     $userInfos =  UserInfo::latest()->paginate(20);
+        // }
+        $userInfos =  UserInfo::latest()->paginate(20);
         return view('admin-views.user-info.list', compact('userInfos'));
+    }
+    public function ajaxSearch(Request $request)
+    {
+        $query = UserInfo::query();
+
+        // Date filter
+        if ($request->from && $request->to) {
+            $query->whereDate('created_at', '>=', $request->from)
+                ->whereDate('created_at', '<=', $request->to);
+        }
+
+        // Search Filter
+        if ($request->search) {
+            $query->where(function ($q) use ($request) {
+                $q->where('name', 'like', "%{$request->search}%")
+                    ->orWhere('email', 'like', "%{$request->search}%")
+                    ->orWhere('phone', 'like', "%{$request->search}%")
+                    ->orWhere('address', 'like', "%{$request->search}%")
+                    ->orWhere('order_process', 'like', "%{$request->search}%")
+                    ->orWhere('order_status', 'like', "%{$request->search}%")
+                    ->orWhere('order_note', 'like', "%{$request->search}%")
+                    ->orWhere('type', 'like', "%{$request->search}%");
+            });
+        }
+
+        $userInfos = $query->latest()->paginate(20);
+
+        return view('admin-views.user-info.partial.userinfo_table', compact('userInfos'))->render();
     }
 
 

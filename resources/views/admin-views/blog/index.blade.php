@@ -10,6 +10,7 @@
         .avatar-lg:hover {
             transform: scale(2.5);
         }
+
         .modal-body p {
             font-size: 17px;
         }
@@ -63,12 +64,13 @@
                                 </div>
                             </div>
                             <div id="banner-btn">
-                                <a href="{{ route('admin.business-settings.blog.create') }}" class="btn btn-primary"><i
+                                <a href="{{ route('admin.blog.create') }}" class="btn btn-primary"><i
                                         class="tio-add-circle"></i>
                                     {{ \App\CPU\translate('Add_Blog') }}</a>
                             </div>
                         </div>
                     </div>
+
                     <div class="card-body" style="padding: 0">
                         <div class="table-responsive">
                             <table id="columnSearchDatatable" class="table table-striped table-bordered">
@@ -121,7 +123,7 @@
                                                     <i class="tio-visible"></i>
                                                 </a>
                                                 <a class="btn btn-primary btn-sm edit"
-                                                    href="{{ route('admin.business-settings.blog.edit', $blogCat->slug) }}">
+                                                    href="{{ route('admin.blog.edit', $blogCat->slug) }}">
                                                     <i class="tio-edit"></i>
                                                 </a>
 
@@ -137,7 +139,8 @@
                                             <div class=" modal-dialog modal-dialog-centered modal-lg">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <h3 class="modal-title text-info" id="viewBlogModal_{{ $blogCat->id }}">
+                                                        <h3 class="modal-title text-info"
+                                                            id="viewBlogModal_{{ $blogCat->id }}">
                                                             {{ \App\CPU\translate('View_Blog') }}</h3>
                                                         <button type="button" class="close" data-dismiss="modal"
                                                             aria-label="Close">
@@ -270,7 +273,7 @@
                 }
             });
             $.ajax({
-                url: "{{ route('admin.business-settings.blog.status') }}",
+                url: "{{ route('admin.blog.status') }}",
                 method: 'POST',
                 data: {
                     id: id,
@@ -307,7 +310,7 @@
                         }
                     });
                     $.ajax({
-                        url: "{{ route('admin.business-settings.blog.delete') }}",
+                        url: "{{ route('admin.blog.delete') }}",
                         method: 'DELETE',
                         data: {
                             id: id

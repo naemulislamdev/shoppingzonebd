@@ -5,7 +5,7 @@
     <link href="{{ asset('assets/select2/css/select2.min.css') }}" rel="stylesheet">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <style>
-       .upload-container {
+        .upload-container {
             max-width: 600px;
             margin: 0 auto;
             text-align: center;
@@ -137,8 +137,8 @@
                                             </div>
                                             <div class="exsit-image-container">
                                                 <div class="row">
-                                                    @if ($landing_pages->main_banner)
-                                                        @foreach (json_decode($landing_pages->main_banner) as $key => $photo)
+                                                    @if (isset($landing_pages) && !empty($landing_pages->main_banner))
+                                                        @foreach (json_decode($landing_pages->main_banner ?? '[]', true) ?? [] as $photo)
                                                             <div class="col-md-6 mb-2">
                                                                 <div class="card">
                                                                     <div class="card-body">
@@ -149,14 +149,18 @@
 
                                                                         <div class="d-flex">
                                                                             <a href="{{ route('admin.landingpages.remove-image', ['id' => $landing_pages->id, 'name' => $photo]) }}"
-                                                                                class="btn btn-danger btn-xs m-1">{{ \App\CPU\translate('Remove') }}</a>
+                                                                                class="btn btn-danger btn-xs m-1">
+                                                                                {{ \App\CPU\translate('Remove') }}
+                                                                            </a>
                                                                         </div>
-
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         @endforeach
+
+
                                                     @endif
+
                                                 </div>
                                             </div>
                                         </div>
@@ -198,7 +202,8 @@
                                                         class=" js-example-responsive form-control" name="product_id">
                                                         <option selected disabled>Select a product</option>
                                                         @foreach (\App\Model\Product::active()->orderBy('id', 'DESC')->get() as $key => $product)
-                                                            <option value="{{ $product->id }}" {{$landing_pages->product_id == $product->id ? 'selected' : '' }}>
+                                                            <option value="{{ $product->id }}"
+                                                                {{ $landing_pages->product_id == $product->id ? 'selected' : '' }}>
                                                                 {{ $product['name'] }} || {{ $product['code'] }}
                                                             </option>
                                                         @endforeach
@@ -287,7 +292,7 @@
         });
     </script>
 
-   <script>
+    <script>
         $(document).ready(function() {
             const previewContainer = $("#image-preview");
             $("#image-upload").on("change", function(event) {
