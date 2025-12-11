@@ -9,144 +9,6 @@
     span.tk {
         font-family: 'SolaimanLipi', sans-serif;
     }
-
-    .btn-orange {
-        background: #ff5d00 !important;
-        color: #fff !important;
-    }
-
-    .btn.btn-orange:focus {
-        outline: 0;
-        box-shadow: 0 0 0 .2rem rgba(255, 93, 0, .25);
-    }
-
-    .product-img-container {
-        height: 390px;
-        overflow: hidden;
-        position: relative;
-        /* box-sizing: content-box */
-    }
-
-    .product-img-container img {
-        width: 100% !important;
-        height: 100% !important;
-        object-fit: contain;
-        position: absolute;
-        border-radius: 10px 10px 0 0;
-        transition: transform 0.4s ease;
-    }
-
-    .product-card {
-        border: none;
-        box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-        border-radius: 10px !important;
-        transition: 0.5s ease;
-    }
-
-    .product-card.card {
-        border: none !important;
-    }
-
-    .product-title {
-        font-size: 18px;
-        font-weight: 600;
-        line-height: 1.3;
-        margin-bottom: 10px;
-        color: #1a1a1a;
-    }
-
-    .product-text {
-        color: #ff5d00;
-        font-size: 18px;
-        font-weight: 600;
-        line-height: 1.5;
-        text-align: center;
-        overflow: hidden;
-    }
-
-    .product-img-container .add-to-cart {
-        position: absolute;
-        left: 0;
-        bottom: -32px;
-        width: 100%;
-        border: none;
-        padding: 4px;
-        background: #ff5d00;
-        color: #fff;
-        cursor: pointer;
-        transition: all 0.4s ease;
-    }
-
-    .product-card:hover {
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-    }
-
-    .product-card:hover .product-img-container img {
-        transform: scale(1.1);
-    }
-
-    .product-card:hover .product-img-container .add-to-cart {
-        bottom: 0;
-    }
-
-    .product-card:hover .product-title {
-        color: #ff5d00;
-    }
-
-    .owl-nav button:focus {
-        outline: 0;
-        box-shadow: 0 0 0 .2rem rgba(255, 93, 0, .25);
-    }
-
-    .owl-nav button {
-        position: absolute;
-        top: 45%;
-        transform: translateY(-50%);
-        background: #ff5d00 !important;
-        color: #fff !important;
-        border: none;
-        outline: none;
-        border-radius: 5px;
-        width: 40px;
-        height: 40px;
-        font-size: 18px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: 0.3s;
-    }
-
-    .owl-carousel .owl-nav button.owl-next {
-        right: 0;
-        top: 50%;
-    }
-
-    .owl-carousel .owl-nav button.owl-prev {
-        left: 0;
-        top: 50%;
-    }
-
-
-    @media (max-width: 768px) {
-        .product-title {
-            color: #ff5d00;
-            font-size: 15px;
-        }
-
-        .product-img-container img {
-            object-fit: cover;
-        }
-
-        .product-img-container {
-            height: 280px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .product-text {
-            font-size: 15px;
-        }
-    }
 </style>
 
 @section('content')
@@ -199,46 +61,6 @@
             </div>
             <div class=" pt-4">
                 <div class="row">
-                    {{-- <div class="col-lg-4 col-md-4 col-sm-12 mb-4 mx-auto">
-                        <div class="card shadow-lg product-card">
-                            <div class="product-img-container">
-                                <a href="{{ route('product', $first_product->slug) }}">
-                                    <img class="card-img-top"
-                                        src="{{ \App\CPU\ProductManager::product_image_path('thumbnail') }}/{{ $first_product['thumbnail'] }}"
-                                        alt="{{ $first_product['name'] }}">
-                                </a>
-
-                            </div>
-
-                            <div class="card-body">
-                                <a href="{{ route('product', $first_product->slug) }}">
-                                    <h4 class="product-title">
-                                        {{ Str::limit($first_product->name, 50) }}
-                                    </h4>
-                                </a>
-                                @if ($first_product->discount > 0)
-                                    <span class="product-text">৳
-                                        {{ \App\CPU\Helpers::currency_converter(
-                                            $first_product->unit_price - \App\CPU\Helpers::get_product_discount($first_product, $first_product->unit_price),
-                                        ) }}</span>
-                                    <del>৳ {{ \App\CPU\Helpers::currency_converter($first_product->unit_price) }}</del>
-                                @else
-                                    <span class="product-text">৳
-                                        {{ \App\CPU\Helpers::currency_converter($first_product->unit_price) }}</span>
-                                @endif
-
-                            </div>
-                            <div style="gap: 10px"
-                                class="sm-button d-flex justify-content-center justify-content-lg-between p-3 ">
-                                <a href="{{ route('product', $first_product->slug) }}" class="btn btn-info text-white"><i
-                                        class="fa fa-eye mr-2"></i>বিস্তারিত দেখুন</a>
-                                <button class="btn  btn-orange text-white"
-                                    onclick="buy_now('form-{{ $first_product->id }}')"><i
-                                        class="fa fa-cart-plus mr-2"></i>অর্ডার
-                                    করুন</button>
-                            </div>
-                        </div>
-                    </div> --}}
                     {{-- product --}}
                     <div class="col-lg-4 col-sm-6 product-column mx-auto" data-category="{{ $dataCategory ?? '' }}">
                         <div class="product-box product-box-col-2 card shadow-lg product-card"
@@ -501,7 +323,7 @@
                     </div>
                 </div>
             @else
-                <div class="">
+                <div class="d-block d-lg-none">
                     <div class="row">
                         @foreach ($subProducts as $key => $product)
                             @include('web-views.products.product_box', ['classBox' => 'col-md-3'])

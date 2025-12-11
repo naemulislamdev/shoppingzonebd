@@ -267,7 +267,6 @@
                                         </div>
                                         <button type="button" style="cursor: pointer;" class="btn btn-primary new-av-product" data-pid="form-{{ $product->id }}">অর্ডার করুন</button>
                                     </div>
-
                                 </div>
                             </div>
                             <!-- AddToCart Modal -->

@@ -185,7 +185,7 @@
                                         </div>
                                     </div>
                                 </div>
-                             
+
                             </div>
 
                             <div class=" pl-0">
@@ -232,7 +232,7 @@
                                         <tr>
 
                                             <td>{{ $deal->title }}</td>
-                                            <td><a href="https://shop.shoppingzonebd.com.bd/collections/{{ $deal->slug }}"
+                                            <td><a href="{{ route('collections', $deal->slug) }}"
                                                     target="_blank">{{ $deal->slug }}</a></td>
                                             <td>
                                                 <label class="switch">
