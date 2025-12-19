@@ -158,6 +158,14 @@
                                                for="refund_management">{{\App\CPU\translate('refund_management')}}</label>
                                     </div>
                                 </div>
+                                <div class="col-md-3">
+                                    <div class="form-group form-check">
+                                        <input type="checkbox" name="modules[]" value="career_management" class="form-check-input"
+                                               id="career_management">
+                                        <label class="form-check-label" style="{{Session::get('direction') === "rtl" ? 'margin-right: 1.25rem;' : ''}};"
+                                               for="career_management">{{\App\CPU\translate('career_management')}}</label>
+                                    </div>
+                                </div>
                             </div>
 
                             <button type="submit" class="btn btn-primary float-right">{{\App\CPU\translate('Submit')}}</button>

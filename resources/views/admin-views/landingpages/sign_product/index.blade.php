@@ -88,7 +88,7 @@
 
                             <td>{{ $lPage->product->code }}</td>
                             <td>
-                                <a href="https://shoppingzonebd.com.bd/page/{{ $lPage->slug }}"
+                                <a href="{{env("APP_URL")}}/page/{{ $lPage->slug }}"
                                     target="_blank">page/{{ Str::limit($lPage->slug, 30, '...') }}</a>
                             </td>
 

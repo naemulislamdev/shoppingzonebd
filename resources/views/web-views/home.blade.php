@@ -480,6 +480,7 @@
                 </div>
                 <div class="row product-grid">
                     <!-- Your product columns go here -->
+                   
                     @foreach ($category['products'] as $key => $product)
                         @if ($key < 12)
                             @include('web-views.products.product_box', [

@@ -199,8 +199,7 @@ $route = request()->route()->getName();
                         @endif
 
                         <!-- End POS -->
-
-
+                        {{-- start career management --}}
                         @if (\App\CPU\Helpers::module_permission_check('career_management'))
                             <li class="nav-item {{ Request::is('admin/career*') ? 'scroll-here' : '' }}">
                                 <small class="nav-subtitle"
@@ -219,6 +218,18 @@ $route = request()->route()->getName();
                                 </a>
                                 <ul class="js-navbar-vertical-aside-submenu nav nav-sub"
                                     style="display: {{ Request::is('admin/career*') ? 'block' : 'none' }}">
+
+                                    <li class="nav-item {{ Request::is('admin/job-departments') ? 'active' : '' }}">
+                                        <a class="nav-link" href="{{ route('admin.job-departments.index') }}" title="">
+                                            <span class="tio-circle nav-indicator-icon"></span>
+                                            <span class="text-truncate">
+                                                {{ \App\CPU\translate('Job_Department') }}
+                                                <span class="badge badge-info badge-pill ml-1">
+                                                    {{ \App\Models\JobDepartment::all()->count() }}
+                                                </span>
+                                            </span>
+                                        </a>
+                                    </li>
                                     <li class="nav-item {{ Request::is('admin/career/view') ? 'active' : '' }}">
                                         <a class="nav-link" href="{{ route('admin.career.view') }}" title="">
                                             <span class="tio-circle nav-indicator-icon"></span>

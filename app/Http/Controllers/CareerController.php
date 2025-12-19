@@ -6,6 +6,7 @@ use App\CPU\Helpers;
 use App\CPU\ImageManager;
 use App\Models\Career;
 use App\Models\JobApplication;
+use App\Models\JobDepartment;
 use Carbon\Carbon;
 use Rap2hpoutre\FastExcel\FastExcel;
 use Illuminate\Http\Request;
@@ -32,8 +33,8 @@ class CareerController extends Controller
             $banners = Career::orderBy('id', 'desc');
         }
         $careers = $banners->paginate(Helpers::pagination_limit())->appends($query_param);
-
-        return view("admin-views.career.view", compact("careers", "search"));
+        $allDepartment = JobDepartment::where("status", 1)->get();
+        return view("admin-views.career.view", compact("careers", "search", "allDepartment"));
     }
     public function bulk_export_dataJobsInfo()
     {

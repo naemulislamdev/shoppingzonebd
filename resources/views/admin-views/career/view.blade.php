@@ -177,14 +177,15 @@
                                                                     <select required name="department"
                                                                         class="form-control" required>
 
-                                                                        <option
-                                                                            {{ $career->department == 'Digital Merketing' ? 'checked' : '' }}
-                                                                            value="Digital Merketing">Digital Merketing
-                                                                        </option>
-                                                                        <option
-                                                                            {{ $career->department == 'Sales (online sales)' ? 'checked' : '' }}
-                                                                            value="Sales (online sales)">Sales (online
-                                                                            sales)</option>
+                                                                        @foreach ($allDepartment as $dept)
+                                                                            <option
+                                                                                {{ $career->department == $dept->name ? 'selected' : '' }}
+                                                                                value="{{ $dept->name }}">
+                                                                                {{ $dept->name }}
+                                                                            </option>
+                                                                        @endforeach
+
+
                                                                     </select>
                                                                 </div>
                                                                 {{-- Branch location --}}
@@ -496,8 +497,11 @@
                                     <span class="text-danger">*</span></label>
                                 <select required name="department" class="form-control" required>
                                     <option selected disabled value="">------</option>
-                                    <option value="Digital Merketing">Digital Merketing</option>
-                                    <option value="Sales (online sales)">Sales (online sales)</option>
+                                    @foreach ($allDepartment as $dept)
+                                        <option 
+                                            value="{{ $dept->name }}">{{ $dept->name }}
+                                        </option>
+                                    @endforeach
                                 </select>
                             </div>
                             {{-- Branch location --}}

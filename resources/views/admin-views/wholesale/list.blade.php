@@ -74,46 +74,166 @@
                                         <th style="width: 40%">{{ \App\CPU\translate('Address') }}</th>
                                         <th style="width: 15%">{{ \App\CPU\translate('Product Quantity') }}</th>
                                         <th style="width: 15%">{{ \App\CPU\translate('Status') }}</th>
+                                        <th style="width: 15%">{{ \App\CPU\translate('Wholesale_status') }}</th>
+                                        <th style="width: 15%">{{ \App\CPU\translate('Wholesale_note') }}</th>
                                         <th style="width: 10%">{{ \App\CPU\translate('action') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($wholesaleList as $k => $lead)
+                                    @foreach ($wholesaleList as $k => $wholesale)
                                         <tr>
                                             <td style="width: 5%">{{ $loop->iteration }}</td>
 
                                             <td style="width: 10%">
-                                                {{ \Carbon\Carbon::parse($lead->created_at)->format('d M Y') }}
+                                                {{ \Carbon\Carbon::parse($wholesale->created_at)->format('d M Y') }}
                                             </td>
 
-                                            <td style="width: 15%">{{ $lead['name'] }}</td>
+                                            <td style="width: 15%">{{ $wholesale['name'] }}</td>
 
-                                            <td style="width: 15%">{{ $lead['phone'] }}</td>
+                                            <td style="width: 15%">{{ $wholesale['phone'] }}</td>
 
-                                            <td style="width: 25%">{{ $lead['address'] }}</td>
+                                            <td style="width: 25%">{{ $wholesale['address'] }}</td>
 
-                                            <td style="width: 10%">{{ round($lead['product_quantity']) }}</td>
+                                            <td style="width: 10%">{{ round($wholesale['product_quantity']) }}</td>
+                                            <td class="status_{{$wholesale->id}}" style="width: 10%;">
+                                                {{ $wholesale['status'] == 0 ? 'Unseen' : 'Seen' }}
+                                            </td>
+                                             <td class="m-0 p-0">
+                                                <div class="form-group">
+                                                    <div class="hs-unfold float-right">
+                                                        <div class="dropdown">
+                                                            <select name="order_status"
+                                                                onchange="order_status(this.value, {{ $wholesale['id'] }})"
+                                                                class="status form-control status_select_{{$wholesale->id}}"
+                                                                data-id="{{ $wholesale['id'] }}">
 
-                                            <td style="width: 10%;">
-                                                {{ $lead['status'] == 1 ? 'Unseen' : 'Seen' }}
+                                                                <option value="pending"
+                                                                    {{ $wholesale->wholesale_status == 'pending' ? 'selected' : '' }}>
+                                                                    {{ \App\CPU\translate('Pending') }}</option>
+                                                                <option value="confirmed"
+                                                                    {{ $wholesale->wholesale_status == 'confirmed' ? 'selected' : '' }}>
+                                                                    {{ \App\CPU\translate('Confirmed') }}</option>
+                                                                <option value="canceled"
+                                                                    {{ $wholesale->wholesale_status == 'canceled' ? 'selected' : '' }}>
+                                                                    {{ \App\CPU\translate('Canceled') }} </option>
+
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="note_{{$wholesale->id}}">
+                                                {{ $wholesale->wholesale_note }}
                                             </td>
 
                                             <td style="width: 10%">
                                                 <div class="d-flex justify-content-between">
-                                                    <a title="{{ \App\CPU\translate('View') }}" class="btn btn-info btn-sm"
-                                                        style="cursor: pointer;"
-                                                        href="{{ route('admin.wholesale.view', $lead->id) }}">
+                                                    <a title="{{ \App\CPU\translate('View') }}"
+                                                        class="btn btn-info btn-sm {{ !$wholesale->status ? 'viewBtn' : '' }} visiable_{{ $wholesale->id }}"
+                                                        style="cursor: pointer;" data-id="{{ $wholesale->id }}"
+                                                        data-toggle="modal"
+                                                        data-target="#viewWholesaleModal_{{ $wholesale['id'] }}"
+                                                        href="#">
                                                         <i class="tio-visible"></i>
                                                     </a>
 
                                                     <a class="btn btn-danger btn-sm delete" style="cursor: pointer;"
-                                                        id="{{ $lead['id'] }}"
+                                                        id="{{ $wholesale['id'] }}"
                                                         title="{{ \App\CPU\translate('Delete') }}">
                                                         <i class="tio-delete"></i>
                                                     </a>
                                                 </div>
                                             </td>
                                         </tr>
+                                        <!-- view wholesale Modal start-->
+                                        <div class="modal fade" id="viewWholesaleModal_{{ $wholesale['id'] }}"
+                                            tabindex="-1" aria-labelledby="viewCareerModalLabel" aria-hidden="true">
+                                            <div class=" modal-dialog modal-dialog-centered modal-lg">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h3 class="modal-title" id="subcategoryModal">
+                                                            {{ \App\CPU\translate('Wholesale_info') }}</h3>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div>
+
+                                                            <div class="row">
+                                                                <div class="col-12 mb-3">
+                                                                    <div class="row">
+                                                                        <div class="col-3"> Name</div>
+                                                                        <div class="col-2">:</div>
+                                                                        <div class="col-7">
+                                                                            <strong>{{ $wholesale->name }}</strong>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-12 mb-3">
+                                                                    <div class="row">
+                                                                        <div class="col-3">Phone</div>
+                                                                        <div class="col-2">:</div>
+                                                                        <div class="col-7">
+                                                                            <strong>{{ $wholesale->phone }}</strong>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-12 mb-3">
+                                                                    <div class="row">
+                                                                        <div class="col-3">Date & Time</div>
+                                                                        <div class="col-2">:</div>
+                                                                        <div class="col-7">
+                                                                            <strong>{{ \Carbon\Carbon::parse($wholesale->created_at)->format('d M Y') }}
+
+                                                                                {{ date('h:i A', strtotime($wholesale['created_at'])) }}</strong>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-12 mb-3">
+                                                                    <div class="row">
+                                                                        <div class="col-3">Address</div>
+                                                                        <div class="col-2">:</div>
+                                                                        <div class="col-7">
+                                                                            <strong>{{ $wholesale->address }}</strong>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+
+                                                                <div class="col-12 mb-3">
+                                                                    <div class="row">
+                                                                        <div class="col-3">Product Quantity</div>
+                                                                        <div class="col-2">:</div>
+                                                                        <div class="col-7">
+                                                                            <strong>{{ $wholesale->product_quantity }}</strong>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-12 mb-3">
+                                                                    <div class="row">
+                                                                        <div class="col-3">Status</div>
+                                                                        <div class="col-2">:</div>
+                                                                        <div class="col-7">
+                                                                            <strong>{{ $wholesale['status'] == 0 ? 'Unseen' : 'Seen' }}</strong>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer border-t-0">
+                                                                <button type="button" class="btn btn-secondary"
+                                                                    data-dismiss="modal">{{ \App\CPU\translate('close') }}</button>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- view wholesale Modal End-->
                                     @endforeach
                                 </tbody>
                             </table>
@@ -171,12 +291,169 @@
                         },
                         success: function() {
                             toastr.success(
-                                '{{ \App\CPU\translate('wholesale_deleted_successfully') }}');
+                                '{{ \App\CPU\translate('wholesale_deleted_successfully') }}'
+                                );
                             location.reload();
                         }
                     });
                 }
             })
         });
+    </script>
+    <script>
+        // 1. ajax for view status change
+        $(document).on('click', '.viewBtn', function() {
+            let id = $(this).data('id');
+            console.log('clicked');
+
+            $.ajax({
+                url: "{{ route('admin.wholesale.view') }}",
+                type: "POST",
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    id: id
+                },
+                success: function(response) {
+                    $(`.status_${id}`).html('Seen');
+                    $(`.visiable_${id}`).removeClass('viewBtn');
+                }
+            });
+        });
+    </script>
+    <script>
+        function order_status(status, id) {
+            var orderStatus = status ? status : 'pending';
+
+            if (status === 'confirmed') {
+                Swal.fire({
+                    title: '{{ \App\CPU\translate('Are you sure Change this?') }}!',
+                    text: "{{ \App\CPU\translate('Think before you completed') }}.",
+                    html: `
+                        <br />
+                        <form class="form-horizontal" action="{{ route('admin.user-info.status') }}" method="post">
+                            <input type="hidden" name="wholesale_status" value="${status}">
+                            <input type="hidden" name="id" value="${id}">
+                            <input required
+                                class="form-control wedding-input-text wizard-input-pad"
+                                type="text"
+                                name="wholesale_note"
+                                id="note"
+                                placeholder="For ${status} note">
+                        </form>
+                    `,
+                    showCancelButton: true,
+                    confirmButtonColor: '#377dff',
+                    cancelButtonColor: 'secondary',
+                    confirmButtonText: '{{ \App\CPU\translate('Yes, Change it') }}!'
+                }).then((result) => {
+                    if (result.value) {
+                        $.ajaxSetup({
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                            }
+                        });
+                        $.ajax({
+                            url: "{{ route('admin.wholesale.status') }}",
+                            method: 'POST',
+                            data: $("form").serialize(),
+                            success: function(data) {
+                                toastr.success('Status Change successfully');
+                                $(`.note_${id}`).html(data.note);
+
+                            },
+                            error: function(data) {
+                                toastr.warning('Something went wrong !');
+                            }
+                        });
+                    }
+                });
+            } else if (status === 'canceled') {
+                Swal.fire({
+                    title: 'Are you sure Change this?',
+                    text: "You won't be able to revert this!",
+                    html: `
+                        <br />
+                        <form class="form-horizontal" action="{{ route('admin.user-info.status') }}" method="post">
+                            <input type="hidden" name="wholesale_status" value="canceled">
+                            <input type="hidden" name="id" value="${id}">
+                            <input required class="form-control wedding-input-text wizard-input-pad" type="text" name="wholesale_note" id="note" placeholder="For ${status} note">
+                        </form>
+                    `,
+                    showCancelButton: true,
+                    confirmButtonColor: '#377dff',
+                    cancelButtonColor: 'secondary',
+                    confirmButtonText: 'Yes, Change it!',
+                }).then((result) => {
+                    if (result.value) {
+                        $.ajaxSetup({
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                            }
+                        });
+                        $.ajax({
+                            url: "{{ route('admin.wholesale.status') }}",
+                            method: 'POST',
+                            data: $("form").serialize(),
+                            success: function(data) {
+
+                                toastr.success('Status Change successfully');
+                                $(`.note_${id}`).html(data.note);
+                                console.log(data.note);
+
+                            },
+                            error: function(data) {
+                                toastr.warning('Something went wrong !');
+                            }
+                        });
+                    }
+                });
+            } else {
+                Swal.fire({
+                    title: '{{ \App\CPU\translate('Are you sure Change this') }}?',
+                    text: "You won't be able to revert this!",
+                    html: `
+                            <br />
+                            <form class="form-horizontal" action="{{ route('admin.user-info.status') }}" method="post">
+                                <input type="hidden" name="wholesale_status" value="${status}">
+                                <input type="hidden" name="id" value="${id}">
+                                <input
+                                    required
+                                    class="form-control wedding-input-text wizard-input-pad"
+                                    type="text"
+                                    name="wholesale_note"
+                                    id="note"
+                                    placeholder="For ${status} note"
+                                >
+                            </form>
+                        `,
+                    showCancelButton: true,
+                    confirmButtonColor: '#377dff',
+                    cancelButtonColor: 'secondary',
+                    confirmButtonText: '{{ \App\CPU\translate('Yes, Change it') }}!'
+                }).then((result) => {
+                    if (result.value) {
+                        $.ajaxSetup({
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                            }
+                        });
+                        $.ajax({
+                            url: "{{ route('admin.wholesale.status') }}",
+                            method: 'POST',
+                            data: $("form").serialize(),
+                            success: function(data) {
+
+                                toastr.success('Status Change successfully');
+                                $(`.note_${id}`).html(data.note);
+                            },
+                            error: function(data) {
+                                toastr.warning('Something went wrong !');
+                            }
+                        });
+                    }
+                });
+            }
+
+        }
     </script>
 @endpush

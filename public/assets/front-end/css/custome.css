@@ -1555,3 +1555,60 @@ footer {
     font-size: 14px;
     text-align: center;
 }
+
+.whatsapp-animate-btn {
+    width: 60px;
+    height: 60px;
+    text-align: center;
+    line-height: 60px;
+    border-radius: 50%;
+    font-size: 60px;
+    color: #ff5d00 !important;
+    position: fixed;
+    right: 1%;
+    top: 77%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+}
+.whatsapp-animate-btn i {
+    font-size: 30px;
+    background: #ff5d00;
+    height: 45px;
+    width: 45px;
+    line-height: 45px;
+    text-align: center;
+    border-radius: 50%;
+    color: #ffff;
+}
+.whatsapp-animate-btn::after {
+    content: "";
+    height: 60px;
+    width: 60px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    background: #ff5d00;
+    border-radius: 50%;
+    animation: playButton 1.5s ease-out infinite;
+}
+
+@keyframes playButton {
+    0%,
+    30% {
+        transform: scale(0);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.3);
+        opacity: 0.7;
+    }
+
+    100% {
+        transform: scale(1.5);
+        opacity: 0;
+    }
+}

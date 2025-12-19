@@ -84,12 +84,20 @@ class WholesaleController extends Controller
             ]);
         return view('admin-views.wholesale.list', compact('wholesaleList', 'search'));
     }
-    public function wholesaleView($id)
+    public function wholesaleView(Request $request)
     {
-        $wholesale = Wholesale::findOrFail($id);
-        $wholesale->update(['status' => 0]);
-        return view('admin-views.wholesale.view', compact('wholesale'));
-    }
+
+        $item = Wholesale::findOrFail($request->id);
+        // status update
+        if ($item->status !== 1) {
+            $item->status = 1;
+            $item->save();
+        }
+
+        return response()->json([
+            'status' => $item->status,
+        ]);
+}
     public function wholesaleDestroy(Request $request) {
         $wlist = Wholesale::find($request->id);
         $wlist->delete();
@@ -114,5 +122,18 @@ class WholesaleController extends Controller
             ];
         }
         return (new FastExcel($data))->download('wholesale_info.xlsx');
+    }
+    public function status(Request $request)
+    {
+        $wSale = Wholesale::find($request->id);
+        $wSale->wholesale_status = $request->wholesale_status;
+        $wSale->wholesale_note = $request->wholesale_note;
+        $wSale->save();
+
+        return response()->json([
+            'status' => true,
+            'id' => $wSale->id,
+            'note' => $wSale->wholesale_note
+        ]);
     }
 }

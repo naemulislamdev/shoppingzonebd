@@ -6,7 +6,9 @@ use App\CPU\Helpers;
 use App\Exports\DynamicExport;
 use App\Http\Controllers\Controller;
 use App\Model\BusinessSetting;
+use App\Model\Color;
 use App\Model\Contact;
+use App\Model\Product;
 use App\Models\Investor;
 use App\Models\Lead;
 use App\Models\UserInfo;
@@ -16,6 +18,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
+use Yajra\DataTables\Facades\DataTables;
 
 class ContactController extends Controller
 {
@@ -44,6 +47,7 @@ class ContactController extends Controller
 
     public function list(Request $request)
     {
+
         $query_param = [];
         $search = $request['search'];
 
@@ -129,17 +133,31 @@ class ContactController extends Controller
         return view('admin-views.leads.list', compact('leads', 'search'));
     }
 
-    public function leadView($id)
+    public function leadView(Request $request)
     {
-        $lead = Lead::findOrFail($id);
-        $lead->update(['status' => 1]);
-        return view('admin-views.leads.view', compact('lead'));
+        $item = Lead::findOrFail($request->id);
+
+        // status update
+        if ($item->status !== 1) {
+            $item->status = 1;
+            $item->save();
+        }
+
+        return response()->json([
+            'status' => $item->status,
+        ]);
     }
-    public function updateLeadRemark(Request $request, $id)
+    public function updateLeadRemark(Request $request)
     {
-        $investor = Lead::findOrFail($id);
-        $investor->update(['remark' => $request->remark]);
-        return back()->with('success', 'Remark added successfully');
+        $lead = Lead::find($request->id);
+        $lead->remark = $request->remark;
+        $lead->save();
+
+        return response()->json([
+            'status' => true,
+            'id' => $lead->id,
+            'remark' => $lead->remark
+        ]);
     }
     public function leadDestroy(Request $request)
     {
@@ -172,55 +190,199 @@ class ContactController extends Controller
         return Excel::download(new DynamicExport($headings, $data), 'leads_info.xlsx');
     }
 
+    public function reloadUserInfo() {
+        return view('admin-views.user-info.partial.userinfo_table');
+    }
+
     //--- User Information Management ---//
     public function userInfoList(Request $request)
     {
-        // $from = $request['from'];
-        // $to = $request['to'];
-        // if ($from && $to) {
-        //     $userInfos =  UserInfo::whereDate('created_at', '>=', $from)
-        //         ->whereDate('created_at', '<=', $to)->get();
-        // } else {
-        //     $userInfos =  UserInfo::latest()->paginate(20);
-        // }
-        $userInfos =  UserInfo::latest()->paginate(20);
-        return view('admin-views.user-info.list', compact('userInfos'));
-    }
-    public function ajaxSearch(Request $request)
-    {
-        $query = UserInfo::query();
+        if ($request->ajax()) {
+            // Date filter
 
-        // Date filter
-        if ($request->from && $request->to) {
-            $query->whereDate('created_at', '>=', $request->from)
-                ->whereDate('created_at', '<=', $request->to);
+            $query = UserInfo::query()
+
+                ->select([
+                    'id',
+                    'name',
+                    'email',
+                    'phone',
+                    'address',
+                    'status',
+                    'type',
+                    'order_process',
+                    'product_details',
+                    'order_status',
+                    'order_note',
+                    'created_at',
+                    'updated_at'
+                ]);
+
+            // ✅ Date wise filter
+            if ($request->filled('from') && $request->filled('to')) {
+                $query->whereBetween('created_at', [
+                    $request->from . ' 00:00:00',
+                    $request->to   . ' 23:59:59'
+                ]);
+            }
+
+            return DataTables::of($query)
+                // add column
+                ->addColumn('action', function ($row) {
+                    return '
+                            <button class="btn btn-sm btn-info viewBtn mb-2 visiable_' . $row->id . '"  data-id="' . $row->id . '">
+                                <i class="tio-visible"></i>
+                            </button>
+
+                            <button type="button" id="' . $row->id . '" class="btn btn-sm btn-danger delete">
+                                <i class="tio-delete"></i>
+                            </button>
+                        ';
+                    })
+
+
+
+                ->editColumn('order_note', function ($row) {
+                    return '<span class="note_' . $row->id . '">' . ($row->order_note ?? 'N/A') . '</span>';
+                })
+
+
+                // Edit Column
+                ->editColumn('status', function ($row) {
+                return $row->status == 1
+                    ? '<span class="badge badge-success status_' . $row->id . '">Seen</span>'
+                    : '<span class="badge badge-primary status_' . $row->id . '">Unseen</span>';
+            })
+
+                ->editColumn('created_at', function ($row) {
+                    return Carbon::parse($row->created_at)
+                        ->format('d F Y g.i A');
+                })
+                ->editColumn('product_details', function ($row) {
+
+                    $html = '';
+                    $product_details = json_decode($row->product_details, true);
+
+                    if (!is_array($product_details) || count($product_details) === 0) {
+                        return 'No product details available';
+                    }
+
+                    // CASE 1: Multiple products
+                    if (isset($product_details[0]) && is_array($product_details[0])) {
+
+                        foreach ($product_details as $item) {
+
+                            $product = Product::find($item['id'] ?? null);
+
+                            // Variation detect
+                            $variationText = null;
+
+                            if (!empty($item['variant'])) {
+                                $variationText = $item['variant'];
+                            } elseif (!empty($item['variations']) && is_array($item['variations'])) {
+                                $parts = [];
+                                foreach ($item['variations'] as $key => $value) {
+                                    $parts[] = ucfirst($key) . ': ' . ucfirst($value);
+                                }
+                                $variationText = implode(', ', $parts);
+                            }
+
+                            $html .= '<div class="mb-2">';
+                            $html .= '<strong>Product Code:</strong> ' . ($product->code ?? 'N/A') . '<br>';
+
+                            if ($variationText) {
+                                $html .= '<strong>Variation:</strong> ' . $variationText . '<br>';
+                            }
+
+                            $html .= '</div>';
+                        }
+                    }
+                    // CASE 2: Single product
+                    else {
+
+                        $product = Product::find($product_details['product_id'] ?? null);
+
+                        $color_name = null;
+                        if (!empty($product_details['color'])) {
+                            $color_name = Color::where('code', $product_details['color'])->value('name');
+                        }
+
+                        $html .= '<div class="mb-2">';
+                        $html .= '<strong>Product Code:</strong> ' . ($product->code ?? 'N/A') . '<br>';
+
+                        if ($color_name) {
+                            $html .= '<strong>Color:</strong> ' . $color_name . '<br>';
+                        }
+
+                        if (!empty($product_details['choice_8'])) {
+                            $html .= '<strong>Size:</strong> ' . $product_details['choice_8'] . '<br>';
+                        }
+
+                        $html .= '</div>';
+                    }
+
+                    return $html;
+                })
+                ->editColumn('order_process', function ($row) {
+
+                    if ($row->order_process === 'pending') {
+                        return '<span class="badge badge-danger">Pending</span>';
+                    }
+
+                    if ($row->order_process === 'completed') {
+                        return '<span class="badge badge-success">Confirmed</span>';
+                    }
+
+                    // fallback (just in case)
+                    return '<span class="badge badge-secondary">' . ucfirst($row->order_process) . '</span>';
+                })
+                ->editColumn('order_status', function ($row) {
+                    $html = '<div class="dropdown w-100 d-block">';
+                    $html .= '<select name="order_status" onchange="order_status(this.value, ' . $row->id . ')"
+                class="status form-control status_select_' . $row->id . '"
+                data-id="' . $row->id . '">';
+
+                    $statuses = ['pending' => 'Pending', 'confirmed' => 'Confirmed', 'canceled' => 'Canceled'];
+
+                    foreach ($statuses as $key => $label) {
+                        $selected = $row->order_status == $key ? 'selected' : '';
+                        $html .= '<option value="' . $key . '" ' . $selected . '>' . $label . '</option>';
+                    }
+
+                    $html .= '</select></div>';
+
+                    return $html;
+                })
+
+
+
+                ->rawColumns(['product_details', 'status', 'order_process', 'order_status', 'action', 'order_note']) // ⭐ IMPORTANT
+                ->addIndexColumn()
+
+                ->make(true);
         }
 
-        // Search Filter
-        if ($request->search) {
-            $query->where(function ($q) use ($request) {
-                $q->where('name', 'like', "%{$request->search}%")
-                    ->orWhere('email', 'like', "%{$request->search}%")
-                    ->orWhere('phone', 'like', "%{$request->search}%")
-                    ->orWhere('address', 'like', "%{$request->search}%")
-                    ->orWhere('order_process', 'like', "%{$request->search}%")
-                    ->orWhere('order_status', 'like', "%{$request->search}%")
-                    ->orWhere('order_note', 'like', "%{$request->search}%")
-                    ->orWhere('type', 'like', "%{$request->search}%");
-            });
+
+
+        return view('admin-views.user-info.list_old'); // Blade view
+    }
+    public function userInfoView(Request $request)
+    {
+        $item = UserInfo::findOrFail($request->id);
+
+        // status update
+        if ($item->status !== 1) {
+            $item->status = 1;
+            $item->save();
         }
 
-        $userInfos = $query->latest()->paginate(20);
+        // return view content for modal
+        $html = view('admin-views.user-info.partial.modal_view', compact('item'))->render();
 
-        return view('admin-views.user-info.partial.userinfo_table', compact('userInfos'))->render();
-    }
-
-
-    public function userInfoView($id)
-    {
-        $userInfo = UserInfo::findOrFail($id);
-        $userInfo->update(['status' => 1]);
-        return view('admin-views.user-info.view', compact('userInfo'));
+        return response()->json([
+            'status' => $item->status,
+            'html' => $html,
+        ]);
     }
     public function userInfoDestroy(Request $request)
     {
@@ -236,29 +398,45 @@ class ContactController extends Controller
         $data = [];
         foreach ($userInfos as $item) {
             $data[] = [
-                'Date' => Carbon::parse($item->created_at)->format('d M Y'),
-                'name' => $item->name,
-                'phone' => $item->phone,
-                'address' => $item->address,
-                'status' => $item->status == 0 ? 'Unseen' : 'Seen',
+                'Date'          => Carbon::parse($item->created_at)->format('d F Y'),
+                'Time'          => Carbon::parse($item->created_at)->format('h:i A'),
+
+                'Name'          => $item->name ?? '',
+                'Email'         => $item->email ?? '',
+                'Phone'         => $item->phone ?? '',
+                'Address'       => $item->address ?? '',
+
+                'Type'          => ucfirst($item->type ?? ''),
+
+                'Status'        => $item->status == 0 ? 'Unseen' : 'Seen',
+
+                'Order Process' => $item->order_process == 'pending'
+                    ? 'Pending'
+                    : ($item->order_process == 'completed' ? 'Confirmed' : ucfirst($item->order_process)),
+
+                'Order Status'  => ucfirst($item->order_status ?? ''),
+
+                'Order Note'    => $item->order_note ?? '',
+
 
             ];
         }
-        $headings = ['Date', 'Name', 'Phone', 'Address', 'Status'];
+        $headings = ['Date', 'Time', 'Name', 'Email', 'Phone', 'Address', 'Type', 'Status', 'Order Process', 'Order Status', 'Order Note'];
 
         return Excel::download(new DynamicExport($headings, $data), 'user_info.xlsx');
     }
     public function status(Request $request)
     {
+        $userinfo = UserInfo::find($request->id);
+        $userinfo->order_status = $request->order_status;
+        $userinfo->order_note = $request->note;
+        $userinfo->save();
 
-        if ($request->ajax()) {
-            $userinfo = UserInfo::find($request->id);
-            $userinfo->order_status = $request->order_status;
-            $userinfo->order_note = $request->note;
-            $userinfo->save();
-            $data = $request->order_status;
-            return response()->json($data);
-        }
+        return response()->json([
+            'status' => true,
+            'id' => $userinfo->id,
+            'note' => $userinfo->order_note
+        ]);
     }
     //--- Investment Management ---//
     public function investorsList(Request $request)
@@ -267,18 +445,21 @@ class ContactController extends Controller
         return view('admin-views.investors.list', compact('investors'));
     }
 
-    public function investorsView($id)
+    public function investorsViewStatus(Request $request)
     {
-        $investor = Investor::findOrFail($id);
-        $investor->update(['status' => 0]);
-        return view('admin-views.investors.view', compact('investor'));
+        $item = Investor::findOrFail($request->id);
+
+        // status update
+        if ($item->status !== 1) {
+            $item->status = 1;
+            $item->save();
+        }
+
+        return response()->json([
+            'status' => $item->status,
+        ]);
     }
-    public function updateRemark(Request $request, $id)
-    {
-        $investor = Investor::findOrFail($id);
-        $investor->update(['remark' => $request->remark]);
-        return back()->with('success', 'Remark added successfully');
-    }
+
     public function investorsDestroy(Request $request)
     {
         $lead = Investor::find($request->id);
@@ -304,16 +485,22 @@ class ContactController extends Controller
 
         return Excel::download(new DynamicExport($headings, $data), 'investors_info.xlsx');
     }
-    public function remarkStatus(Request $request)
+    public function updateInvestorRemark(Request $request)
     {
+        //dd($request->all());
+        $request->validate([
+            'id' => 'required|exists:investors,id',
+            'remark' => 'required|string'
+        ]);
 
-        if ($request->ajax()) {
-            $invest = Investor::find($request->id);
-            $invest->remark = auth('admin')->name . ': ' . $request->remark;
-            $invest->status =  0;
-            $invest->save();
-            $data = $request->remark;
-            return response()->json($data);
-        }
+        $investor = Investor::find($request->id);
+        $investor->remark = $request->remark;
+        $investor->save();
+
+        return response()->json([
+            'status' => true,
+            'id' => $investor->id,
+            'remark' => $investor->remark
+        ]);
     }
 }

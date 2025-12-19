@@ -67,6 +67,13 @@ Route::middleware(['maintenance_mode'])->group(function () {
         Route::get('/career/apply-form/{slug}', 'showApplyForm')->name('career.form');
         Route::post('/career/apply-form/store', 'storeApplication')->name('career.form.store');
     });
+    //  department of job  routes
+    Route::controller(CareerController::class)->group(function () {
+        Route::get('/careers', 'careers')->name('careers');
+        Route::get('/careers-details/{slug}', 'careerDetails')->name('career.details');
+        Route::get('/career/apply-form/{slug}', 'showApplyForm')->name('career.form');
+        Route::post('/career/apply-form/store', 'storeApplication')->name('career.form.store');
+    });
 
     // Route::get('quick-view', 'WebController@quick_view')->name('quick-view');
     // Route::get('searched-products', 'WebController@searched_products')->name('searched-products');

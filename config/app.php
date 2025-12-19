@@ -139,6 +139,7 @@ return [
         /*
          * Laravel Framework Service Providers...
          */
+        Yajra\DataTables\DataTablesServiceProvider::class,
         Illuminate\Auth\AuthServiceProvider::class,
         Illuminate\Broadcasting\BroadcastServiceProvider::class,
         Illuminate\Bus\BusServiceProvider::class,
@@ -179,7 +180,7 @@ return [
         App\Providers\MailConfigServiceProvider::class,
         \App\Providers\PaymentConfigProvider::class,
         \App\Providers\ConfigServiceProvider::class,
-       /* Amirami\Localizator\ServiceProvider::class*/
+        /* Amirami\Localizator\ServiceProvider::class*/
     ],
 
     /*
