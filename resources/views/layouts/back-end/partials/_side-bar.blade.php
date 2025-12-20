@@ -1190,7 +1190,7 @@ $route = request()->route()->getName();
                                     </span>
                                 </a>
                             </li>
-                            <li
+                            {{-- <li
                                 class="navbar-vertical-aside-has-menu {{ Request::is('admin/user-info*') ? 'active' : '' }}">
                                 <a class="js-navbar-vertical-aside-menu-link nav-link"
                                     href="{{ route('admin.user-info.list') }}">
@@ -1199,7 +1199,75 @@ $route = request()->route()->getName();
                                         User Info
                                     </span>
                                 </a>
+                            </li> --}}
+                            {{-- Userinfo management section start --}}
+                                <li
+                                class="navbar-vertical-aside-has-menu {{ Request::is('admin/user-info/*') ? 'active' : '' }}">
+                                <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle"
+                                    href="javascript:">
+                                    <i class="tio-messages nav-icon"></i>
+                                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">
+                                        {{ \App\CPU\translate('User Info') }}
+                                    </span>
+                                </a>
+                                <ul class="js-navbar-vertical-aside-submenu nav nav-sub"
+                                    style="display: {{ Request::is('admin/user-info/*') ? 'block' : 'none' }}">
+                                    <li
+                                        class="nav-item {{ Request::is('admin/user-info/list') ? 'active' : '' }}">
+                                        <a class="nav-link"
+                                            href="{{ route('admin.user-info.list') }}">
+                                            <span class="tio-circle nav-indicator-icon"></span>
+                                            <span class="text-truncate">
+                                                {{ \App\CPU\translate('all_user_info') }}
+                                                <span class="badge badge-soft-primary badge-pill ml-1">
+                                                    {{\App\Models\UserInfo::all()->count()}}
+                                                </span>
+                                            </span>
+                                        </a>
+                                    </li>
+                                    <li
+                                        class="nav-item {{ Request::is('admin/user-info/pending') ? 'active' : '' }}">
+                                        <a class="nav-link"
+                                            href="{{ route('admin.user-info.pending') }}">
+                                            <span class="tio-circle nav-indicator-icon"></span>
+                                            <span class="text-truncate">
+                                                {{ \App\CPU\translate('pending') }}
+                                                <span class="badge badge-soft-warning badge-pill ml-1">
+                                                    {{ \App\Models\UserInfo::where('order_status', 'pending')->count()}}
+                                                </span>
+                                            </span>
+                                        </a>
+                                    </li>
+
+                                    <li
+                                        class="nav-item {{ Request::is('admin/user-info/confirmed') ? 'active' : '' }}">
+                                        <a class="nav-link"
+                                            href="{{ route('admin.user-info.confirmed') }}">
+                                            <span class="tio-circle nav-indicator-icon"></span>
+                                            <span class="text-truncate">
+                                                {{ \App\CPU\translate('Confimed') }}
+                                                <span class="badge badge-soft-success badge-pill ml-1">
+                                                    {{ \App\Models\UserInfo::where('order_status', 'confirmed')->count()}}
+                                                </span>
+                                            </span>
+                                        </a>
+                                    </li>
+                                    <li
+                                        class="nav-item {{ Request::is('admin/user-info/canceled') ? 'active' : '' }}">
+                                        <a class="nav-link"
+                                            href="{{ route('admin.user-info.canceled') }}">
+                                            <span class="tio-circle nav-indicator-icon"></span>
+                                            <span class="text-truncate">
+                                                {{ \App\CPU\translate('Canceled') }}
+                                                <span class="badge badge-soft-danger badge-pill ml-1">
+                                                    {{ \App\Models\UserInfo::where('order_status', 'canceled')->count() }}
+                                                </span>
+                                            </span>
+                                        </a>
+                                    </li>
+                                </ul>
                             </li>
+                            {{-- Userinfo management section End --}}
                             <li
                                 class="navbar-vertical-aside-has-menu {{ Request::is('admin/support-ticket*') ? 'active' : '' }}">
                                 <a class="js-navbar-vertical-aside-menu-link nav-link"

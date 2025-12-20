@@ -190,11 +190,13 @@ class ContactController extends Controller
         return Excel::download(new DynamicExport($headings, $data), 'leads_info.xlsx');
     }
 
-    public function reloadUserInfo() {
+
+    //--- User Information Management start---//
+    public function reloadUserInfo()
+    {
         return view('admin-views.user-info.partial.userinfo_table');
     }
 
-    //--- User Information Management ---//
     public function userInfoList(Request $request)
     {
         if ($request->ajax()) {
@@ -238,7 +240,7 @@ class ContactController extends Controller
                                 <i class="tio-delete"></i>
                             </button>
                         ';
-                    })
+                })
 
 
 
@@ -249,10 +251,10 @@ class ContactController extends Controller
 
                 // Edit Column
                 ->editColumn('status', function ($row) {
-                return $row->status == 1
-                    ? '<span class="badge badge-success status_' . $row->id . '">Seen</span>'
-                    : '<span class="badge badge-primary status_' . $row->id . '">Unseen</span>';
-            })
+                    return $row->status == 1
+                        ? '<span class="badge badge-success status_' . $row->id . '">Seen</span>'
+                        : '<span class="badge badge-primary status_' . $row->id . '">Unseen</span>';
+                })
 
                 ->editColumn('created_at', function ($row) {
                     return Carbon::parse($row->created_at)
@@ -362,9 +364,7 @@ class ContactController extends Controller
                 ->make(true);
         }
 
-
-
-        return view('admin-views.user-info.list_old'); // Blade view
+        return view('admin-views.user-info.list_old');
     }
     public function userInfoView(Request $request)
     {
@@ -427,9 +427,18 @@ class ContactController extends Controller
     }
     public function status(Request $request)
     {
+
         $userinfo = UserInfo::find($request->id);
         $userinfo->order_status = $request->order_status;
         $userinfo->order_note = $request->note;
+        if($request->order_status == 'confirmed'){
+            $userinfo->confirmed_by = auth('admin')->user()->name;
+            $userinfo->confirmed_at = now();
+        }
+        if($request->order_status == 'canceled'){
+            $userinfo->canceled_by = auth('admin')->user()->name;
+            $userinfo->canceled_at = now();
+        }
         $userinfo->save();
 
         return response()->json([
@@ -438,6 +447,528 @@ class ContactController extends Controller
             'note' => $userinfo->order_note
         ]);
     }
+    public function userinfoPendingList(Request $request) {
+        if ($request->ajax()) {
+            // Date filter
+
+            $query = UserInfo::query()
+
+                ->select([
+                    'id',
+                    'name',
+                    'email',
+                    'phone',
+                    'address',
+                    'status',
+                    'type',
+                    'order_process',
+                    'product_details',
+                    'order_status',
+                    'order_note',
+                    'created_at',
+                    'updated_at'
+                ]);
+
+            // Filter by order_status canceled
+
+            $query->where('order_status', 'pending')
+                ->latest('created_at');
+
+            // ✅ Date wise filter
+            if ($request->filled('from') && $request->filled('to')) {
+                $query->whereBetween('created_at', [
+                    $request->from . ' 00:00:00',
+                    $request->to   . ' 23:59:59'
+                ]);
+            }
+
+            return DataTables::of($query)
+                // add column
+                ->addColumn('action', function ($row) {
+                    return '
+                            <button class="btn btn-sm btn-info viewBtn mb-2 visiable_' . $row->id . '"  data-id="' . $row->id . '">
+                                <i class="tio-visible"></i>
+                            </button>
+
+                            <button type="button" id="' . $row->id . '" class="btn btn-sm btn-danger delete">
+                                <i class="tio-delete"></i>
+                            </button>
+                        ';
+                })
+
+
+
+                ->editColumn('order_note', function ($row) {
+                    return '<span class="note_' . $row->id . '">' . ($row->order_note ?? 'N/A') . '</span>';
+                })
+
+
+                // Edit Column
+                ->editColumn('status', function ($row) {
+                    return $row->status == 1
+                        ? '<span class="badge badge-success status_' . $row->id . '">Seen</span>'
+                        : '<span class="badge badge-primary status_' . $row->id . '">Unseen</span>';
+                })
+
+                ->editColumn('created_at', function ($row) {
+                    return Carbon::parse($row->created_at)
+                        ->format('d F Y g.i A');
+                })
+                ->editColumn('product_details', function ($row) {
+
+                    $html = '';
+                    $product_details = json_decode($row->product_details, true);
+
+                    if (!is_array($product_details) || count($product_details) === 0) {
+                        return 'No product details available';
+                    }
+
+                    // CASE 1: Multiple products
+                    if (isset($product_details[0]) && is_array($product_details[0])) {
+
+                        foreach ($product_details as $item) {
+
+                            $product = Product::find($item['id'] ?? null);
+
+                            // Variation detect
+                            $variationText = null;
+
+                            if (!empty($item['variant'])) {
+                                $variationText = $item['variant'];
+                            } elseif (!empty($item['variations']) && is_array($item['variations'])) {
+                                $parts = [];
+                                foreach ($item['variations'] as $key => $value) {
+                                    $parts[] = ucfirst($key) . ': ' . ucfirst($value);
+                                }
+                                $variationText = implode(', ', $parts);
+                            }
+
+                            $html .= '<div class="mb-2">';
+                            $html .= '<strong>Product Code:</strong> ' . ($product->code ?? 'N/A') . '<br>';
+
+                            if ($variationText) {
+                                $html .= '<strong>Variation:</strong> ' . $variationText . '<br>';
+                            }
+
+                            $html .= '</div>';
+                        }
+                    }
+                    // CASE 2: Single product
+                    else {
+
+                        $product = Product::find($product_details['product_id'] ?? null);
+
+                        $color_name = null;
+                        if (!empty($product_details['color'])) {
+                            $color_name = Color::where('code', $product_details['color'])->value('name');
+                        }
+
+                        $html .= '<div class="mb-2">';
+                        $html .= '<strong>Product Code:</strong> ' . ($product->code ?? 'N/A') . '<br>';
+
+                        if ($color_name) {
+                            $html .= '<strong>Color:</strong> ' . $color_name . '<br>';
+                        }
+
+                        if (!empty($product_details['choice_8'])) {
+                            $html .= '<strong>Size:</strong> ' . $product_details['choice_8'] . '<br>';
+                        }
+
+                        $html .= '</div>';
+                    }
+
+                    return $html;
+                })
+                ->editColumn('order_process', function ($row) {
+
+                    if ($row->order_process === 'pending') {
+                        return '<span class="badge badge-danger">Pending</span>';
+                    }
+
+                    if ($row->order_process === 'completed') {
+                        return '<span class="badge badge-success">Confirmed</span>';
+                    }
+
+                    // fallback (just in case)
+                    return '<span class="badge badge-secondary">' . ucfirst($row->order_process) . '</span>';
+                })
+                ->editColumn('order_status', function ($row) {
+                    $html = '<div class="dropdown w-100 d-block">';
+                    $html .= '<select name="order_status" onchange="order_status(this.value, ' . $row->id . ')"
+                class="status form-control status_select_' . $row->id . '"
+                data-id="' . $row->id . '">';
+
+                    $statuses = ['pending' => 'Pending', 'confirmed' => 'Confirmed', 'canceled' => 'Canceled'];
+
+                    foreach ($statuses as $key => $label) {
+                        $selected = $row->order_status == $key ? 'selected' : '';
+                        $html .= '<option value="' . $key . '" ' . $selected . '>' . $label . '</option>';
+                    }
+
+                    $html .= '</select></div>';
+
+                    return $html;
+                })
+
+
+
+                ->rawColumns(['product_details', 'status', 'order_process', 'order_status', 'action', 'order_note']) // ⭐ IMPORTANT
+                ->addIndexColumn()
+
+                ->make(true);
+        }
+
+        return view('admin-views.user-info.pending_list');
+    }
+    public function userinfoConfirmedList(Request $request) {
+        if ($request->ajax()) {
+            // Date filter
+
+            $query = UserInfo::query()
+
+                ->select([
+                    'id',
+                    'name',
+                    'email',
+                    'phone',
+                    'address',
+                    'status',
+                    'type',
+                    'order_process',
+                    'product_details',
+                    'order_status',
+                    'order_note',
+                    'created_at',
+                    'updated_at'
+                ]);
+
+            // Filter by order_status canceled
+
+            $query->where('order_status', 'confirmed')
+                ->latest('confirmed_at');
+
+            // ✅ Date wise filter
+            if ($request->filled('from') && $request->filled('to')) {
+                $query->whereBetween('created_at', [
+                    $request->from . ' 00:00:00',
+                    $request->to   . ' 23:59:59'
+                ]);
+            }
+
+            return DataTables::of($query)
+                // add column
+                ->addColumn('action', function ($row) {
+                    return '
+                            <button class="btn btn-sm btn-info viewBtn mb-2 visiable_' . $row->id . '"  data-id="' . $row->id . '">
+                                <i class="tio-visible"></i>
+                            </button>
+
+                            <button type="button" id="' . $row->id . '" class="btn btn-sm btn-danger delete">
+                                <i class="tio-delete"></i>
+                            </button>
+                        ';
+                })
+
+
+
+                ->editColumn('order_note', function ($row) {
+                    return '<span class="note_' . $row->id . '">' . ($row->order_note ?? 'N/A') . '</span>';
+                })
+
+
+                // Edit Column
+                ->editColumn('status', function ($row) {
+                    return $row->status == 1
+                        ? '<span class="badge badge-success status_' . $row->id . '">Seen</span>'
+                        : '<span class="badge badge-primary status_' . $row->id . '">Unseen</span>';
+                })
+
+                ->editColumn('created_at', function ($row) {
+                    return Carbon::parse($row->created_at)
+                        ->format('d F Y g.i A');
+                })
+                ->editColumn('product_details', function ($row) {
+
+                    $html = '';
+                    $product_details = json_decode($row->product_details, true);
+
+                    if (!is_array($product_details) || count($product_details) === 0) {
+                        return 'No product details available';
+                    }
+
+                    // CASE 1: Multiple products
+                    if (isset($product_details[0]) && is_array($product_details[0])) {
+
+                        foreach ($product_details as $item) {
+
+                            $product = Product::find($item['id'] ?? null);
+
+                            // Variation detect
+                            $variationText = null;
+
+                            if (!empty($item['variant'])) {
+                                $variationText = $item['variant'];
+                            } elseif (!empty($item['variations']) && is_array($item['variations'])) {
+                                $parts = [];
+                                foreach ($item['variations'] as $key => $value) {
+                                    $parts[] = ucfirst($key) . ': ' . ucfirst($value);
+                                }
+                                $variationText = implode(', ', $parts);
+                            }
+
+                            $html .= '<div class="mb-2">';
+                            $html .= '<strong>Product Code:</strong> ' . ($product->code ?? 'N/A') . '<br>';
+
+                            if ($variationText) {
+                                $html .= '<strong>Variation:</strong> ' . $variationText . '<br>';
+                            }
+
+                            $html .= '</div>';
+                        }
+                    }
+                    // CASE 2: Single product
+                    else {
+
+                        $product = Product::find($product_details['product_id'] ?? null);
+
+                        $color_name = null;
+                        if (!empty($product_details['color'])) {
+                            $color_name = Color::where('code', $product_details['color'])->value('name');
+                        }
+
+                        $html .= '<div class="mb-2">';
+                        $html .= '<strong>Product Code:</strong> ' . ($product->code ?? 'N/A') . '<br>';
+
+                        if ($color_name) {
+                            $html .= '<strong>Color:</strong> ' . $color_name . '<br>';
+                        }
+
+                        if (!empty($product_details['choice_8'])) {
+                            $html .= '<strong>Size:</strong> ' . $product_details['choice_8'] . '<br>';
+                        }
+
+                        $html .= '</div>';
+                    }
+
+                    return $html;
+                })
+                ->editColumn('order_process', function ($row) {
+
+                    if ($row->order_process === 'pending') {
+                        return '<span class="badge badge-danger">Pending</span>';
+                    }
+
+                    if ($row->order_process === 'completed') {
+                        return '<span class="badge badge-success">Confirmed</span>';
+                    }
+
+                    // fallback (just in case)
+                    return '<span class="badge badge-secondary">' . ucfirst($row->order_process) . '</span>';
+                })
+                ->editColumn('order_status', function ($row) {
+                    $html = '<div class="dropdown w-100 d-block">';
+                    $html .= '<select name="order_status" onchange="order_status(this.value, ' . $row->id . ')"
+                class="status form-control status_select_' . $row->id . '"
+                data-id="' . $row->id . '">';
+
+                    $statuses = ['pending' => 'Pending', 'confirmed' => 'Confirmed', 'canceled' => 'Canceled'];
+
+                    foreach ($statuses as $key => $label) {
+                        $selected = $row->order_status == $key ? 'selected' : '';
+                        $html .= '<option value="' . $key . '" ' . $selected . '>' . $label . '</option>';
+                    }
+
+                    $html .= '</select></div>';
+
+                    return $html;
+                })
+
+
+
+                ->rawColumns(['product_details', 'status', 'order_process', 'order_status', 'action', 'order_note']) // ⭐ IMPORTANT
+                ->addIndexColumn()
+
+                ->make(true);
+        }
+
+        return view('admin-views.user-info.confirmed_list');
+    }
+    public function userinfoCanceledList(Request $request) {
+        if ($request->ajax()) {
+            // Date filter
+
+            $query = UserInfo::query()
+
+                ->select([
+                    'id',
+                    'name',
+                    'email',
+                    'phone',
+                    'address',
+                    'status',
+                    'type',
+                    'order_process',
+                    'product_details',
+                    'order_status',
+                    'order_note',
+                    'created_at',
+                    'updated_at'
+                ]);
+
+            // Filter by order_status canceled
+
+            $query->where('order_status', 'canceled')
+             ->latest('canceled_at');
+
+            // ✅ Date wise filter
+            if ($request->filled('from') && $request->filled('to')) {
+                $query->whereBetween('created_at', [
+                    $request->from . ' 00:00:00',
+                    $request->to   . ' 23:59:59'
+                ]);
+            }
+
+            return DataTables::of($query)
+                // add column
+                ->addColumn('action', function ($row) {
+                    return '
+                            <button class="btn btn-sm btn-info viewBtn mb-2 visiable_' . $row->id . '"  data-id="' . $row->id . '">
+                                <i class="tio-visible"></i>
+                            </button>
+
+                            <button type="button" id="' . $row->id . '" class="btn btn-sm btn-danger delete">
+                                <i class="tio-delete"></i>
+                            </button>
+                        ';
+                })
+
+
+
+                ->editColumn('order_note', function ($row) {
+                    return '<span class="note_' . $row->id . '">' . ($row->order_note ?? 'N/A') . '</span>';
+                })
+
+
+                // Edit Column
+                ->editColumn('status', function ($row) {
+                    return $row->status == 1
+                        ? '<span class="badge badge-success status_' . $row->id . '">Seen</span>'
+                        : '<span class="badge badge-primary status_' . $row->id . '">Unseen</span>';
+                })
+
+                ->editColumn('created_at', function ($row) {
+                    return Carbon::parse($row->created_at)
+                        ->format('d F Y g.i A');
+                })
+                ->editColumn('product_details', function ($row) {
+
+                    $html = '';
+                    $product_details = json_decode($row->product_details, true);
+
+                    if (!is_array($product_details) || count($product_details) === 0) {
+                        return 'No product details available';
+                    }
+
+                    // CASE 1: Multiple products
+                    if (isset($product_details[0]) && is_array($product_details[0])) {
+
+                        foreach ($product_details as $item) {
+
+                            $product = Product::find($item['id'] ?? null);
+
+                            // Variation detect
+                            $variationText = null;
+
+                            if (!empty($item['variant'])) {
+                                $variationText = $item['variant'];
+                            } elseif (!empty($item['variations']) && is_array($item['variations'])) {
+                                $parts = [];
+                                foreach ($item['variations'] as $key => $value) {
+                                    $parts[] = ucfirst($key) . ': ' . ucfirst($value);
+                                }
+                                $variationText = implode(', ', $parts);
+                            }
+
+                            $html .= '<div class="mb-2">';
+                            $html .= '<strong>Product Code:</strong> ' . ($product->code ?? 'N/A') . '<br>';
+
+                            if ($variationText) {
+                                $html .= '<strong>Variation:</strong> ' . $variationText . '<br>';
+                            }
+
+                            $html .= '</div>';
+                        }
+                    }
+                    // CASE 2: Single product
+                    else {
+
+                        $product = Product::find($product_details['product_id'] ?? null);
+
+                        $color_name = null;
+                        if (!empty($product_details['color'])) {
+                            $color_name = Color::where('code', $product_details['color'])->value('name');
+                        }
+
+                        $html .= '<div class="mb-2">';
+                        $html .= '<strong>Product Code:</strong> ' . ($product->code ?? 'N/A') . '<br>';
+
+                        if ($color_name) {
+                            $html .= '<strong>Color:</strong> ' . $color_name . '<br>';
+                        }
+
+                        if (!empty($product_details['choice_8'])) {
+                            $html .= '<strong>Size:</strong> ' . $product_details['choice_8'] . '<br>';
+                        }
+
+                        $html .= '</div>';
+                    }
+
+                    return $html;
+                })
+                ->editColumn('order_process', function ($row) {
+
+                    if ($row->order_process === 'pending') {
+                        return '<span class="badge badge-danger">Pending</span>';
+                    }
+
+                    if ($row->order_process === 'completed') {
+                        return '<span class="badge badge-success">Confirmed</span>';
+                    }
+
+                    // fallback (just in case)
+                    return '<span class="badge badge-secondary">' . ucfirst($row->order_process) . '</span>';
+                })
+                ->editColumn('order_status', function ($row) {
+                    $html = '<div class="dropdown w-100 d-block">';
+                    $html .= '<select name="order_status" onchange="order_status(this.value, ' . $row->id . ')"
+                class="status form-control status_select_' . $row->id . '"
+                data-id="' . $row->id . '">';
+
+                    $statuses = ['pending' => 'Pending', 'confirmed' => 'Confirmed', 'canceled' => 'Canceled'];
+
+                    foreach ($statuses as $key => $label) {
+                        $selected = $row->order_status == $key ? 'selected' : '';
+                        $html .= '<option value="' . $key . '" ' . $selected . '>' . $label . '</option>';
+                    }
+
+                    $html .= '</select></div>';
+
+                    return $html;
+                })
+
+
+
+                ->rawColumns(['product_details', 'status', 'order_process', 'order_status', 'action', 'order_note']) // ⭐ IMPORTANT
+                ->addIndexColumn()
+
+                ->make(true);
+        }
+
+        return view('admin-views.user-info.canceled_list');
+    }
+
+    //--- User Information Management end---//
+
     //--- Investment Management ---//
     public function investorsList(Request $request)
     {

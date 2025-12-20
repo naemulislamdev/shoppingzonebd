@@ -1,5 +1,5 @@
 @extends('layouts.back-end.app')
-@section('title', \App\CPU\translate('User info List'))
+@section('title', \App\CPU\translate('Pending User-info List'))
 @push('css_or_js')
     <!-- Custom styles for this page -->
     <link href="{{ asset('assets/back-end/vendor/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
@@ -14,13 +14,13 @@
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">{{ \App\CPU\translate('Dashboard') }}</a>
                 </li>
-                <li class="breadcrumb-item" aria-current="page">{{ \App\CPU\translate('User-info Message') }}</li>
+                <li class="breadcrumb-item" aria-current="page">{{ \App\CPU\translate('Pending_user_info') }}</li>
             </ol>
         </nav>
         <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-between mb-2">
-            <h1 class="h3 mb-0 text-black-50">{{ \App\CPU\translate('User-info') }}
-                {{ \App\CPU\translate('List') }} <span class="badge badge-soft-info">{{ \App\Models\UserInfo::all()->count() }}</span> </h1>
+            <h1 class="h3 mb-0 text-black-50">{{ \App\CPU\translate('pending_user-info') }}
+                {{ \App\CPU\translate('List') }} <span class="badge badge-soft-warning">{{ \App\Models\UserInfo::where("order_status", 'pending')->count() }}</span></h1>
 
         </div>
         <div class="row" style="margin-top: 20px">
@@ -155,6 +155,7 @@
                             success: function(data) {
                                 toastr.success('Status Change successfully');
                                 $(`.note_${id}`).html(data.note);
+                                  $('#userinfos-table').DataTable().ajax.reload(null, false);
 
                             },
                             error: function(data) {
@@ -194,6 +195,7 @@
 
                                 toastr.success('Status Change successfully');
                                 $(`.note_${id}`).html(data.note);
+                                  $('#userinfos-table').DataTable().ajax.reload(null, false);
                             },
                             error: function(data) {
                                 toastr.warning('Something went wrong !');
@@ -260,7 +262,7 @@
                     processing: '<div class="d-flex flex-column justify-content-center align-items-center"> <div  class="spinner-border text-primary" role="status"></div>Loading...</div>'
                 },
                 ajax: {
-                    url: '{{ route('admin.user-info.list') }}',
+                    url: '{{ route('admin.user-info.pending') }}',
                     data: function(d) {
                         d.from = $('#from_date').val();
                         d.to = $('#to_date').val();

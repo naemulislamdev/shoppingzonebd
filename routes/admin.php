@@ -783,6 +783,11 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::post('status', 'status')->name('status');
             Route::get('bulk-export', 'bulk_export_dataUserInfo')->name('bulk-export');
             Route::get('reload-user-info', 'reloadUserInfo')->name('reloadUserInfo');
+
+
+            Route::get('pending', 'userinfoPendingList')->name('pending');
+            Route::get('confirmed', 'userinfoConfirmedList')->name('confirmed');
+            Route::get('canceled', 'userinfoCanceledList')->name('canceled');
         });
 
         Route::controller(DeliveryManController::class)->prefix('/delivery-man')->as('delivery-man.')->group(function () {

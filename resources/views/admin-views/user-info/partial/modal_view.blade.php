@@ -1,30 +1,30 @@
 <div class="container-fluid text-left">
 
     <div class="row mb-2">
-        <div class="col-4 font-weight-bold">Name</div>
-        <div class="col-8">: {{ $item->name }}</div>
+        <div class="col-5 font-weight-bold">Name</div>
+        <div class="col-7">: {{ $item->name }}</div>
     </div>
 
     <div class="row mb-2">
-        <div class="col-4 font-weight-bold">Email</div>
-        <div class="col-8">: {{ $item->email ?? 'N/A' }}</div>
+        <div class="col-5 font-weight-bold">Email</div>
+        <div class="col-7">: {{ $item->email ?? 'N/A' }}</div>
     </div>
 
     <div class="row mb-2">
-        <div class="col-4 font-weight-bold">Phone</div>
-        <div class="col-8">: {{ $item->phone }}</div>
+        <div class="col-5 font-weight-bold">Phone</div>
+        <div class="col-7">: {{ $item->phone }}</div>
     </div>
 
     <div class="row mb-2">
-        <div class="col-4 font-weight-bold">Address</div>
-        <div class="col-8">: {{ $item->address ?? 'N/A' }}</div>
+        <div class="col-5 font-weight-bold">Address</div>
+        <div class="col-7">: {{ $item->address ?? 'N/A' }}</div>
     </div>
 
     <hr>
 
     <div class="row mb-2">
-        <div class="col-4 font-weight-bold">Status</div>
-        <div class="col-8">
+        <div class="col-5 font-weight-bold">Status</div>
+        <div class="col-7">
             :
             {!! $item->status == 1
                 ? '<span class="badge badge-success">Seen</span>'
@@ -33,8 +33,8 @@
     </div>
 
     <div class="row mb-2">
-        <div class="col-4 font-weight-bold">Order Process</div>
-        <div class="col-8">
+        <div class="col-5 font-weight-bold">Order Process</div>
+        <div class="col-7">
             :
             @if ($item->order_process === 'pending')
                 <span class="badge badge-warning">Pending</span>
@@ -47,14 +47,38 @@
     </div>
 
     <div class="row mb-2">
-        <div class="col-4 font-weight-bold">Order Status</div>
-        <div class="col-8">: {{ ucfirst($item->order_status) }}</div>
+        <div class="col-5 font-weight-bold">Order Status</div>
+        <div class="col-7">: {{ ucfirst($item->order_status) }}</div>
     </div>
 
+
     <div class="row mb-2">
-        <div class="col-4 font-weight-bold">Order Note</div>
-        <div class="col-8">: {{ $item->order_note ?? 'N/A' }}</div>
+        <div class="col-5 font-weight-bold">Order Status Note</div>
+        <div class="col-7">: {{ $item->order_note ?? 'N/A' }}</div>
     </div>
+
+   @if ($item->confirmed_by)
+    <div class="row mb-2">
+        <div class="col-5 font-weight-bold">Order Status Confirmed By</div>
+        <div class="col-7 ">
+            : <span class="badge badge-success">
+                {{$item->confirmed_by}} => Date: {{ \Carbon\Carbon::parse($item->confirmed_at)->format('d F Y g.i A') }}
+            </span>
+        </div>
+    </div>
+@endif
+
+@if ($item->canceled_by)
+    <div class="row mb-2">
+        <div class="col-5 font-weight-bold">Order Status Canceled By</div>
+        <div class="col-7 ">
+            : <div class="badge badge-danger">
+                {{$item->canceled_by}} => Date: {{ \Carbon\Carbon::parse($item->canceled_at)->format('d F Y g.i A') }}
+            </div>
+        </div>
+    </div>
+@endif
+
 
     <hr>
 
@@ -113,8 +137,8 @@
     <hr>
 
     <div class="row">
-        <div class="col-4 font-weight-bold">Date</div>
-        <div class="col-8">
+        <div class="col-5 font-weight-bold">Date</div>
+        <div class="col-7">
             :
             {{ \Carbon\Carbon::parse($item->created_at)->format('d F Y g.i A') }}
         </div>

@@ -20,6 +20,7 @@
             </nav>
             <a href="{{route('admin.landingpages.create')}}" class="btn btn-primary">{{ \App\CPU\translate('Add new') }}</a>
         </div>
+        
 
         <!-- Content Row -->
         <div class="row" style="margin-top: 20px">

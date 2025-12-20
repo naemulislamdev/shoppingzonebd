@@ -343,7 +343,7 @@ class OrderController extends Controller
         $order = Order::with('details', 'shipping', 'seller')->where(['id' => $id])->first();
 
 
-
+        
         // dd($order);
 
         $shipping_method = Helpers::get_business_settings('shipping_method');
