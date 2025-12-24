@@ -245,6 +245,24 @@
                             </div>
                         </div>
                         <!--History Modal End-->
+
+                        <div class="mt-3">
+                            <h4>Multiple Order Note:</h4>
+
+                            <ul id="noteList" class="list-unstyled d-flex flex-column">
+                                @if ($order->multiple_note)
+                                    @foreach (json_decode($order->multiple_note, true) as $note)
+                                        <li style="text-align: left;  text-wrap: wrap; line-height: 20px"
+                                            class="badge badge-soft-primary mb-2 py-2">
+                                            {{ $note['note'] }}
+                                            <span class="text-muted">({{ $note['time'] }} -> Note by:
+                                                {{ $note['user'] }})</span>
+                                        </li>
+                                    @endforeach
+
+                                @endif
+                            </ul>
+                        </div>
                     </div>
 
                     <div class="col-12 col-md-6 border py-3">
@@ -292,23 +310,26 @@
                             </div>
                         </div>
                         <div class="col-12 mt-5">
-                            <form method="post" action="" class="" style="padding-top: 20px;">
-                                        <label>Add Note <span class="text-danger">*</span></label>
-                                        <div id="input-container">
-                                            <div class="input-group mb-3">
-                                                <input type="text" class="form-control" name="multiple_note"
-                                                    placeholder="Enter New note">
-                                            </div>
-                                        </div>
+                            <form id="orderNoteForm" style="padding-top: 20px;">
+                                @csrf
+                                <input type="hidden" name="id" value="{{ $order['id'] }}">
+                                <label>Add Note</label>
+                                <div>
+                                    <div class="input-group mb-3">
+                                        <input autofocus required type="text" class="form-control"
+                                            name="multiple_note[]" placeholder="Enter New note">
+                                    </div>
+                                </div>
 
-                                        <button type="button" class="btn btn-success add-new"> <i class="tio tio-add"></i> Add New Note</button>
-                                        @error('feature_title')
-                                            <span class="text-danger">{{ $message }}</span>
-                                        @enderror
-                                        <div class="d-flex justify-content-end">
-                                            <button type="submit" class="btn btn-primary">Submit</button>
-                                        </div>
-                                    </form>
+                                {{-- <button type="button" class="btn btn-success add-new"> <i class="tio tio-add"></i> Add
+                                    New Note</button> --}}
+                                @error('multiple_note')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                                <div class="d-flex justify-content-end">
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -334,13 +355,17 @@
                             </h4>
                         </div>
 
-                        <div class="col-6 pt-2">
+                        <div class="col-6 pt-2 ">
                             @if ($order->order_note != null)
                                 <span class="font-weight-bold text-capitalize">
                                     {{ \App\CPU\translate('order_note') }} :
                                 </span>
-                                <p class="pl-1">
-                                    {{ $order->order_note }}
+                                @php
+                                    $note = json_decode($order->order_note, true);
+                                @endphp
+
+                                <p class="pl-1 order_note">
+                                    {{ $note['note'] ?? '' }} — {{ $note['user'] ?? '' }} ({{ $note['date'] ?? '' }})
                                 </p>
                             @endif
                         </div>
@@ -528,6 +553,7 @@
                                 </div>
                             </div>
                             {{-- seller info old --}}
+
 
                             <!--Discount Modal Start-->
                             <div class="modal fade" id="exampleModal{{ $detail->id }}" tabindex="-1" role="dialog"
@@ -908,7 +934,7 @@
                                 toastr.warning(
                                     '{{ \App\CPU\translate('Account has been deleted, you can not change the status!') }}!'
                                 );
-                                // location.reload();
+
                             } else {
                                 toastr.success(
                                     '{{ \App\CPU\translate('Status Change successfully') }}'
@@ -951,6 +977,9 @@
                             data: $("form").serialize(),
                             success: function(data) {
                                 console.log(data.payment_status);
+                                console.log(data);
+
+
                                 toastr.success('Status Change successfully');
                                 // location.reload();
                             },
@@ -982,6 +1011,7 @@
                             data: $("form").serialize(),
                             success: function(data) {
                                 console.log(data);
+
                                 toastr.success('Status Change successfully');
                                 // location.reload();
                             },
@@ -1216,7 +1246,7 @@
             initializegLocationMap();
         });
     </script>
-       <script>
+    <script>
         $(document).ready(function() {
             // Function to handle adding new input fields
             $('.add-new').click(function() {
@@ -1225,7 +1255,7 @@
                 // Create new input field with delete button
                 let newInput = `
                     <div class="input-group mb-3">
-                        <input type="text" class="form-control" name="multiple_note" placeholder="Enter New Note">
+                        <input required type="text" class="form-control" name="multiple_note[]" placeholder="Enter New Note">
                         <button type="button" class="btn btn-danger delete"><i class="tio tio-delete"></i></button>
                     </div>`;
 
@@ -1236,6 +1266,48 @@
             // Function to handle deleting input fields
             $(document).on('click', '.delete', function() {
                 $(this).closest('.input-group').remove();
+            });
+        });
+    </script>
+    <script>
+        $('#orderNoteForm').on('submit', function(e) {
+            e.preventDefault();
+
+            let form = $(this);
+
+            // trim textarea value
+            let noteInput = form.find('input[name="multiple_note[]"]');
+            let trimmedValue = noteInput.val().trim();
+
+            if (trimmedValue === '') {
+                toastr.warning("Note cannot be empty !");
+                return;
+            }
+            // replace the original value with trimmed
+            noteInput.val(trimmedValue);
+            $.ajax({
+                url: "{{ route('admin.orders.multiple_note') }}",
+                type: "POST",
+                data: form.serialize(),
+                success: function(res) {
+                    if (res.status) {
+                        // frontend update
+                        $('#noteList').append(`
+                            <li style='text-align: left; text-wrap: wrap; line-height: 20px' class="badge badge-soft-primary d-inline-block  mb-2 py-2">
+                                ${res.note.note}
+                                <span class="text-muted">(${res.note.time}- Note by: ${res.note.user})</span>
+                            </li>
+                        `);
+
+
+                        form[0].reset();
+                    }
+                    toastr.success('Note added Successfully !');
+
+                },
+                error: function() {
+                    toastr.error('Something went wrong');
+                }
             });
         });
     </script>

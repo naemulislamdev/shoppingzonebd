@@ -5,6 +5,17 @@
     <link href="{{ asset('assets/back-end/vendor/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
     <script src="{{ asset('assets/back-end/vendor/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('assets/back-end/vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
+
+    <style>
+        td.order_status {
+            display: inline-block;
+            width: 120px;
+        }
+        td.cName {
+            display: inline-block;
+            width: 120px;
+        }
+    </style>
 @endpush
 
 
@@ -20,7 +31,8 @@
         <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-between mb-2">
             <h1 class="h3 mb-0 text-black-50">{{ \App\CPU\translate('User-info') }}
-                {{ \App\CPU\translate('List') }} <span class="badge badge-soft-info">{{ \App\Models\UserInfo::all()->count() }}</span> </h1>
+                {{ \App\CPU\translate('List') }} <span
+                    class="badge badge-soft-info">{{ \App\Models\UserInfo::all()->count() }}</span> </h1>
 
         </div>
         <div class="row" style="margin-top: 20px">
@@ -37,22 +49,15 @@
                                 <label for="to_date">To:</label>
                                 <input type="date" id="to_date" class="form-control">
                             </div>
-
                             <div class="col-md-4">
                                 <button id="filterBtn" class="btn btn-primary">Filter</button>
                                 <button id="clearBtn" class="btn btn-secondary ms-3">Clear</button>
                             </div>
-
-
                             <div class="col-md-2">
                                 <a href="{{ route('admin.user-info.bulk-export') }}" class="btn btn-success text-white">
                                     Export</a>
                             </div>
-
                         </div>
-
-
-
                     </div>
                     <div class="card-body" style="padding: 0">
                         <div class="table-responsive">
@@ -60,6 +65,7 @@
                                 @include('admin-views.user-info.partial.userinfo_table')
                             </div>
                         </div>
+
                     </div>
                     <div class="card-footer">
                     </div>
@@ -81,7 +87,7 @@
     <script>
         $(document).on('click', '.viewBtn', function() {
             let id = $(this).data('id');
-            console.log(id);
+
 
             $.ajax({
                 url: "{{ route('admin.user-info.view') }}", // POST route
@@ -92,18 +98,19 @@
                 },
                 success: function(response) {
                     // Table–এ status update
-                    if (response.status == 1) {
+                    if (response.status == 1 && response.seen_by !== null) {
                         $(`.status_${id}`).replaceWith(
-                            `<span class="badge badge-success status_${id}">Seen</span>`
+                            `
+                            <span class="badge badge-success status_${id}">Seen</span>
+                            <div><small>Seen by: <br/> ${response.seen_by}</small></div>
+                            `
                         );
+                        $(`.visiable_${id}`).removeClass("viewBtn");
                     }
 
-
-                    // Modal show
-                    console.log('AJAX RESPONSE:', response);
                     Swal.fire({
                         title: 'User Info',
-                        html: response.html, // ⭐ এখানে পুরো HTML যাবে
+                        html: response.html,
                         width: '800px',
                         showCloseButton: true,
                         showConfirmButton: false,
@@ -155,7 +162,6 @@
                             success: function(data) {
                                 toastr.success('Status Change successfully');
                                 $(`.note_${id}`).html(data.note);
-
                             },
                             error: function(data) {
                                 toastr.warning('Something went wrong !');
@@ -288,7 +294,8 @@
                         data: 'name',
                         title: 'NAME',
                         width: 'auto',
-                        searchable: true
+                        searchable: true,
+                        className: 'cName',
                     },
                     {
                         data: 'phone',
@@ -405,6 +412,53 @@
                         });
                     }
                 });
+            });
+        });
+    </script>
+    <script>
+        $(document).on('submit', '#orderNoteForm', function(e) {
+            console.log('submit');
+
+            e.preventDefault();
+
+            let form = $(this);
+
+            // trim input
+            let noteInput = form.find('input[name="multiple_note[]"]');
+            let trimmedValue = noteInput.val().trim();
+
+            if (trimmedValue === '') {
+                toastr.warning("Note cannot be empty !");
+                return;
+            }
+
+            noteInput.val(trimmedValue);
+
+            $.ajax({
+                url: "{{ route('admin.user-info.multiple_note') }}",
+                type: "POST",
+                data: form.serialize(),
+                success: function(res) {
+
+                    if (res.status) {
+
+                        $('#noteList').append(`
+                    <li style="text-align:left; line-height:20px"
+                        class="badge badge-soft-primary d-inline-block mb-2 py-2">
+                        ${res.note.note}
+                        <span class="text-muted">
+                            (${res.note.time} - Note by: ${res.note.user})
+                        </span>
+                    </li>
+                `);
+
+                        form[0].reset();
+                        toastr.success('Note added Successfully !');
+                    }
+                },
+                error: function() {
+                    toastr.error('Something went wrong');
+                }
             });
         });
     </script>

@@ -201,9 +201,7 @@ class ContactController extends Controller
     {
         if ($request->ajax()) {
             // Date filter
-
             $query = UserInfo::query()
-
                 ->select([
                     'id',
                     'name',
@@ -211,6 +209,7 @@ class ContactController extends Controller
                     'phone',
                     'address',
                     'status',
+                    'seen_by',
                     'type',
                     'order_process',
                     'product_details',
@@ -232,7 +231,7 @@ class ContactController extends Controller
                 // add column
                 ->addColumn('action', function ($row) {
                     return '
-                            <button class="btn btn-sm btn-info viewBtn mb-2 visiable_' . $row->id . '"  data-id="' . $row->id . '">
+                             <button class="btn btn-sm btn-info viewBtn mb-2 visiable_' . $row->id . '"  data-id="' . $row->id . '">
                                 <i class="tio-visible"></i>
                             </button>
 
@@ -242,18 +241,23 @@ class ContactController extends Controller
                         ';
                 })
 
-
-
                 ->editColumn('order_note', function ($row) {
-                    return '<span class="note_' . $row->id . '">' . ($row->order_note ?? 'N/A') . '</span>';
+                    return '
+                        <span class="note_' . $row->id . '">' . ($row->order_note ?? 'N/A') . '</span>
+                   ';
                 })
 
 
                 // Edit Column
                 ->editColumn('status', function ($row) {
-                    return $row->status == 1
-                        ? '<span class="badge badge-success status_' . $row->id . '">Seen</span>'
-                        : '<span class="badge badge-primary status_' . $row->id . '">Unseen</span>';
+                    if ($row->status == 1) {
+                        return '
+            <span class="badge badge-success status_' . $row->id . '">Seen</span>
+            <div><small>Seen by: <br/>' . $row->seen_by . '</small></div>
+        ';
+                    } else {
+                        return '<span class="badge badge-primary status_' . $row->id . '">Unseen</span>';
+                    }
                 })
 
                 ->editColumn('created_at', function ($row) {
@@ -369,20 +373,26 @@ class ContactController extends Controller
     public function userInfoView(Request $request)
     {
         $item = UserInfo::findOrFail($request->id);
-
         // status update
-        if ($item->status !== 1) {
-            $item->status = 1;
-            $item->save();
+        if ($item->status === 0) {
+            $item->update([
+                'status'  => 1,
+                'seen_by' => auth('admin')->user()->name,
+            ]);
         }
-
+        if($item->seen_by == null){
+            $data = [
+                'seen_by' => $item->seen_by
+            ];
+        }
         // return view content for modal
         $html = view('admin-views.user-info.partial.modal_view', compact('item'))->render();
 
-        return response()->json([
+        $data = [
             'status' => $item->status,
             'html' => $html,
-        ]);
+        ];
+        return response()->json($data);
     }
     public function userInfoDestroy(Request $request)
     {
@@ -427,27 +437,43 @@ class ContactController extends Controller
     }
     public function status(Request $request)
     {
+        $userinfo = UserInfo::findOrFail($request->id);
 
-        $userinfo = UserInfo::find($request->id);
         $userinfo->order_status = $request->order_status;
-        $userinfo->order_note = $request->note;
-        if($request->order_status == 'confirmed'){
-            $userinfo->confirmed_by = auth('admin')->user()->name;
-            $userinfo->confirmed_at = now();
+        $userinfo->order_note   = $request->note;
+
+        if ($request->order_status === 'confirmed') {
+
+            $userinfo->confirmed_by = json_encode([
+                'user' => auth('admin')->user()->name,
+                'time' => now()->format('d M Y h:i A')
+            ]);
+        } elseif ($request->order_status === 'canceled') {
+
+            $userinfo->canceled_by = json_encode([
+                'user' => auth('admin')->user()->name,
+                'time' => now()->format('d M Y h:i A')
+            ]);
         }
-        if($request->order_status == 'canceled'){
-            $userinfo->canceled_by = auth('admin')->user()->name;
-            $userinfo->canceled_at = now();
-        }
+
+
         $userinfo->save();
 
         return response()->json([
-            'status' => true,
-            'id' => $userinfo->id,
-            'note' => $userinfo->order_note
+            'status'       => true,
+            'id'           => $userinfo->id,
+            'order_status' => $userinfo->order_status,
+            'note'         => $userinfo->order_note,
+            'data'         => $request->order_status === 'confirmed'
+                ? json_decode($userinfo->confirmed_by)
+                : ($request->order_status === 'canceled'
+                    ? json_decode($userinfo->canceled_by)
+                    : null)
         ]);
     }
-    public function userinfoPendingList(Request $request) {
+
+    public function userinfoPendingList(Request $request)
+    {
         if ($request->ajax()) {
             // Date filter
 
@@ -460,6 +486,7 @@ class ContactController extends Controller
                     'phone',
                     'address',
                     'status',
+                    'seen_by',
                     'type',
                     'order_process',
                     'product_details',
@@ -472,7 +499,8 @@ class ContactController extends Controller
             // Filter by order_status canceled
 
             $query->where('order_status', 'pending')
-                ->latest('created_at');
+                ->orderBy('id', 'desc');
+
 
             // ✅ Date wise filter
             if ($request->filled('from') && $request->filled('to')) {
@@ -499,17 +527,25 @@ class ContactController extends Controller
 
 
                 ->editColumn('order_note', function ($row) {
-                    return '<span class="note_' . $row->id . '">' . ($row->order_note ?? 'N/A') . '</span>';
+                    return '
+                        <div>
+                            <span class="note_' . $row->id . '">' . ($row->order_note ?? 'N/A') . '</span>
+                        </div>
+                    ';
                 })
 
 
                 // Edit Column
                 ->editColumn('status', function ($row) {
-                    return $row->status == 1
-                        ? '<span class="badge badge-success status_' . $row->id . '">Seen</span>'
-                        : '<span class="badge badge-primary status_' . $row->id . '">Unseen</span>';
+                    if ($row->status == 1) {
+                        return '
+            <span class="badge badge-success status_' . $row->id . '">Seen</span>
+            <div><small>Seen by: <br/>' . $row->seen_by . '</small></div>
+        ';
+                    } else {
+                        return '<span class="badge badge-primary status_' . $row->id . '">Unseen</span>';
+                    }
                 })
-
                 ->editColumn('created_at', function ($row) {
                     return Carbon::parse($row->created_at)
                         ->format('d F Y g.i A');
@@ -620,7 +656,8 @@ class ContactController extends Controller
 
         return view('admin-views.user-info.pending_list');
     }
-    public function userinfoConfirmedList(Request $request) {
+    public function userinfoConfirmedList(Request $request)
+    {
         if ($request->ajax()) {
             // Date filter
 
@@ -633,6 +670,7 @@ class ContactController extends Controller
                     'phone',
                     'address',
                     'status',
+                    'seen_by',
                     'type',
                     'order_process',
                     'product_details',
@@ -645,7 +683,7 @@ class ContactController extends Controller
             // Filter by order_status canceled
 
             $query->where('order_status', 'confirmed')
-                ->latest('confirmed_at');
+                ->orderBy('id', 'desc');
 
             // ✅ Date wise filter
             if ($request->filled('from') && $request->filled('to')) {
@@ -678,9 +716,14 @@ class ContactController extends Controller
 
                 // Edit Column
                 ->editColumn('status', function ($row) {
-                    return $row->status == 1
-                        ? '<span class="badge badge-success status_' . $row->id . '">Seen</span>'
-                        : '<span class="badge badge-primary status_' . $row->id . '">Unseen</span>';
+                    if ($row->status == 1) {
+                        return '
+            <span class="badge badge-success status_' . $row->id . '">Seen</span>
+            <div><small>Seen by: <br/>' . $row->seen_by . '</small></div>
+        ';
+                    } else {
+                        return '<span class="badge badge-primary status_' . $row->id . '">Unseen</span>';
+                    }
                 })
 
                 ->editColumn('created_at', function ($row) {
@@ -793,7 +836,8 @@ class ContactController extends Controller
 
         return view('admin-views.user-info.confirmed_list');
     }
-    public function userinfoCanceledList(Request $request) {
+    public function userinfoCanceledList(Request $request)
+    {
         if ($request->ajax()) {
             // Date filter
 
@@ -806,6 +850,7 @@ class ContactController extends Controller
                     'phone',
                     'address',
                     'status',
+                    'seen_by',
                     'type',
                     'order_process',
                     'product_details',
@@ -818,7 +863,7 @@ class ContactController extends Controller
             // Filter by order_status canceled
 
             $query->where('order_status', 'canceled')
-             ->latest('canceled_at');
+                ->orderBy('id', 'desc');
 
             // ✅ Date wise filter
             if ($request->filled('from') && $request->filled('to')) {
@@ -851,9 +896,14 @@ class ContactController extends Controller
 
                 // Edit Column
                 ->editColumn('status', function ($row) {
-                    return $row->status == 1
-                        ? '<span class="badge badge-success status_' . $row->id . '">Seen</span>'
-                        : '<span class="badge badge-primary status_' . $row->id . '">Unseen</span>';
+                    if ($row->status == 1) {
+                        return '
+            <span class="badge badge-success status_' . $row->id . '">Seen</span>
+            <div><small>Seen by: <br/>' . $row->seen_by . '</small></div>
+        ';
+                    } else {
+                        return '<span class="badge badge-primary status_' . $row->id . '">Unseen</span>';
+                    }
                 })
 
                 ->editColumn('created_at', function ($row) {
@@ -965,6 +1015,41 @@ class ContactController extends Controller
         }
 
         return view('admin-views.user-info.canceled_list');
+    }
+    public function multipleUserInfoNote(Request $request)
+    {
+        $request->validate([
+            'id' => 'required',
+            'multiple_note' => 'required|array'
+        ]);
+
+        $userinfo = UserInfo::findOrFail($request->id);
+
+        // existing notes
+        $existingNotes = json_decode($userinfo->multiple_note, true) ?? [];
+
+        // new notes with date & time
+        $newNotes = [];
+
+        foreach ($request->multiple_note as $note) {
+            $newNotes[] = [
+                'note' => $note,
+                'time' => now()->format('d M Y h:i A'),
+                'user' => auth('admin')->user()->name
+            ];
+        }
+
+        // merge old + new
+        $mergedNotes = array_merge($existingNotes, $newNotes);
+
+        // save as json
+        $userinfo->multiple_note = json_encode($mergedNotes);
+        $userinfo->save();
+
+        return response()->json([
+            'status' => true,
+            'note' => end($newNotes) // last added note frontend এ পাঠানো
+        ]);
     }
 
     //--- User Information Management end---//

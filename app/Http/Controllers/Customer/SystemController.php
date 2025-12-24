@@ -313,24 +313,10 @@ class SystemController extends Controller
                 ->get();
 
             if ($userInfos->isNotEmpty()) {
-                // Update all matching pending user info entries
                 foreach ($userInfos as $userInfo) {
-                    $userInfo->update([
-                        'type' => 'Main page',
-                        'order_process' => 'completed',
-                        'order_process' => json_encode(session('cart'))
-                    ]);
+                    $userInfo->delete();
+
                 }
-            } else {
-                UserInfo::create([
-                    'name' => $request->name,
-                    'phone' => $request->phone,
-                    'email' => null,
-                    'address' => $request->address,
-                    'type' => 'Main page',
-                    'order_process' => 'completed',
-                    'product_details' => json_encode(session('cart')),
-                ]);
             }
 
             try {

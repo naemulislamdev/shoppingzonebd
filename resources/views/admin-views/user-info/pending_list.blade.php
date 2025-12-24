@@ -5,6 +5,17 @@
     <link href="{{ asset('assets/back-end/vendor/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
     <script src="{{ asset('assets/back-end/vendor/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('assets/back-end/vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
+     <style>
+          td.order_status  {
+            display: inline-block;
+            width: 120px;
+        }
+      td.cName  {
+        display: inline-block;
+        width: 120px;
+    }
+
+    </style>
 @endpush
 
 
@@ -93,9 +104,13 @@
                 success: function(response) {
                     // Table–এ status update
                     if (response.status == 1) {
-                        $(`.status_${id}`).replaceWith(
-                            `<span class="badge badge-success status_${id}">Seen</span>`
+                         $(`.status_${id}`).replaceWith(
+                            `
+                            <span class="badge badge-success status_${id}">Seen</span>
+                            <div><small>Seen by: <br/> ${response.seen_by}</small></div>
+                            `
                         );
+
                     }
 
 
@@ -290,7 +305,8 @@
                         data: 'name',
                         title: 'NAME',
                         width: 'auto',
-                        searchable: true
+                        searchable: true,
+                        className: 'cName'
                     },
                     {
                         data: 'phone',
@@ -407,6 +423,53 @@
                         });
                     }
                 });
+            });
+        });
+    </script>
+      <script>
+        $(document).on('submit', '#orderNoteForm', function(e) {
+            console.log('submit');
+
+            e.preventDefault();
+
+            let form = $(this);
+
+            // trim input
+            let noteInput = form.find('input[name="multiple_note[]"]');
+            let trimmedValue = noteInput.val().trim();
+
+            if (trimmedValue === '') {
+                toastr.warning("Note cannot be empty !");
+                return;
+            }
+
+            noteInput.val(trimmedValue);
+
+            $.ajax({
+                url: "{{ route('admin.user-info.multiple_note') }}",
+                type: "POST",
+                data: form.serialize(),
+                success: function(res) {
+
+                    if (res.status) {
+
+                        $('#noteList').append(`
+                    <li style="text-align:left; line-height:20px"
+                        class="badge badge-soft-primary d-inline-block mb-2 py-2">
+                        ${res.note.note}
+                        <span class="text-muted">
+                            (${res.note.time} - Note by: ${res.note.user})
+                        </span>
+                    </li>
+                `);
+
+                        form[0].reset();
+                        toastr.success('Note added Successfully !');
+                    }
+                },
+                error: function() {
+                    toastr.error('Something went wrong');
+                }
             });
         });
     </script>

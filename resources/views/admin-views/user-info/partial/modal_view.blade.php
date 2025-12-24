@@ -22,6 +22,14 @@
 
     <hr>
 
+    <div class="col-12 row mb-3 px-0">
+        <div class="col-5 font-weight-bold">Date</div>
+        <div class="col-7">
+            :
+            {{ \Carbon\Carbon::parse($item->created_at)->format('d F Y g.i A') }}
+        </div>
+    </div>
+
     <div class="row mb-2">
         <div class="col-5 font-weight-bold">Status</div>
         <div class="col-7">
@@ -56,31 +64,42 @@
         <div class="col-5 font-weight-bold">Order Status Note</div>
         <div class="col-7">: {{ $item->order_note ?? 'N/A' }}</div>
     </div>
+    
+ @if ($item->confirmed_by)
+    @php
+        $confirmed = json_decode($item->confirmed_by);
+    @endphp
 
-   @if ($item->confirmed_by)
-    <div class="row mb-2">
-        <div class="col-5 font-weight-bold">Order Status Confirmed By</div>
-        <div class="col-7 ">
-            : <span class="badge badge-success">
-                {{$item->confirmed_by}} => Date: {{ \Carbon\Carbon::parse($item->confirmed_at)->format('d F Y g.i A') }}
-            </span>
+    @if ($confirmed)
+        <div class="row mb-2">
+            <div class="col-5 font-weight-bold">Order Status Confirmed By</div>
+            <div class="col-7">
+                : <span class="badge badge-success">
+                    {{ $confirmed->user ?? 'Unknown' }} => Date: {{ $confirmed->time ?? 'N/A' }}
+                </span>
+            </div>
         </div>
-    </div>
+    @endif
 @endif
 
 @if ($item->canceled_by)
-    <div class="row mb-2">
-        <div class="col-5 font-weight-bold">Order Status Canceled By</div>
-        <div class="col-7 ">
-            : <div class="badge badge-danger">
-                {{$item->canceled_by}} => Date: {{ \Carbon\Carbon::parse($item->canceled_at)->format('d F Y g.i A') }}
+    @php
+        $canceled = json_decode($item->canceled_by);
+    @endphp
+
+    @if ($canceled)
+        <div class="row mb-2">
+            <div class="col-5 font-weight-bold">Order Status Canceled By</div>
+            <div class="col-7">
+                : <span class="badge badge-danger">
+                    {{ $canceled->user ?? 'Unknown' }} => Date: {{ $canceled->time ?? 'N/A' }}
+                </span>
             </div>
         </div>
-    </div>
+    @endif
 @endif
 
 
-    <hr>
 
     {{-- Product Details --}}
     <div class="row mb-2">
@@ -106,13 +125,15 @@
                             @if (!empty($p['variations']) && is_array($p['variations']))
                                 <strong>Variations:</strong>
                                 @foreach ($p['variations'] as $k => $v)
-                                    {{ ucfirst($k) }}: {{ ucfirst($v) }}@if (!$loop->last), @endif
+                                    {{ ucfirst($k) }}: {{ ucfirst($v) }}@if (!$loop->last)
+                                        ,
+                                    @endif
                                 @endforeach
                             @endif
                         </div>
                     @endforeach
 
-                {{-- Single product --}}
+                    {{-- Single product --}}
                 @else
                     <div class="border rounded p-2">
                         <strong>Product ID:</strong> {{ $product_details['product_id'] ?? 'N/A' }} <br>
@@ -126,7 +147,6 @@
                         @endif
                     </div>
                 @endif
-
             @else
                 <p>No product details available</p>
             @endif
@@ -134,14 +154,41 @@
         </div>
     </div>
 
-    <hr>
+    <div class="row border">
+        <div class="col-12">
+            <div class="mt-3">
+                <h4>Order Note:</h4>
 
-    <div class="row">
-        <div class="col-5 font-weight-bold">Date</div>
-        <div class="col-7">
-            :
-            {{ \Carbon\Carbon::parse($item->created_at)->format('d F Y g.i A') }}
+                <ul id="noteList" class="list-unstyled d-flex flex-column">
+                    @if ($item->multiple_note)
+                        @foreach (json_decode($item->multiple_note, true) as $note)
+                            <li style="text-align: left;  text-wrap: wrap; line-height: 20px"
+                                class="badge badge-soft-primary mb-2 py-2">
+                                {{ $note['note'] }}
+                                <span class="text-muted">({{ $note['time'] }} -> Note by:
+                                    {{ $note['user'] }})</span>
+                            </li>
+                        @endforeach
+
+                    @endif
+                </ul>
+            </div>
+        </div>
+        <div class="col-12">
+            <form id="orderNoteForm" style="padding-top: 20px;">
+                @csrf
+                <input type="hidden" name="id" value="{{ $item['id'] }}">
+                <label>Add Note</label>
+                <div class="input-group mb-3">
+                    <input autofocus required type="text" class="form-control" name="multiple_note[]"
+                        placeholder="Enter New note">
+                    <button class="btn btn-primary" type="submit">Submit</button>
+                </div>
+
+                @error('multiple_note')
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
+            </form>
+
         </div>
     </div>
-
-</div>

@@ -656,6 +656,7 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('Individual/{status}', 'Individual')->name('Individual');
             Route::post('ordersPrice/{id}', 'ordersPrice')->name('ordersPrice');
             Route::get('detailsProduct/{product_id}', 'detailsProduct')->name('detailsProduct');
+            Route::post("multiple-note", 'multipleNote')->name("multiple_note");
             Route::get('details/{id}', 'details')->name('details');
             Route::get('edit/{id}', 'edit')->name('edit');
             Route::post('update/{id}', 'orderUpdate')->name('update');
@@ -784,7 +785,7 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('bulk-export', 'bulk_export_dataUserInfo')->name('bulk-export');
             Route::get('reload-user-info', 'reloadUserInfo')->name('reloadUserInfo');
 
-
+            Route::post("multiple-note", 'multipleUserInfoNote')->name("multiple_note");
             Route::get('pending', 'userinfoPendingList')->name('pending');
             Route::get('confirmed', 'userinfoConfirmedList')->name('confirmed');
             Route::get('canceled', 'userinfoCanceledList')->name('canceled');

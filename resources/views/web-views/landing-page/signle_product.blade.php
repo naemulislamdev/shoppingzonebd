@@ -891,6 +891,7 @@
                                                                                         <label class="shipping-box"
                                                                                             for="shipping_{{ $shipping['id'] }}">
                                                                                             <input type="radio"
+                                                                                                required
                                                                                                 name="shipping_method"
                                                                                                 class="shipping-method"
                                                                                                 id="shipping_{{ $shipping['id'] }}"

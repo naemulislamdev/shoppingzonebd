@@ -20,9 +20,9 @@
                             @endphp
                             @if (session()->has('cart') && count(session()->get('cart')) > 0)
                                 @foreach (session()->get('cart') as $key => $cartItem)
-                                @php
-                                    $gTotal += ($cartItem['price'] - $cartItem['discount']) * $cartItem['quantity'];
-                                @endphp
+                                    @php
+                                        $gTotal += ($cartItem['price'] - $cartItem['discount']) * $cartItem['quantity'];
+                                    @endphp
                                     <tr>
                                         <td class="product-col">
                                             <div class="checkout-product">
@@ -171,6 +171,11 @@
         let typingTimer;
         let doneTypingInterval = 1000; // Time in milliseconds (1 second)
 
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
         $(".auto-save").on("input", function() {
             clearTimeout(typingTimer);
             typingTimer = setTimeout(saveUserData, doneTypingInterval);
@@ -200,29 +205,31 @@
 </script>
 
 @if (session()->has('cart') && count(session()->get('cart')) > 0)
-<script>
-    window.dataLayer = window.dataLayer || [];
+    <script>
+        window.dataLayer = window.dataLayer || [];
 
-    dataLayer.push({
-        event: "begin_checkout",
-        ecommerce: {
-            currency: "BDT",
-            value: {{ \App\CPU\Helpers::currency_converter($gTotal) }},
-            items: [
-                @foreach (session('cart') as $item)
-                {
-                    item_id: "{{ $item['id'] }}",
-                    item_name: "{{ $item['name'] }}",
-                    item_brand: "{{ $item['brand'] ?? '' }}",
-                    item_category: "{{ $item['category'] ?? '' }}",
-                    item_variant: "{{ $item['variant'] ?? '' }}",
-                    price: {{ \App\CPU\Helpers::currency_converter($item['price'] - $item['discount']) }},
-                    quantity: {{ $item['quantity'] }}
-                }@if(!$loop->last),@endif
-                @endforeach
-            ]
-        }
-    });
-</script>
+        dataLayer.push({
+            event: "begin_checkout",
+            ecommerce: {
+                currency: "BDT",
+                value: {{ \App\CPU\Helpers::currency_converter($gTotal) }},
+                items: [
+                    @foreach (session('cart') as $item)
+                        {
+                            item_id: "{{ $item['id'] }}",
+                            item_name: "{{ $item['name'] }}",
+                            item_brand: "{{ $item['brand'] ?? '' }}",
+                            item_category: "{{ $item['category'] ?? '' }}",
+                            item_variant: "{{ $item['variant'] ?? '' }}",
+                            price: {{ \App\CPU\Helpers::currency_converter($item['price'] - $item['discount']) }},
+                            quantity: {{ $item['quantity'] }}
+                        }
+                        @if (!$loop->last)
+                            ,
+                        @endif
+                    @endforeach
+                ]
+            }
+        });
+    </script>
 @endif
-
