@@ -756,7 +756,7 @@
                             <div class="media-body">
                                 <span class="text-body text-hover-primary">
                                     {{ \App\Model\Order::where('customer_id', $order['customer_id'])->count() }}
-                                    {{ \App\CPU\translate('orders') }}</span>
+                                    {{ \App\CPU\translate('orders') }} </span>
                             </div>
                             <div class="media-body text-right">
                                 {{-- <i class="tio-chevron-right text-body"></i> --}}

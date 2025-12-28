@@ -90,6 +90,8 @@ class OrderController extends Controller
                 foreach ($key as $value) {
                     $qq->where('id', 'like', "%{$value}%")
                         ->orWhere('order_status', 'like', "%{$value}%")
+                        ->orWhere('phone', 'like', "%{$value}%")
+                        ->orWhere('customer_id', 'like', "%{$value}%")
                         ->orWhere('transaction_ref', 'like', "%{$value}%");
                 }
             });
