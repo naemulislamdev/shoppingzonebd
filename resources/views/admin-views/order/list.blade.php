@@ -549,7 +549,13 @@
                             </td>
                             <td>
                                 @if ($order['order_note'])
-                                    {{ $order['order_note'] }}
+                                    @php
+                                    $note = json_decode($order->order_note, true);
+                                @endphp
+
+                                <p class="pl-1 order_note">
+                                    {{ $note['note'] ?? '' }} — {{ $note['user'] ?? '' }} ({{ $note['date'] ?? '' }})
+                                </p>
                                 @else
                                     <span>Empty</span>
                                 @endif

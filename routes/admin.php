@@ -63,8 +63,9 @@ use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\WithdrawController;
 use App\Http\Controllers\CareerController;
 use App\Http\Controllers\JobApplicationController;
+use App\Http\Controllers\JobDepartmentController;
 use App\Http\Controllers\WholesaleController;
-use App\Models\Blog;
+
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('/admin')->as('admin.')->group(function () {
@@ -655,6 +656,7 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('Individual/{status}', 'Individual')->name('Individual');
             Route::post('ordersPrice/{id}', 'ordersPrice')->name('ordersPrice');
             Route::get('detailsProduct/{product_id}', 'detailsProduct')->name('detailsProduct');
+            Route::post("multiple-note", 'multipleNote')->name("multiple_note");
             Route::get('details/{id}', 'details')->name('details');
             Route::get('edit/{id}', 'edit')->name('edit');
             Route::post('update/{id}', 'orderUpdate')->name('update');
@@ -691,6 +693,11 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::post('/status', 'status')->name('status');
             Route::get('bulk-export', 'bulk_export_applications')->name('bulk-export');
         });
+
+        // Job Department
+
+        Route::resource('job-departments', JobDepartmentController::class);
+        Route::post("/job_departments/status", [JobDepartmentController::class, 'status'])->name("job_department.status");
 
 
         //pos management
@@ -749,32 +756,39 @@ Route::prefix('/admin')->as('admin.')->group(function () {
         });
         Route::controller(ContactController::class)->prefix('/investors')->as('investors.')->middleware('module:support_section')->group(function () {
             Route::get('list', 'investorsList')->name('list');
-            Route::get('view/{id}', 'investorsView')->name('view');
+            Route::post('view', 'investorsViewStatus')->name('view');
             Route::post('delete', 'investorsDestroy')->name('delete');
-            Route::post('update/remark/{id}', 'updateRemark')->name('update_remark');
+            Route::post('update/remark', 'updateInvestorRemark')->name('update_remark');
             Route::get('bulk-export', 'bulk_export_investors')->name('bulk-export');
-            Route::post('remark-status', 'remarkStatus')->name('remarkstatus');
+
         });
         Route::controller(ContactController::class)->prefix('/leads')->as('leads.')->middleware('module:support_section')->group(function () {
             Route::get('list', 'leadsList')->name('list');
             Route::post('delete', 'leadDestroy')->name('delete');
-            Route::get('view/{id}', 'leadView')->name('view');
-            Route::post('update/remark/{id}', 'updateLeadRemark')->name('update_remark');
+            Route::post('view', 'leadView')->name('view');
+            Route::post('update/remark', 'updateLeadRemark')->name('update_remark');
             Route::get('bulk-export', 'bulk_export_LeadsData')->name('bulk-export');
         });
         // wholesale routes
         Route::controller(WholesaleController::class)->prefix('/wholesale')->as('wholesale.')->middleware('module:support_section')->group(function () {
             Route::get('list', 'wholesaleList')->name('list');
             Route::post('delete', 'wholesaleDestroy')->name('delete');
-            Route::get('view/{id}', 'wholesaleView')->name('view');
+            Route::post('view', 'wholesaleView')->name('view');
+            Route::post('status', 'status')->name('status');
             Route::get('bulk-export', 'bulk_export_data')->name('bulk-export');
         });
         Route::controller(ContactController::class)->prefix('/user-info')->as('user-info.')->middleware('module:support_section')->group(function () {
             Route::get('list', 'userInfoList')->name('list');
             Route::post('delete', 'userInfoDestroy')->name('delete');
-            Route::get('view/{id}', 'userInfoView')->name('view');
+            Route::post('view', 'userInfoView')->name('view');
             Route::post('status', 'status')->name('status');
-            Route::get('ajax-search', 'ajaxSearch')->name('ajax-search');
+            Route::get('bulk-export', 'bulk_export_dataUserInfo')->name('bulk-export');
+            Route::get('reload-user-info', 'reloadUserInfo')->name('reloadUserInfo');
+
+            Route::post("multiple-note", 'multipleUserInfoNote')->name("multiple_note");
+            Route::get('pending', 'userinfoPendingList')->name('pending');
+            Route::get('confirmed', 'userinfoConfirmedList')->name('confirmed');
+            Route::get('canceled', 'userinfoCanceledList')->name('canceled');
         });
 
         Route::controller(DeliveryManController::class)->prefix('/delivery-man')->as('delivery-man.')->group(function () {

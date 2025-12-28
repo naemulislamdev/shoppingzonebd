@@ -16,6 +16,10 @@
 
     <!-- Font Awesome cdn link -->
     <link rel="stylesheet" href="{{ asset('assets/front-end') }}/css/font-awesome.min.css" />
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.13.1/font/bootstrap-icons.min.css"
+        integrity="sha512-t7Few9xlddEmgd3oKZQahkNI4dS6l80+eGEzFQiqtyVYdvcSG2D3Iub77R20BdotfRPA9caaRkg1tyaJiPmO0g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="{{ asset('assets/front-end') }}/css/animate.min.css" />
     <link rel="stylesheet" href="{{ asset('assets/front-end') }}/css/xzoom.min.css" />
     <!-- Owl-carosul css cdn link -->
@@ -46,34 +50,34 @@
         .v-size-box {
             display: flex;
             align-items: center;
-            width: 4.375rem;
-            height: 1.875rem !important;
-            margin-top: 0rem;
-            margin-right: .625rem;
+            width: 70px;
+            height: 30px !important;
+            margin-top: 0px;
+            margin-right: 10px;
         }
 
         .v-color-box>.color-label,
         .v-size-box>.size-label {
             cursor: pointer;
-            border: .125rem solid #ccc;
-            padding: .125rem .375rem !important;
-            border-radius: .3125rem;
+            border: 2px solid #ccc;
+            padding: 2px 6px !important;
+            border-radius: 5px;
             width: 100%;
             text-align: center;
-            /* height: 1.875rem !important; */
+            /* height: 30px !important; */
             position: relative;
         }
 
         .v-color-box>input:checked+.color-label,
         .v-size-box>input:checked+.size-label {
-            border: 4px solid #02ab16 !important;
+            border: .25rem solid #02ab16 !important;
         }
 
         .v-size-box>input:checked+.size-label::after {
             content: '✓';
             position: absolute;
             color: green !important;
-            font-size: 19px !important;
+            font-size: 1.1875rem !important;
             top: 51% !important;
             left: 77% !important;
             font-weight: bolder;
@@ -82,7 +86,7 @@
 
         .cs_header_number_wrap {
             position: relative;
-            padding-left: 3.125rem;
+            padding-left: 50px;
             display: -webkit-box;
             display: -ms-flexbox;
             display: flex;
@@ -96,22 +100,22 @@
         .cs_header_number_wrap svg {
             position: absolute;
             left: 0;
-            width: 2.5rem;
-            height: 2.5rem;
-            top: .1875rem;
+            width: 40px;
+            height: 40px;
+            top: 3px;
         }
 
         .cs_header_number_wrap .cs_header_number {
             font-weight: 600;
             font-family: var(--primary-font);
-            font-size: 1.625rem;
+            font-size: 26px;
             line-height: 1.1em;
         }
 
         .cs_header_number_wrap .cs_header_number_text {
-            font-size: .75rem;
+            font-size: 12px;
             line-height: 1.5em;
-            color: #636363;
+            color: #fff;
         }
 
         .table-cart th {
@@ -123,46 +127,46 @@
         .btn-primary {
             background-color: #303030;
             border: none;
-            margin-top: .625rem;
-            font-size: 1.0625rem;
+            margin-top: 10px;
+            font-size: 17px;
             font-weight: 600;
-            bottom: 0px;
+            bottom: 0rem;
             position: absolute;
-            left: 0rem;
-            right: 0rem;
+            left: 0px;
+            right: 0px;
             width: 100%;
         }
 
         .product-box {
-            box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+            box-shadow: rgba(0, 0, 0, 0.24) 0rem .1875rem .5rem;
         }
 
         .product-box-col-2 {
-            height: 29.0625rem;
+            height: 465px;
         }
 
         .product-box-col-3 {
-            height: 42.5rem;
+            height: 680px;
         }
 
         .product-box-col-6 {
-            height: 77.1875rem;
+            height: 1235px;
         }
 
         .product-box-col-4 {
-            height: 54.375rem;
+            height: 870px;
         }
 
         .product-box-col-sm-6 {
-            height: 32.5rem;
+            height: 520px;
         }
 
         .product-box-col-sm-12 {
-            height: 46.875rem;
+            height: 750px;
         }
 
         .product-image2-col-2 {
-            height: 16.875rem
+            height: 270px
         }
 
         .product-box .title {
@@ -301,7 +305,7 @@
 </head>
 <!-- Body-->
 
-<body class="toolbar-enabled">
+<body class="toolbar-enabled position-relative">
     <!-- Google Tag Manager (noscript) -->
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WQ6FD77Z" height="0" width="0"
             style="display:none;visibility:hidden"></iframe></noscript>
@@ -310,19 +314,18 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-6">
-                    <a href="tel:{{ \App\CPU\Helpers::get_business_settings('company_hotline') }}"
-                        class="cs_header_number_wrap float-right">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"
-                            stroke-linejoin="round" class="lucide lucide-headset">
-                            <path
-                                d="M3 11h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5Zm0 0a9 9 0 1 1 18 0m0 0v5a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3Z" />
-                            <path d="M21 16v2a4 4 0 0 1-4 4h-5" />
-                        </svg>
-                        <span
-                            class="cs_accent_color cs_fs_24 cs_header_number">{{ \App\CPU\Helpers::get_business_settings('company_hotline') }}</span>
-                        <span class="cs_header_number_text">24/7 Support Center</span>
+
+
+                    <a href="https://wa.me/8801406667669?text=Is%20anyone%20available%20to%20chat%3F"
+                        class="cs_header_number_wrap d-flex flex-row align-items-center justify-content-end g-2">
+                        <div><i style="font-size: 2.1875rem; color:#fff;" class="fa fa-whatsapp"></i></div>
+                        <div class="d-flex flex-column ml-2">
+                            <span style=" color:#fff;"
+                                class="cs_accent_color cs_fs_24 cs_header_number">{{ \App\CPU\Helpers::get_business_settings('company_hotline') }}</span>
+                            <span class="cs_header_number_text">24/7 Support Center</span>
+                        </div>
                     </a>
+
                     {{-- <div>
                         <span class="topbar-contact">{{ \App\CPU\translate('Hotline') }}: <a
                                 href="tel:{{ \App\CPU\Helpers::get_business_settings('company_hotline') }}">{{ \App\CPU\Helpers::get_business_settings('company_hotline') }}</a></span>
@@ -416,7 +419,7 @@
 
     {{-- loader --}}
     <div class="row">
-        <div class="col-12" style="margin-top:160px;position: fixed;z-index: 9999;">
+        <div class="col-12" style="margin-top:10rem;position: fixed;z-index: 9999;">
             <div id="loading" style="display: none;">
                 <center>
                     <img width="200"
@@ -427,6 +430,44 @@
         </div>
     </div>
     {{-- loader --}}
+
+    {{-- Whatsapp Start --}}
+
+    {{-- <div class="chat-wrapper draggable" id="chat-wrapper">
+        <!-- Social Box -->
+        <div class="chat-box" id="chatBox">
+            <a title="Messenger" href="https://m.me/shoppingzonebd300" target="_blank" class="chat-item messenger">
+                <i class="bi bi-messenger"></i>
+            </a>
+            <a title="WhatsApp" href="https://wa.me/8801406667669?text=Is%20anyone%20available%20to%20chat%3F"
+                target="_blank" class="chat-item whatsapp">
+                <i class="bi bi-whatsapp"></i>
+            </a>
+        </div>
+
+        <!-- Toggle Button -->
+        <button class="chat-toggle" id="chatToggle">
+            <i class="bi bi-chat-right-text"></i>
+        </button>
+    </div> --}}
+
+    <div class="chat-wrapper draggable" id="chat-wrapper">
+        <div class="chat-box" id="chatBox">
+            <a title="Messenger" href="https://m.me/shoppingzonebd300" target="_blank" class="chat-item messenger">
+                <i class="bi bi-messenger"></i>
+            </a>
+            <a title="WhatsApp" href="https://wa.me/8801406667669?text=Is%20anyone%20available%20to%20chat%3F"
+                target="_blank" class="chat-item whatsapp">
+                <i class="bi bi-whatsapp"></i>
+            </a>
+        </div>
+
+        <button class="chat-toggle" id="chatToggle">
+            <i class="bi bi-chat-right-text"></i>
+        </button>
+    </div>
+
+
 
     <!-- Page Content-->
     @yield('content')
@@ -447,7 +488,7 @@
     <script src="{{ asset('assets/front-end') }}/js/xzoom_setup.js"></script>
     <script src="{{ asset('assets/front-end') }}/js/spartan-multi-image-picker-min.js"></script>
     <script src="{{ asset('assets/front-end') }}/js/scrolltotop.js"></script>
-
+    <script src="https://unpkg.com/interactjs/dist/interact.min.js"></script>
     <script src="{{ asset('assets/front-end') }}/js/sweet_alert.js"></script>
     {{-- Toastr --}}
     <script src={{ asset('assets/back-end/js/toastr.js') }}></script>
@@ -473,6 +514,157 @@
             toastr.warning("{{ Session::get('warning') }}")
         </script>
     @endif
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const wrapper = document.getElementById('chat-wrapper');
+            const toggleBtn = document.getElementById('chatToggle');
+            const icon = toggleBtn.querySelector('i');
+
+            // Toggle chat box
+            toggleBtn.addEventListener('click', (e) => {
+                wrapper.classList.toggle('active');
+                if (wrapper.classList.contains('active')) {
+                    icon.classList.remove('bi-chat-right-text');
+                    icon.classList.add('bi-x-circle');
+                } else {
+                    icon.classList.remove('bi-x-circle');
+                    icon.classList.add('bi-chat-right-text');
+                }
+            });
+
+            // Interact.js draggable
+            interact('.draggable')
+                .draggable({
+                    // enable inertial throwing
+                    inertia: true,
+                    // keep the element within the area of it's parent
+                    modifiers: [
+                        interact.modifiers.restrictRect({
+                            restriction: 'parent',
+                            endOnly: true
+                        })
+                    ],
+                    // enable autoScroll
+                    autoScroll: true,
+
+                    listeners: {
+                        // call this function on every dragmove event
+                        move: dragMoveListener,
+
+                        // call this function on every dragend event
+                        end(event) {
+                            var textEl = event.target.querySelector('p')
+
+                            textEl && (textEl.textContent =
+                                'moved a distance of ' +
+                                (Math.sqrt(Math.pow(event.pageX - event.x0, 2) +
+                                    Math.pow(event.pageY - event.y0, 2) | 0))
+                                .toFixed(2) + 'px')
+                        }
+                    }
+                })
+        });
+
+        function dragMoveListener(event) {
+            var target = event.target
+            // keep the dragged position in the data-x/data-y attributes
+            var x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx
+            var y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy
+
+            // translate the element
+            target.style.transform = 'translate(' + x + 'px, ' + y + 'px)'
+
+            // update the posiion attributes
+            target.setAttribute('data-x', x)
+            target.setAttribute('data-y', y)
+        }
+
+        // this function is used later in the resizing and gesture demos
+        window.dragMoveListener = dragMoveListener
+    </script>
+
+    {{-- Multi social toggle and drag --}}
+    {{-- <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const wrapper = document.getElementById('chat-wrapper');
+            const toggleBtn = document.getElementById('chatToggle');
+            const icon = toggleBtn.querySelector('i');
+
+            // Toggle
+            toggleBtn.addEventListener('click', () => {
+                wrapper.classList.toggle('active');
+                if (wrapper.classList.contains('active')) {
+                    icon.classList.remove('bi-chat-right-text');
+                    icon.classList.add('bi-x-circle');
+                } else {
+                    icon.classList.remove('bi-x-circle');
+                    icon.classList.add('bi-chat-right-text');
+                }
+            });
+
+            // Drag
+            let isDragging = false,
+                offsetX = 0,
+                offsetY = 0;
+
+            const startDrag = (e) => {
+                e.preventDefault();
+                const evt = e.touches ? e.touches[0] : e;
+                offsetX = evt.clientX - wrapper.offsetLeft;
+                offsetY = evt.clientY - wrapper.offsetTop;
+                isDragging = true;
+            };
+
+            const doDrag = (e) => {
+                if (!isDragging) return;
+                const evt = e.touches ? e.touches[0] : e;
+
+                let x = evt.clientX - offsetX;
+                let y = evt.clientY - offsetY;
+
+                // Clamp
+                const maxX = window.innerWidth - wrapper.offsetWidth;
+                const maxY = window.innerHeight - wrapper.offsetHeight;
+                x = Math.max(0, Math.min(x, maxX));
+                y = Math.max(0, Math.min(y, maxY));
+
+                wrapper.style.left = x + 'px';
+                wrapper.style.top = y + 'px';
+            };
+
+            const endDrag = () => {
+                if (!isDragging) return;
+                isDragging = false;
+                sessionStorage.setItem('chatPosition', JSON.stringify({
+                    left: wrapper.offsetLeft,
+                    top: wrapper.offsetTop
+                }));
+            };
+
+            // Load position
+            const saved = JSON.parse(sessionStorage.getItem('chatPosition'));
+            if (saved) {
+                wrapper.style.left = saved.left + 'px';
+                wrapper.style.top = saved.top + 'px';
+                wrapper.style.right = 'auto';
+                wrapper.style.bottom = 'auto';
+            }
+
+            // Events
+            wrapper.addEventListener('mousedown', startDrag);
+            document.addEventListener('mousemove', doDrag);
+            document.addEventListener('mouseup', endDrag);
+
+            wrapper.addEventListener('touchstart', startDrag, {
+                passive: false
+            });
+            document.addEventListener('touchmove', doDrag, {
+                passive: false
+            });
+            document.addEventListener('touchend', endDrag);
+        });
+    </script> --}}
+
     {{-- owl carosel  --}}
     <script>
         // $(document).ready(function() {
@@ -839,7 +1031,7 @@
                         $('.countWishlist').html(data.count);
                         $('.countWishlist-' + product_id).text(data.product_count);
                         $('.tooltip').html('');
-                        /*$('.wishlist' + data.id).html('<button type="button" class="btn" title="Add to wishlist" onclick="addWishlist(' + data.id + ')" style="background-color: transparent ;font-size: 1.125rem; height: 2.8125rem; color: #9E9E9E; border: .125rem solid #9E9E9E;">' +
+                        /*$('.wishlist' + data.id).html('<button type="button" class="btn" title="Add to wishlist" onclick="addWishlist(' + data.id + ')" style="background-color: transparent ;font-size: 18px; height: 45px; color: #9E9E9E; border: 2px solid #9E9E9E;">' +
                             '                       <i class="fa fa-heart-o mr-2" aria-hidden="true"></i>' +
                             '                   </button>');*/
                         // Product AI API integration
@@ -892,7 +1084,7 @@
                     $('.countWishlist').html(data.count);
                     $('#set-wish-list').html(data.wishlist);
                     $('.tooltip').html('');
-                    /*$('.wishlist' + data.id).html('<button type="button" class="btn" title="Add to wishlist" onclick="addWishlist(' + data.id + ')" style="background-color: transparent ;font-size: 1.125rem; height: 2.8125rem; color: #9E9E9E; border: .125rem solid #9E9E9E;">' +
+                    /*$('.wishlist' + data.id).html('<button type="button" class="btn" title="Add to wishlist" onclick="addWishlist(' + data.id + ')" style="background-color: transparent ;font-size: 18px; height: 45px; color: #9E9E9E; border: 2px solid #9E9E9E;">' +
                         '                       <i class="fa fa-heart-o mr-2" aria-hidden="true"></i>' +
                         '                   </button>');*/
                 },
@@ -1395,6 +1587,8 @@
             });
         });
     </script>
+
+
 
     @stack('scripts')
 </body>

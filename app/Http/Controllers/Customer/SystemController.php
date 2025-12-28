@@ -488,28 +488,12 @@ class SystemController extends Controller
 
             DB::table('order_details')->insert($or_d);
 
-            $userInfos = UserInfo::where('phone', $request->phone)
-                ->where('type', 'pending')
-                ->get();
+            $userInfo = UserInfo::where('session_id', $request->input('session_id'))
+                ->where('order_process', 'pending')
+                ->first();
 
-            if ($userInfos->isNotEmpty()) {
-                // Update all matching pending user info entries
-                foreach ($userInfos as $userInfo) {
-                    $userInfo->update([
-                        'type' => 'Landing page',
-                        'order_process' => 'completed',
-                    ]);
-                }
-            } else {
-                UserInfo::create([
-                    'name' => $request->name,
-                    'phone' => $request->phone,
-                    'email' => null,
-                    'address' => $request->address,
-                    'type' => 'Landing page',
-                    'order_process' => 'completed',
-                    'product_details' => json_encode($request->all()),
-                ]);
+            if ($userInfo) {
+                $userInfo->delete();
             }
 
             try {

@@ -141,13 +141,7 @@ a:hover {
     font-size: 25px;
     color: #f26d21;
 }
-.topbar-contact,
-.topbar-contact > a,
-header.scrolled .header-icon > a > .fa,
-header.scrolled .menu-area a,
-header.scrolled .navbar-brand {
-    color: #fff;
-}
+
 .overlay {
     display: none;
     top: 0;
@@ -157,6 +151,7 @@ header.scrolled .navbar-brand {
 }
 .topbar-section {
     padding: 5px 0;
+    background-color: #ff5d00;
 }
 .topbar-contact {
     font-family: var(--jost);
@@ -164,7 +159,7 @@ header.scrolled .navbar-brand {
 .topbar-box ul > li > a,
 .topbar-contact,
 .topbar-contact > a {
-    color: #3b3b3b;
+    color: #fff;
     font-family: var(--jost);
 }
 .dropdown-menu1 ul,
@@ -191,8 +186,7 @@ header.scrolled .navbar-brand {
     font-family: var(--ef);
 }
 .header-logo {
-    width: 350px;
-    border-radius: 27px;
+    width: 80px;
 }
 header {
     position: sticky;
@@ -202,11 +196,12 @@ header {
     padding: 0;
     z-index: 9999;
     border-bottom: 0px solid hsla(0, 0%, 100%, 0.14);
-    background: #ff5d00;
+    background: #fff;
     transition: 0.5s;
 }
 header.scrolled {
-    background-color: #ff5d00;
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     z-index: 9999;
 }
 .menu-area {
@@ -227,13 +222,16 @@ header.scrolled {
     margin-right: 10px;
 }
 .menu-area > ul > li > a {
-    color: var(--text-white);
+    color: var(--text-black);
     padding: 0 7px;
     display: block;
     transition: 0.5s;
     font-family: var(--jost);
     font-size: 17px;
     font-weight: 500;
+}
+.menu-area > ul > li > a:hover {
+    color: #ff5d00;
 }
 .menu-active {
     color: brown !important;
@@ -354,7 +352,7 @@ header.scrolled {
 .slider-content-box > h3,
 .slider-content-box > h5,
 .slider-inner-btn > a {
-    color: var(--text-white);
+    color: var(--text-black);
 }
 .menu-link a .fa-minus,
 .menu-link a .fa-plus {
@@ -1555,3 +1553,94 @@ footer {
     font-size: 14px;
     text-align: center;
 }
+
+
+.chat-wrapper {
+    position: fixed;
+    right: 0;
+    bottom: 9%;
+    z-index: 9999;
+    text-align: center;
+    border-radius: 40px;
+    padding-bottom: 10px;
+    transition: all 0.3s ease;
+}
+
+.chat-wrapper.active {
+    background-color: #fff;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+}
+
+.chat-toggle {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    border: none;
+    background: #ff5d00;
+    color: #fff;
+    font-size: 22px;
+    cursor: pointer;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    z-index: 10000;
+    position: relative;
+}
+
+.chat-toggle:focus {
+    outline: none;
+    border: none;
+}
+
+.chat-box {
+    background: #fff;
+    padding: 12px;
+    margin-bottom: 14px;
+    border-radius: 40px 40px 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+
+    opacity: 0;
+    transform: translateY(10px) scale(0.95);
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+.chat-wrapper.active .chat-box {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+
+.chat-item {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 22px;
+    text-decoration: none;
+    transition: transform 0.2s;
+}
+
+.chat-item:hover {
+    transform: scale(1.1);
+    color: #fff;
+}
+
+.messenger {
+    background: #0084ff;
+}
+
+.whatsapp {
+    background: #25d366;
+}
+@media (max-width: 768px) {
+    .chat-wrapper {
+        left: auto !important; /* ignore saved left */
+        right: 10px !important; /* always right */
+        bottom: 80px; /* adjust for toggle button */
+    }
+}
+

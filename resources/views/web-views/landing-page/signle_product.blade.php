@@ -217,6 +217,177 @@
             font-weight: 700;
             font-family: 'Jost' !important;
         }
+
+        /* style change by Md. Naim.jr 22-10-2025 start*/
+
+        .btn-primary:hover {
+            background-color: #f26d21;
+        }
+
+        .btn-primary:focus {
+            background-color: #f26d21;
+            outline: none;
+        }
+
+        .btn-primary:active {
+            background-color: #f26d21;
+            outline: none;
+        }
+
+        .btn-primary:not(:disabled):not(.disabled).active,
+        .btn-primary:not(:disabled):not(.disabled):active,
+        .show>.btn-primary.dropdown-toggle {
+            color: #fff;
+            background-color: #f26d21;
+            border-color: #f26d21;
+            outline: none;
+        }
+
+        .slider-img>img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .p-details h3 {
+            text-align: left !important;
+        }
+
+        .p-short-details h4 {
+            text-align: left !important;
+        }
+
+        .p-short-details p {
+            text-align: left !important;
+        }
+
+        .p-details,
+        .p-details-contact-section,
+        .p-image {
+            padding: 30px 13px;
+        }
+
+        .name-price {
+            border: none !important;
+            box-shadow: none !important;
+        }
+
+        #orderPlace .card-body .order-box:last-child {
+            border: 2px dashed #f26d21;
+        }
+
+        #orderPlace .btn-primary {
+            position: static;
+        }
+
+        .benefit-section .benefit-img img {
+            width: 100%;
+            height: 100%;
+
+        }
+
+        .carousel-control-next {
+            right: 23%;
+        }
+
+        .carousel-control-prev {
+            left: 23%;
+        }
+
+        .v-size-box>input:checked+.size-label::after {
+            color: green !important;
+            font-size: 19px !important;
+            top: 57% !important;
+            left: 75% !important;
+            transform: translate(-50%, -50%) rotate(10deg) !important;
+        }
+
+        .benefit-section .benefit-img {
+            padding: 0 75px;
+        }
+
+        @media (max-width: 768px) {
+            .lt-slider .slider-img>img {
+                height: 100%;
+                object-fit: contain;
+                object-position: bottom center;
+            }
+
+            .benefit-section .benefit-img img {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+            }
+
+            .name-price {
+                padding: 0 !important;
+            }
+
+            .carousel-control-next {
+                right: 5%;
+            }
+
+            .carousel-control-prev {
+                left: 5%;
+            }
+
+            .slider-img {
+                max-height: 550px;
+            }
+
+            .benefit-section .benefit-img {
+                padding: 0;
+            }
+
+        }
+
+        /* style change by Md. Naim.jr 22-10-2025 end*/
+        .p-dtls-box>table>tbody>tr {
+            display: block !important;
+            justify-content: space-between;
+            border: 1px solid #ddd;
+        }
+
+        .shipping-box {
+            border: 1px solid #ddd;
+            padding: 7px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-evenly;
+            cursor: pointer;
+            align-items: center;
+            transition: 0.3s all ease-in-out;
+        }
+
+        .shipping-box input[type="radio"]:checked+.shipping-title {
+            font-weight: bold;
+            color: #f26d21;
+        }
+
+        .v-color-box>.color-label,
+        .v-size-box>.size-label {
+            cursor: pointer;
+            border: 2px solid #ccc;
+            padding: 2px 6px !important;
+            border-radius: 5px;
+            width: 100%;
+            text-align: center;
+            height: 70px !important;
+            position: relative;
+        }
+
+        .v-color-box>input:checked+.color-label::after {
+            content: '✔';
+            color: green;
+            font-size: 30px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .v-color-box, .v-size-box {
+            margin-right: 0.925rem !important;
+        }
     </style>
 @endpush
 @section('content')
@@ -227,9 +398,10 @@
     <section>
         <div class="container">
             <div class="row">
-                <div class="col-md-4 mx-auto">
+                <div class="col-lg-6">
                     <div class="lt-slider">
-                        <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+                        <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel"
+                            data-bs-interval="2000">
                             <ol class="carousel-indicators">
                                 @foreach (json_decode($productLandingPage->slider_img) as $key => $image)
                                     <li data-target="#carouselExampleIndicators" data-slide-to="{{ $key }}"
@@ -261,26 +433,27 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </section>
-
-
-    <!-- Offer Section -->
-    <section class="p-details">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12 text-center">
-                    <div class="p-name">
-                        <h3 class="mb-2">{{ $productLandingPage->product->name }}</h3>
-                    </div>
-                    <div class="p-short-details">
-                        <p>{!! $productLandingPage->description !!}</p>
+                <!-- Offer Section -->
+                <div class="p-details col-lg-6">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                <div class="p-name">
+                                    <h3 class="mb-2">{{ $productLandingPage->product->name }}</h3>
+                                </div>
+                                <div class="p-short-details">
+                                    <p>{!! $productLandingPage->description !!}</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+
+
+
     @php
         $videoUrl = $productLandingPage->video_url;
         $embedUrl = '';
@@ -331,19 +504,19 @@
     @endphp
 
     <!-- Video Section -->
-    <div class="container video-section">
-        <div class="row justify-content-center">
-            <div class="col-md-{{ $col }}"> <!-- Adjust column width if needed -->
-                <div style="position: relative; width: {{ $width }}; height: {{ $height }}px;">
-                    <iframe style="width: 100%; height: 100%;" src="{{ $embedUrl }}" title="Video Player"
-                        frameborder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
-                    </iframe>
-                </div>
-            </div>
-        </div>
-    </div>
+    <!--<div class="container video-section">-->
+    <!--    <div class="row justify-content-center">-->
+    <!--        <div class="col-md-{{ $col }}"> <!-- Adjust column width if needed -->
+    <!--            <div style="position: relative; width: {{ $width }}; height: {{ $height }}px;">-->
+    <!--                <iframe style="width: 100%; height: 100%;" src="{{ $embedUrl }}" title="Video Player"-->
+    <!--                    frameborder="0"-->
+    <!--                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"-->
+    <!--                    referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>-->
+    <!--                </iframe>-->
+    <!--            </div>-->
+    <!--        </div>-->
+    <!--    </div>-->
+    <!--</div>-->
 
 
     <!-- Benefit Section -->
@@ -375,7 +548,7 @@
                                 {{-- <img src="{{ asset('landingpage/') }}"
                                     style="width: 100%; height:500px;" alt=""> --}}
                                 <img src="{{ asset('storage/landingpage/' . $productLandingPage->feature_img) }}"
-                                    style="width: 100%; height:560px;" alt="">
+                                    style="width: 100%; " alt="">
                             </div>
                         </div>
                     </div>
@@ -459,7 +632,7 @@
                                 @csrf
                                 <div class="row">
                                     <div class="col-md-6">
-<div class="order-box">
+                                        <div class="order-box">
                                             <div class="card-body">
                                                 <div class="row mb-3">
                                                     <div class="col">
@@ -483,8 +656,9 @@
                                                         <div class="form-group">
                                                             <label for="phone">ফোন নম্বর <span
                                                                     class="text-danger">*</span></label>
-                                                            <input type="number" class="form-control auto-save" id="phone"
-                                                                name="phone" placeholder="আপনার ফোন নম্বর লিখুন" required
+                                                            <input type="number" class="form-control auto-save"
+                                                                id="phone" name="phone"
+                                                                placeholder="আপনার ফোন নম্বর লিখুন" required
                                                                 value="{{ old('phone') }}">
                                                             <span id="phoneFeedback" class="small text-danger"></span>
                                                             @error('phone')
@@ -506,8 +680,7 @@
 
                                                     <div class="col-md-12 mb-3">
                                                         <div class="form-group">
-                                                            <label>আপনার ঠিকানা <span
-                                                                    class="text-danger">*</span></label>
+                                                            <label>আপনার ঠিকানা <span class="text-danger">*</span></label>
                                                             <textarea class="form-control auto-save" placeholder="আপনার ঠিকানা লিখুন" name="address">{{ old('address') }}</textarea>
                                                             @error('address')
                                                                 <span class="text-danger">{{ $message }}</span>
@@ -552,7 +725,7 @@
                                                             </div>
                                                             <div class="p-data-box d-flex mb-2">
                                                                 <div class="mr-2">
-                                                                    <img class="sp-right-img"
+                                                                    <img id="main-image" class="sp-right-img"
                                                                         src="{{ \App\CPU\ProductManager::product_image_path('thumbnail') }}/{{ $productLandingPage->product->thumbnail }}">
                                                                 </div>
                                                                 <div>
@@ -578,7 +751,7 @@
                                                                 </div>
                                                             </div>
                                                             <div class="p-variant">
-                                                                @if (count(json_decode($productLandingPage->product->colors)) > 0)
+                                                                {{-- @if (count(json_decode($productLandingPage->product->colors)) > 0)
                                                                     <div class="row">
                                                                         <div class="col-12">
                                                                             <h4 style="font-size: 18px;">Color
@@ -602,7 +775,7 @@
                                                                             </div>
                                                                         </div>
                                                                     </div>
-                                                                @endif
+                                                                @endif --}}
                                                                 @php
                                                                     $qty = 0;
                                                                     if (!empty($productLandingPage->product)) {
@@ -616,7 +789,7 @@
                                                                         }
                                                                     }
                                                                 @endphp
-                                                                @foreach (json_decode($productLandingPage->product->choice_options) as $key => $choice)
+                                                                {{-- @foreach (json_decode($productLandingPage->product->choice_options) as $key => $choice)
                                                                     <div class="row">
                                                                         <div class="col-12">
                                                                             <h4 style="font-size: 18px; margin:5px;">
@@ -639,7 +812,46 @@
                                                                             </div>
                                                                         </div>
                                                                     </div>
-                                                                @endforeach
+                                                                @endforeach --}}
+                                                                @if (count(json_decode($productLandingPage->product->colors)) > 0)
+                                                                    <div class="row mb-4 mt-3">
+                                                                        <div class="col-12 mb-3">
+                                                                            <h4 style="font-size: 18px;">Color</h4>
+                                                                        </div>
+                                                                        @if ($productLandingPage->product->color_variant != null)
+                                                                            <div class="col-12 mb-3">
+                                                                                <div class="d-flex">
+                                                                                    @foreach (json_decode($productLandingPage->product->color_variant) as $key => $color)
+                                                                                        <div class="v-color-box position-relative">
+                                                                                            <input type="radio"
+                                                                                                id="{{ $productLandingPage->product->id }}-color-{{ $key }}"
+                                                                                                name="color"
+                                                                                                value="{{ $color->code }}"
+                                                                                                @if ($key == 0) checked @endif>
+                                                                                            <label
+                                                                                                for="{{ $productLandingPage->product->id }}-color-{{ $key }}"
+                                                                                                class="color-label"
+                                                                                                style="background-color: {{ $color->code }}; overflow: hidden;">
+                                                                                                <img src="{{ asset($color->image) }}"
+                                                                                                    data-image="{{ asset($color->image) }}"
+                                                                                                    alt="{{ $color->color }}"
+                                                                                                    style="max-width:100%; height:auto;">
+                                                                                            </label>
+
+                                                                                            <span class="d-inline-block" style="height: 20px; width: 20px; border-radius: 50%; position: absolute;
+                                                                                            right: -11px;
+                                                                                            top: -34px;
+                                                                                            background: {{ $color->code }}"></span>
+
+                                                                                        </div>
+                                                                                    @endforeach
+                                                                                </div>
+                                                                            </div>
+
+                                                                        @endif
+                                                                    </div>
+                                                                @endif
+
                                                             </div>
                                                         </div>
                                                     </div>
@@ -669,27 +881,32 @@
                                                                         </td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <td>
+
+                                                                        <td class="w-100 d-block">
                                                                             <h5 class="shipping-title">Shipping :</h5>
-                                                                            <ul class="p-0 m-0">
+
+                                                                            <div class="row">
                                                                                 @foreach (\App\Model\ShippingMethod::where(['status' => 1])->get() as $shipping)
-                                                                                    <li style="list-style: none;">
-                                                                                        <div class="form-check">
-                                                                                            <input
-                                                                                                class="form-check-input shipping-method"
-                                                                                                type="radio"
+                                                                                    <div class="col-md-6">
+                                                                                        <label class="shipping-box"
+                                                                                            for="shipping_{{ $shipping['id'] }}">
+                                                                                            <input type="radio"
+                                                                                                required
                                                                                                 name="shipping_method"
+                                                                                                class="shipping-method"
                                                                                                 id="shipping_{{ $shipping['id'] }}"
-                                                                                                data-cost="{{ $shipping['cost'] }}"
-                                                                                                value="{{ $shipping['id'] }}" />
-                                                                                            <label class="form-check-label"
-                                                                                                for="shipping_{{ $shipping['id'] }}">
-                                                                                                {{ $shipping['title'] . ' ' . \App\CPU\Helpers::currency_converter($shipping['cost']) }}
-                                                                                            </label>
-                                                                                        </div>
-                                                                                    </li>
+                                                                                                value="{{ $shipping['id'] }}"
+                                                                                                data-cost="{{ $shipping['cost'] }}">
+                                                                                            <span class="shipping-title">
+                                                                                                {{ $shipping['title'] }}
+                                                                                            </span>
+                                                                                            <span class="shipping-cost">
+                                                                                                {{ \App\CPU\Helpers::currency_converter($shipping['cost']) }}
+                                                                                            </span>
+                                                                                        </label>
+                                                                                    </div>
                                                                                 @endforeach
-                                                                            </ul>
+                                                                            </div>
                                                                         </td>
                                                                     </tr>
                                                                     <tr>
@@ -708,16 +925,9 @@
                                                                 </table>
                                                             </div>
                                                         </div>
-                                                        <div class="row">
-                                                            <div class="col">
-                                                                <div class="p-type-box">
-                                                                    <h4>ক্যাশঅন ডেলিভারি</h4>
-                                                                    <p>Pay with cash upon delivery.</p>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <button type="submit" class="w-100 btn btn-primary">Place
-                                                            Order</button>
+
+                                                        <button type="submit" class="w-100 btn btn-primary">অর্ডার
+                                                            সম্পূর্ণ করুন</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -732,7 +942,7 @@
             <div class="row">
                 <div class="col-md-3 mx-auto">
                     <div class="form-group my-3">
-                        <a href="{{ route('home') }}" class="btn btn-primary">Get More Products</a>
+                        <a href="{{ route('home') }}" class="btn btn-primary">Discover More Products</a>
                     </div>
                 </div>
             </div>
@@ -757,6 +967,7 @@
         };
 
         document.addEventListener('DOMContentLoaded', function() {
+            //const shippingBox = document.querySelectorAll('.shipping-box');
             const shippingRadios = document.querySelectorAll('.shipping-method');
             const totalElement = document.getElementById('total');
             const preloader = document.getElementById('preloader');
@@ -764,6 +975,7 @@
             // Update total price
             function updateTotal(shippingCost) {
                 preloader.style.display = 'inline-block'; // Show preloader
+                // shippingBox.style.background = '#f26d21';
                 setTimeout(function() {
                     // Calculate the new total using pre-converted values
                     const total = unitPrice + shippingCost;
@@ -848,6 +1060,42 @@
                     }
                 });
             }
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const mainImage = document.getElementById('main-image');
+            const colorInputs = document.querySelectorAll('input[name="color"]');
+
+            if (!mainImage || colorInputs.length === 0) return;
+
+            // 1️⃣ Set default main image from the first color
+            const firstColorLabel = colorInputs[0].nextElementSibling;
+            const firstImageSrc = firstColorLabel.querySelector('img').getAttribute('data-image');
+            if (firstImageSrc) {
+                mainImage.src = firstImageSrc;
+            }
+
+            // 2️⃣ Add click listener to each color image
+            colorInputs.forEach(input => {
+                const label = input.nextElementSibling;
+                const img = label.querySelector('img');
+                if (img) {
+                    img.addEventListener('click', function() {
+                        const newSrc = img.getAttribute('data-image');
+
+                        // Add transition effect
+                        mainImage.style.transition = 'opacity 0.3s ease';
+                        mainImage.style.opacity = '1';
+
+                        // After fade out, change image
+                        setTimeout(() => {
+                            mainImage.src = newSrc;
+                            mainImage.style.opacity = '1';
+                        }, 300);
+                    });
+                }
+            });
         });
     </script>
 @endpush

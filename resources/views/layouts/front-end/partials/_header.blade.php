@@ -1,14 +1,20 @@
 <header id="header">
     <div class="container">
-        <div class="row main_row align-items-lg-center py-2">
-            <div class="col-md-3 d-none d-lg-block">
+        <div class="row main_row align-items-lg-center">
+            <div class="col-md-3 d-none d-lg-flex align-items-center flex-row gap-5">
                 <!-- <a class="navbar-brand" href="index.html">Shopping Zone BD</a> -->
                 <a href="{{ route('home') }}">
-                    <img style="height: 50px" class="header-logo"
+                    <img class="header-logo"
                         src="{{ asset('storage/company') . '/' . $web_config['web_logo']->value }}"
                         onerror="this.src='{{ asset('assets/front-end/img/image-place-holder.png') }}'"
                         alt="{{ $web_config['name']->value }}">
                 </a>
+                <div class="ml-5">
+                     <a target="_blank" title="Go Whatsapp" style="font-size: 18px; font-weight: 600; " class="text-success d-flex align-items-center" href="https://wa.me/8801406667669?text=Is%20anyone%20available%20to%20chat%3F">
+                        <img style="width: 40px;" src="{{asset('assets/front-end/images/logo/whatsapp.png')}}" alt="whatsapp icon">
+                        <span class="ml-1">01406667669</span>
+                    </a>
+                </div>
             </div>
             <div class="col-md-7">
                 @php $categories = \App\CPU\CategoryManager::parents(); @endphp

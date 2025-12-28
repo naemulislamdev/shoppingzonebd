@@ -52,7 +52,8 @@
                         </span>
                     @elseif($order['order_status'] == 'failed')
                         <span class="badge badge-danger ml-2 ml-sm-3 text-capitalize">
-                            <span class="legend-indicator bg-info"></span>{{ str_replace('_', ' ', $order['order_status']) }}
+                            <span
+                                class="legend-indicator bg-info"></span>{{ str_replace('_', ' ', $order['order_status']) }}
                         </span>
                     @elseif($order['order_status'] == 'processing' || $order['order_status'] == 'out_for_delivery')
                         <span class="badge badge-soft-warning ml-2 ml-sm-3 text-capitalize">
@@ -244,9 +245,27 @@
                             </div>
                         </div>
                         <!--History Modal End-->
+
+                        <div class="mt-3">
+                            <h4>Multiple Order Note:</h4>
+
+                            <ul id="noteList" class="list-unstyled d-flex flex-column">
+                                @if ($order->multiple_note)
+                                    @foreach (json_decode($order->multiple_note, true) as $note)
+                                        <li style="text-align: left;  text-wrap: wrap; line-height: 20px"
+                                            class="badge badge-soft-primary mb-2 py-2">
+                                            {{ $note['note'] }}
+                                            <span class="text-muted">({{ $note['time'] }} -> Note by:
+                                                {{ $note['user'] }})</span>
+                                        </li>
+                                    @endforeach
+
+                                @endif
+                            </ul>
+                        </div>
                     </div>
 
-                    <div class="col-12 col-md-6">
+                    <div class="col-12 col-md-6 border py-3">
                         <div class="hs-unfold float-right col-6">
                             <div class="dropdown">
                                 <select name="order_status" onchange="order_status(this.value)"
@@ -256,7 +275,8 @@
                                         {{ \App\CPU\translate('Pending') }}</option>
                                     <option value="confirmed" {{ $order->order_status == 'confirmed' ? 'selected' : '' }}>
                                         {{ \App\CPU\translate('Confirmed') }}</option>
-                                    <option value="processing" {{ $order->order_status == 'processing' ? 'selected' : '' }}>
+                                    <option value="processing"
+                                        {{ $order->order_status == 'processing' ? 'selected' : '' }}>
                                         {{ \App\CPU\translate('Processing') }} </option>
                                     <option class="text-capitalize" value="out_for_delivery"
                                         {{ $order->order_status == 'out_for_delivery' ? 'selected' : '' }}>
@@ -289,6 +309,28 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="col-12 mt-5">
+                            <form id="orderNoteForm" style="padding-top: 20px;">
+                                @csrf
+                                <input type="hidden" name="id" value="{{ $order['id'] }}">
+                                <label>Add Note</label>
+                                <div>
+                                    <div class="input-group mb-3">
+                                        <input autofocus required type="text" class="form-control"
+                                            name="multiple_note[]" placeholder="Enter New note">
+                                    </div>
+                                </div>
+
+                                {{-- <button type="button" class="btn btn-success add-new"> <i class="tio tio-add"></i> Add
+                                    New Note</button> --}}
+                                @error('multiple_note')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                                <div class="d-flex justify-content-end">
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
                 <!-- End Unfold -->
@@ -313,13 +355,17 @@
                             </h4>
                         </div>
 
-                        <div class="col-6 pt-2">
+                        <div class="col-6 pt-2 ">
                             @if ($order->order_note != null)
                                 <span class="font-weight-bold text-capitalize">
                                     {{ \App\CPU\translate('order_note') }} :
                                 </span>
-                                <p class="pl-1">
-                                    {{ $order->order_note }}
+                                @php
+                                    $note = json_decode($order->order_note, true);
+                                @endphp
+
+                                <p class="pl-1 order_note">
+                                    {{ $note['note'] ?? '' }} — {{ $note['user'] ?? '' }} ({{ $note['date'] ?? '' }})
                                 </p>
                             @endif
                         </div>
@@ -446,8 +492,7 @@
                                     @if ($detail->color_image)
                                         <img class="img-fluid"
                                             onerror="this.src='{{ asset('assets/back-end/img/160x160/img2.jpg') }}'"
-                                            src="{{ $detail->color_image }}"
-                                            alt="Image Description">
+                                            src="{{ $detail->color_image }}" alt="Image Description">
                                     @else
                                         <img class="img-fluid"
                                             onerror="this.src='{{ asset('assets/back-end/img/160x160/img2.jpg') }}'"
@@ -509,6 +554,7 @@
                             </div>
                             {{-- seller info old --}}
 
+
                             <!--Discount Modal Start-->
                             <div class="modal fade" id="exampleModal{{ $detail->id }}" tabindex="-1" role="dialog"
                                 aria-labelledby="exampleModalLabel{{ $detail['id'] }}" aria-hidden="true">
@@ -523,7 +569,8 @@
                                             </button>
                                         </div>
                                         <form class="form-horizontal"
-                                            action="{{ route('admin.orders.ordersPrice', $detail->id) }}" method="post">
+                                            action="{{ route('admin.orders.ordersPrice', $detail->id) }}"
+                                            method="post">
                                             <div class="modal-body">
                                                 @csrf
                                                 <input class="form-control" type="hidden" name="id"
@@ -632,7 +679,8 @@
                                     {{ \App\CPU\translate('choose_delivery_type') }}
                                 </option>
 
-                                <option value="self_delivery" {{ $order->delivery_type == 'self_delivery' ? 'selected' : '' }}>
+                                <option value="self_delivery"
+                                    {{ $order->delivery_type == 'self_delivery' ? 'selected' : '' }}>
                                     {{ \App\CPU\translate('by_self_delivery_man') }}
                                 </option>
                                 <option value="third_party_delivery"
@@ -708,7 +756,7 @@
                             <div class="media-body">
                                 <span class="text-body text-hover-primary">
                                     {{ \App\Model\Order::where('customer_id', $order['customer_id'])->count() }}
-                                    {{ \App\CPU\translate('orders') }}</span>
+                                    {{ \App\CPU\translate('orders') }} </span>
                             </div>
                             <div class="media-body text-right">
                                 {{-- <i class="tio-chevron-right text-body"></i> --}}
@@ -885,12 +933,12 @@
                             if (data.customer_status == 0) {
                                 toastr.warning(
                                     '{{ \App\CPU\translate('Account has been deleted, you can not change the status!') }}!'
-                                    );
-                                // location.reload();
+                                );
+
                             } else {
                                 toastr.success(
                                     '{{ \App\CPU\translate('Status Change successfully') }}'
-                                    );
+                                );
                                 // location.reload();
                             }
                         }
@@ -929,6 +977,9 @@
                             data: $("form").serialize(),
                             success: function(data) {
                                 console.log(data.payment_status);
+                                console.log(data);
+
+
                                 toastr.success('Status Change successfully');
                                 // location.reload();
                             },
@@ -960,6 +1011,7 @@
                             data: $("form").serialize(),
                             success: function(data) {
                                 console.log(data);
+
                                 toastr.success('Status Change successfully');
                                 // location.reload();
                             },
@@ -1024,16 +1076,16 @@
                     if (data.success === 0) {
                         toastr.success(
                             '{{ \App\CPU\translate('Order is already delivered, You can not change it') }} !!'
-                            );
+                        );
                     } else {
                         if (data.payment_status === 0) {
                             toastr.warning(
                                 '{{ \App\CPU\translate('Before delivered you need to make payment status paid!') }}!'
-                                );
+                            );
                         } else if (data.customer_status === 0) {
                             toastr.warning(
                                 '{{ \App\CPU\translate('Account has been deleted, you can not change the status!') }}!'
-                                );
+                            );
                         } else {
                             toastr.success('{{ \App\CPU\translate('Status Change successfully') }}!');
                         }
@@ -1177,7 +1229,7 @@
                     return function() {
                         infowindow.setContent(
                             "<div style='float:left'><img style='max-height:40px;wide:auto;' src='{{ asset('storage/profile/') }}{{ $order->customer->image ?? '' }}'></div><div style='float:right; padding: 10px;'><b>{{ $order->customer->f_name ?? '' }} {{ $order->customer->l_name ?? '' }}</b><br/>{{ $shipping_address->address ?? '' }}</div>"
-                            );
+                        );
                         infowindow.open(map, marker);
                     }
                 })(marker));
@@ -1192,6 +1244,71 @@
         // Re-init map before show modal
         $('#locationModal').on('shown.bs.modal', function(event) {
             initializegLocationMap();
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            // Function to handle adding new input fields
+            $('.add-new').click(function() {
+                let inputCount = $('#input-container .input-group').length;
+
+                // Create new input field with delete button
+                let newInput = `
+                    <div class="input-group mb-3">
+                        <input required type="text" class="form-control" name="multiple_note[]" placeholder="Enter New Note">
+                        <button type="button" class="btn btn-danger delete"><i class="tio tio-delete"></i></button>
+                    </div>`;
+
+                // Append the new input field to the input container
+                $('#input-container').append(newInput);
+            });
+
+            // Function to handle deleting input fields
+            $(document).on('click', '.delete', function() {
+                $(this).closest('.input-group').remove();
+            });
+        });
+    </script>
+    <script>
+        $('#orderNoteForm').on('submit', function(e) {
+            e.preventDefault();
+
+            let form = $(this);
+
+            // trim textarea value
+            let noteInput = form.find('input[name="multiple_note[]"]');
+            let trimmedValue = noteInput.val().trim();
+
+            if (trimmedValue === '') {
+                toastr.warning("Note cannot be empty !");
+                return;
+            }
+            // replace the original value with trimmed
+            noteInput.val(trimmedValue);
+            $.ajax({
+                url: "{{ route('admin.orders.multiple_note') }}",
+                type: "POST",
+                data: form.serialize(),
+                success: function(res) {
+                    if (res.status) {
+                        // frontend update
+                        $('#noteList').append(`
+                            <li style='text-align: left; text-wrap: wrap; line-height: 20px' class="badge badge-soft-primary d-inline-block  mb-2 py-2">
+                                ${res.note.note}
+                                <span class="text-muted">(${res.note.time}- Note by: ${res.note.user})</span>
+                            </li>
+                        `);
+
+
+                        form[0].reset();
+                    }
+                    toastr.success('Note added Successfully !');
+
+                },
+                error: function() {
+                    toastr.error('Something went wrong');
+                }
+            });
         });
     </script>
 @endpush

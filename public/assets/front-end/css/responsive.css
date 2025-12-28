@@ -13,13 +13,12 @@
 @media all and (max-width: 1080px) {
     .menu-icon {
         display: block;
-        color: #ffffff;
+        color: #000;
         margin-top: 12px;
     }
-    header.scrolled .menu-icon {
-        color: #fff;
-    }
-
+   header.scrolled .menu-icon {
+    color: #ff5d00;
+}
     .menu-area {
         display: none;
     }
@@ -59,10 +58,10 @@
         display: none;
     }
     .menu-icon {
-        color: #fff;
+        color: #ff5d00;
     }
     .header-icon > a > .fa {
-        color: #fff;
+        color: #000;
     }
     .header-icon {
         margin-top: 13px;

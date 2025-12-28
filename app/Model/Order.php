@@ -19,7 +19,8 @@ class Order extends Model
         'extra_discount'=>'float',
         'delivery_man_id'=>'integer',
         'shipping_method_id'=>'integer',
-        'seller_id'=>'integer'
+        'seller_id'=>'integer',
+        
     ];
     protected $guarded = ['id'];
 

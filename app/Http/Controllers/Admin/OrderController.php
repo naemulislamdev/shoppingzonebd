@@ -33,12 +33,11 @@ use Illuminate\Support\Facades\View;
 use function App\CPU\translate;
 use App\CPU\CustomerManager;
 use App\CPU\Convert;
+use Intervention\Image\Colors\Rgb\Channels\Red;
 use Rap2hpoutre\FastExcel\FastExcel;
 
 class OrderController extends Controller
 {
-
-
 
     public function list(Request $request, $status)
     {
@@ -91,6 +90,8 @@ class OrderController extends Controller
                 foreach ($key as $value) {
                     $qq->where('id', 'like', "%{$value}%")
                         ->orWhere('order_status', 'like', "%{$value}%")
+                        ->orWhere('phone', 'like', "%{$value}%")
+                        ->orWhere('customer_id', 'like', "%{$value}%")
                         ->orWhere('transaction_ref', 'like', "%{$value}%");
                 }
             });
@@ -104,12 +105,48 @@ class OrderController extends Controller
         return view('admin-views.order.list', compact('orders', 'search', 'from', 'to', 'status'));
     }
 
+    public function multipleNote(Request $request)
+    {
+        $request->validate([
+            'id' => 'required',
+            'multiple_note' => 'required|array'
+        ]);
+
+        $order = Order::findOrFail($request->id);
+
+        // existing notes
+        $existingNotes = json_decode($order->multiple_note, true) ?? [];
+
+        // new notes with date & time
+        $newNotes = [];
+
+        foreach ($request->multiple_note as $note) {
+            $newNotes[] = [
+                'note' => $note,
+                'time' => now()->format('d M Y h:i A'),
+                'user' => auth('admin')->user()->name
+            ];
+        }
+
+        // merge old + new
+        $mergedNotes = array_merge($existingNotes, $newNotes);
+
+        // save as json
+        $order->multiple_note = json_encode($mergedNotes);
+        $order->save();
+
+        return response()->json([
+            'status' => true,
+            'note' => end($newNotes) // last added note frontend এ পাঠানো
+        ]);
+    }
 
 
     public function detailsProduct($id)
     {
         $detailsProduct = OrderDetail::findOrFail($id);
         // dd($detailsProduct);
+
         return view('admin-views.order.order-details', compact('detailsProduct'));
     }
     public function edit($id)
@@ -341,9 +378,6 @@ class OrderController extends Controller
     public function details($id)
     {
         $order = Order::with('details', 'shipping', 'seller')->where(['id' => $id])->first();
-
-
-
         // dd($order);
 
         $shipping_method = Helpers::get_business_settings('shipping_method');
@@ -360,8 +394,10 @@ class OrderController extends Controller
         $shipping_address = ShippingAddress::find($order->shipping_address);
         $orderHistories = OrderHistory::where('order_id', $id)->get();
         if ($order->order_type == 'default_type' || $order->order_type == 'apps') {
-            return view('admin-views.order.order-details', compact('shipping_address', 'order', 'delivery_men', 'orderHistories', 'curiers'));
+            $detailsProduct = OrderDetail::where("order_id", $order->id)->first();
+            return view('admin-views.order.order-details', compact('shipping_address', 'order', 'delivery_men', 'orderHistories', 'curiers',));
         } else {
+
             return view('admin-views.pos.order.order-details', compact('order'));
         }
     }
@@ -491,7 +527,11 @@ class OrderController extends Controller
         }
 
         $order->order_status = $request->order_status;
-        $order->order_note = $request->note;
+        $order->order_note = json_encode([
+            'note' => $request->note,
+            'user' => auth('admin')->user()->name,
+            'date' => now()->format('d M Y h:i A')
+        ]);
 
         OrderManager::stock_update_on_order_status_change($order, $request->order_status);
         $order->save();
@@ -527,7 +567,10 @@ class OrderController extends Controller
             );
         }
 
-        return response()->json($request->order_status);
+        return response()->json([
+            'status' => $request->order_status,
+            'order_note'   => json_decode($order->order_note) // string → object/array
+        ]);
     }
 
     public function payment_status(Request $request)

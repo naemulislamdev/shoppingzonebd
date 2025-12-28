@@ -174,7 +174,7 @@ class WebController extends Controller
             $data['products'] = Product::active()
                 ->where('category_ids', 'like', "%{$id}%")
                 /*->whereJsonContains('category_ids', ["id" => (string)$data['id']])*/
-                ->inRandomOrder()->take(12)->get();
+                ->latest()->take(12)->get();
         });
         //products based on top seller
         $top_sellers = Seller::approved()->with('shop')
@@ -182,11 +182,11 @@ class WebController extends Controller
         //end
 
         //feature products finding based on selling
-        // $featured_products = Product::with(['reviews'])->active()
-        //     ->where('featured', 1)
-        //     ->withCount(['order_details'])->orderBy('order_details_count', 'DESC')
-        //     ->take(12)
-        //     ->get();
+        $featured_products = Product::with(['reviews'])->active()
+            ->where('featured', 1)
+            ->withCount(['order_details'])->orderBy('order_details_count', 'DESC')
+            ->take(12)
+            ->get();
         $featured_products = Product::with(['reviews'])
             ->active()
             ->where('featured', 1)
