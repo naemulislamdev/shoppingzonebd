@@ -1033,7 +1033,9 @@
             }, function(data) {
                 updateTotalCart();
                 updateNavCart();
-                $('#cart-summary').empty().html(data);
+                $('#checkout-cart-items').empty().html(data.html);
+                $('.summary-cart').empty().html(data.html2);
+                // $('#grand-total').empty().text(data.total_amount);
                 toastr.info('Item has been removed from cart', {
                     CloseButton: true,
                     ProgressBar: true
@@ -1174,10 +1176,9 @@
                         ProgressBar: true
                     });
                     updateNavCart();
-
-                    $('#cart-summary').empty().html(data);
+                    $('#cart-summary').empty().html(data.html);
+                    $('.summary-cart').empty().html(data.html2);
                 }
-
 
             });
         }

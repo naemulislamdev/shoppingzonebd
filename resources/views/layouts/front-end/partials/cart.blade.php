@@ -14,7 +14,6 @@
             <div class="header-cart-p-details">
                 <h5>{{ Str::limit($cartItem['name'], 30) }}</h5>
 
-
                 @if (!empty($cartItem['variations']))
                     @foreach ($cartItem['variations'] as $key => $variation)
                         <span>{{ $key }} : {{ $variation }}</span>

@@ -5,7 +5,6 @@
         @php
             $sub_total = 0;
             $total_tax = 0;
-            $total_shipping_cost = 0;
             $total_discount_on_product = 0;
             $g_total = 0;
         @endphp
@@ -16,7 +15,6 @@
                     $sub_total +=
                         $cartItem['price'] * $cartItem['quantity'] - $cartItem['quantity'] * $cartItem['discount'];
                     $total_tax += $cartItem['tax'] * $cartItem['quantity'];
-                    $total_shipping_cost += $cartItem['shipping_cost'];
                     $total_discount_on_product += $cartItem['discount'] * $cartItem['quantity'];
                 @endphp
             @endforeach
@@ -29,7 +27,7 @@
         </tr>
         <tr class="summary-shipping">
             <td>Shipping:</td>
-            <td>{{ \App\CPU\Helpers::currency_converter($total_shipping_cost) }}</td>
+            <td id="shipping-cost"></td>
         </tr>
         <tr class="summary-subtotal">
             @if (session()->has('coupon_discount'))
@@ -63,13 +61,12 @@
 
         <tr class="summary-total">
             @php
-                $g_total = \App\CPU\Helpers::currency_converter(
-                    $sub_total + $total_tax + $total_shipping_cost - $coupon_dis,
-                );
+                $raw_total = $sub_total + $total_tax - $coupon_dis;
+                $g_total = \App\CPU\Helpers::currency_converter($raw_total);
             @endphp
             <td>Total:</td>
             <td id="grand-total" data-raw="{{ $g_total }}">{{ $g_total }}</td>
-        </tr><!-- End .summary-total -->
+        </tr>
         <div id="preloader" style="display: none;">
             <img src="{{ asset('assets/front-end/img/loader_.gif') }}" alt="Loading..." width="20">
         </div>

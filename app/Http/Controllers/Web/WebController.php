@@ -205,7 +205,7 @@ class WebController extends Controller
             ->take(12)
             ->get();
         $latest_products = Product::with(['reviews'])->active()->orderBy('id', 'desc')->take(8)->get();
-        
+
         $categories = Category::where('position', 0)->where('home_status', true)->priority()->take(11)->get();
 
 
@@ -1372,7 +1372,7 @@ class WebController extends Controller
     public function saveUserInfo(Request $request)
     {
         //Save user info based on session ID for guest users
-        $sessionId = Session::getId();
+        $sessionId = $request->input('session_id');
         $identifier = ['session_id' => $sessionId];
 
         $cart = session('cart', []);

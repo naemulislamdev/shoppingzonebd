@@ -11,6 +11,7 @@ use App\Model\Color;
 use App\Model\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 class CartController extends Controller
 {
@@ -166,6 +167,7 @@ class CartController extends Controller
             'data' => $data,
             'status' => 'success',
             'count' => session()->has('cart') ? count(session()->get('cart')) : 0,
+            'total_amount' => Session()->has('cart') ?  \App\CPU\Helpers::currency_converter(\App\CPU\CartManager::cart_total(session()->get('cart'))) : 0,
             'product' => [
                 'id' => $product->id,
                 'name' => $product->name,
@@ -256,8 +258,15 @@ class CartController extends Controller
         session()->forget('coupon_code');
         session()->forget('coupon_discount');
         session()->forget('shipping_method_id');
+        return response()->json([
+            'status' => true,
+            'html'   => view('layouts.front-end.partials.cart_details')->render(),
+            'html2'   => view('web-views.partials._order-summary')->render(),
+            'count' => session()->has('cart') ? count(session()->get('cart')) : 0,
+            'total_amount' => Session()->has('cart') ? \App\CPU\Helpers::currency_converter( \App\CPU\CartManager::cart_total(session()->get('cart'))) : 0,
+        ]);
 
-        return view('layouts.front-end.partials.cart_details');
+        //return view('layouts.front-end.partials.cart_details');
     }
     public function totalCartCount()
     {
@@ -308,6 +317,13 @@ class CartController extends Controller
         session()->forget('coupon_code');
         session()->forget('coupon_discount');
 
-        return view('layouts.front-end.partials.cart_details');
+        //return view('layouts.front-end.partials.cart_details');
+        return response()->json([
+            'data' => $status,
+            'html'   => view('layouts.front-end.partials.cart_details')->render(),
+            'html2'   => view('web-views.partials._order-summary')->render(),
+            'count' => session()->has('cart') ? count(session()->get('cart')) : 0,
+            'total_amount' => Session()->has('cart') ? \App\CPU\Helpers::currency_converter( \App\CPU\CartManager::cart_total(session()->get('cart'))) : 0,
+        ]);
     }
 }
