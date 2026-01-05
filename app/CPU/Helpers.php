@@ -210,11 +210,6 @@ class Helpers
         if ($user == null) {
             $user = 'offline';
         }
-        if ($user->is_active == 0) {
-            auth('customer')->logout();
-            return 'Your account is blocked';
-        }
-
         return $user;
     }
 

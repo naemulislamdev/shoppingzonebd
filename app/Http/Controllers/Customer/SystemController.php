@@ -261,7 +261,7 @@ class SystemController extends Controller
                 'created_at' => now()
             ];
 
-            $order_id = DB::table('orders')->insertGetId($or);
+            $order_id = Order::create($or);
 
             foreach (session('cart') as $c) {
                 $product = Product::where(['id' => $c['id']])->first();
@@ -518,6 +518,7 @@ class SystemController extends Controller
             session()->forget('payment_method');
             session()->forget('customer_info');
             session()->forget('shipping_method_id');
+            dd($order_id);
 
             //return view('web-views.checkout-complete', compact('order'));
             return redirect()->route('customer.checkout-complete', ['id' => $order_id]);

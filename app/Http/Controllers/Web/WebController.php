@@ -48,6 +48,7 @@ use App\Model\Branch;
 use App\Models\Career;
 use App\Model\Color;
 use App\Model\LandingPages;
+use App\Model\ShippingAddress;
 use App\Models\BatchDiscount;
 use App\Models\DiscountOffer;
 use App\Models\Blog;
@@ -1407,5 +1408,32 @@ class WebController extends Controller
         } else {
             return "<h2>This Offer coming very soon !</h2>";
         }
+    }
+    public function delete_facebook_customer_data($phone)
+    {
+        $user = User::where('phone', $phone)->first();
+        if ($user) {
+            $orders = Order::where('customer_id', $user->id)->get();
+            if ($orders->count() > 0) {
+                foreach ($orders as $order) {
+                    // Delete Order Details
+                    $orderDetails = OrderDetail::where('order_id', $order->id)->first();
+                    $orderDetails->delete();
+                    // Delete Order
+                    $order->delete();
+                }
+            }
+
+            //Delete Shipping Addresses
+            $shippingAddresses = ShippingAddress::where('customer_id', $user->id)->get();
+            if ($shippingAddresses->count() > 0) {
+                foreach ($shippingAddresses as $address) {
+                    $address->delete();
+                }
+            }
+            // Delete User Info
+            $user->delete();
+        }
+        return "This " . $phone . " Customer Data Deleted Successfully!";
     }
 }

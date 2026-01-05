@@ -27,6 +27,7 @@ use App\Http\Controllers\Web\UserProfileController;
 use App\Http\Controllers\Web\UserWalletController;
 use App\Http\Controllers\Web\WebController;
 use App\Http\Controllers\WholesaleController;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Mail;
 
@@ -40,6 +41,12 @@ Route::post('/complain/store', [ComplainController::class, 'customerComplainStor
 
 // facebook feed route
 Route::get('/feed/facebook', [FeedController::class, 'facebookFeed']);
+Route::get('/storage-link', function () {
+    Artisan::call('storage:link');
+    return 'Storage linked successfully';
+});
+
+Route::get('/delete/face/customer/data/{phone}', [WebController::class, 'delete_facebook_customer_data']);
 
 
 
