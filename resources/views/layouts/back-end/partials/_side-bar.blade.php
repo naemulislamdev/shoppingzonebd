@@ -526,7 +526,7 @@ $route = request()->route()->getName();
                                 </ul>
                             </li>
                             <li
-                                class="navbar-vertical-aside-has-menu {{ Request::is('admin/category*') || Request::is('admin/sub*') ? 'active' : '' }}">
+                                class="navbar-vertical-aside-has-menu {{ Request::is('admin/category*') || Request::is('admin/sub*') || Request::is('admin/child*') ? 'active' : '' }}">
                                 <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle"
                                     href="javascript:">
                                     <i class="tio-vector nav-icon"></i>
@@ -535,7 +535,7 @@ $route = request()->route()->getName();
                                     </span>
                                 </a>
                                 <ul class="js-navbar-vertical-aside-submenu nav nav-sub"
-                                    style="display: {{ Request::is('admin/category*') || Request::is('admin/sub*') || Request::is('admin/attribute*') || Request::is('admin/brand/list') ? 'block' : '' }}">
+                                    style="display: {{ Request::is('admin/category*') || Request::is('admin/sub*') || Request::is('admin/child*') || Request::is('admin/attribute*') || Request::is('admin/brand/list') ? 'block' : '' }}">
                                     <li class="nav-item {{ Request::is('admin/category/view') ? 'active' : '' }}">
                                         <a class="nav-link " href="{{ route('admin.category.view') }}">
                                             <span class="tio-circle nav-indicator-icon"></span>
@@ -552,11 +552,11 @@ $route = request()->route()->getName();
                                         </a>
                                     </li>
                                     <li
-                                        class="nav-item {{ Request::is('admin/sub-sub-category/view') ? 'active' : '' }}">
-                                        <a class="nav-link " href="{{ route('admin.sub-sub-category.view') }}">
+                                        class="nav-item {{ Request::is('admin/child-category/view') ? 'active' : '' }}">
+                                        <a class="nav-link " href="{{ route('admin.child-category.view') }}">
                                             <span class="tio-circle nav-indicator-icon"></span>
                                             <span
-                                                class="text-truncate">{{ \App\CPU\translate('sub_sub_category') }}</span>
+                                                class="text-truncate">Child Category</span>
                                         </a>
                                     </li>
                                     <li class="nav-item {{ Request::is('admin/brand/list') ? 'active' : '' }}">

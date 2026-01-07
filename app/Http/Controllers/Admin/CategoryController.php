@@ -6,7 +6,6 @@ use App\CPU\Helpers;
 use App\CPU\ImageManager;
 use App\Http\Controllers\Controller;
 use App\Model\Category;
-use App\Model\Translation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Brian2694\Toastr\Facades\Toastr;
@@ -20,14 +19,14 @@ class CategoryController extends Controller
         if($request->has('search'))
         {
             $key = explode(' ', $request['search']);
-            $categories = Category::where(function ($q) use ($key) {
+            $categories = Category::orderBy('order_number','asc')->where(function ($q) use ($key) {
                 foreach ($key as $value) {
                     $q->orWhere('name', 'like', "%{$value}%");
                 }
             });
             $query_param = ['search' => $request['search']];
         }else{
-            $categories = Category::where(['position' => 0]);
+            $categories = Category::orderBy('order_number','asc');
         }
 
         $categories = $categories->latest()->paginate(Helpers::pagination_limit())->appends($query_param);
@@ -39,37 +38,19 @@ class CategoryController extends Controller
         $request->validate([
             'name' => 'required',
             'image' => 'required',
-            'priority'=>'required'
+            'order_number'=>'required'
         ], [
             'name.required' => 'Category name is required!',
             'image.required' => 'Category image is required!',
-            'priority.required' => 'Category priority is required!',
+            'order_number.required' => 'Category order number is required!',
         ]);
 
         $category = new Category;
-        $category->name = $request->name[array_search('en', $request->lang)];
-        $category->slug = Str::slug($request->name[array_search('en', $request->lang)]);
+        $category->name = $request->name;
+        $category->slug = Str::slug($request->name);
         $category->icon = ImageManager::upload('category/', 'png', $request->file('image'));
-        $category->parent_id = 0;
-        $category->position = 0;
-        $category->priority = $request->priority;
+        $category->order_number = $request->order_number;
         $category->save();
-
-        $data = [];
-        foreach ($request->lang as $index => $key) {
-            if ($request->name[$index] && $key != 'en') {
-                array_push($data, array(
-                    'translationable_type' => 'App\Model\Category',
-                    'translationable_id' => $category->id,
-                    'locale' => $key,
-                    'key' => 'name',
-                    'value' => $request->name[$index],
-                ));
-            }
-        }
-        if (count($data)) {
-            Translation::insert($data);
-        }
 
         Toastr::success('Category added successfully!');
         return back();
@@ -81,28 +62,16 @@ class CategoryController extends Controller
         return view('admin-views.category.category-edit', compact('category'));
     }
 
-    public function update(Request $request)
+    public function update(Request $request, $id)
     {
-        $category = Category::find($request->id);
-        $category->name = $request->name[array_search('en', $request->lang)];
-        $category->slug = Str::slug($request->name[array_search('en', $request->lang)]);
+        $category = Category::find($id);
+        $category->name = $request->name;
+        $category->slug = Str::slug($request->name);
         if ($request->image) {
             $category->icon = ImageManager::update('category/', $category->icon, 'png', $request->file('image'));
         }
-        $category->priority = $request->priority;
+        $category->order_number = $request->order_number;
         $category->save();
-
-        foreach ($request->lang as $index => $key) {
-            if ($request->name[$index] && $key != 'en') {
-                Translation::updateOrInsert(
-                    ['translationable_type' => 'App\Model\Category',
-                        'translationable_id' => $category->id,
-                        'locale' => $key,
-                        'key' => 'name'],
-                    ['value' => $request->name[$index]]
-                );
-            }
-        }
 
         Toastr::success('Category updated successfully!');
         return back();
@@ -110,30 +79,11 @@ class CategoryController extends Controller
 
     public function delete(Request $request)
     {
-        $categories = Category::where('parent_id', $request->id)->get();
-        if (!empty($categories)) {
-            foreach ($categories as $category) {
-                $categories1 = Category::where('parent_id', $category->id)->get();
-                if (!empty($categories1)) {
-                    foreach ($categories1 as $category1) {
-                        $translation = Translation::where('translationable_type','App\Model\Category')
-                                    ->where('translationable_id',$category1->id);
-                        $translation->delete();
-                        Category::destroy($category1->id);
-
-                    }
-                }
-                $translation = Translation::where('translationable_type','App\Model\Category')
-                                    ->where('translationable_id',$category->id);
-                $translation->delete();
-                Category::destroy($category->id);
-
-            }
+        $category = Category::find($request->id);
+        if(file_exists(public_path('storage/app/public/category/'.$category->icon))){
+            ImageManager::delete('category/' . $category->icon);
         }
-        $translation = Translation::where('translationable_type','App\Model\Category')
-                                    ->where('translationable_id',$request->id);
-        $translation->delete();
-        Category::destroy($request->id);
+        $category->delete();
 
         return response()->json();
     }
@@ -141,7 +91,7 @@ class CategoryController extends Controller
     public function fetch(Request $request)
     {
         if ($request->ajax()) {
-            $data = Category::where('position', 0)->orderBy('id', 'desc')->get();
+            $data = Category::orderBy('id', 'desc')->get();
             return response()->json($data);
         }
     }

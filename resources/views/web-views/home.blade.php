@@ -297,16 +297,13 @@
             </div>
             <div class="owl-carousel category-carosel mt-4 mt-lg-4 ">
                 @foreach ($categories as $category)
-                    @php
-                        $productCount = $productCounts[$category->id] ?? 0;
-                    @endphp
                     <div style="background: #f26d21" class="category-item card">
-                        <a href="{{ route('products', ['id' => $category['id'], 'data_from' => 'category', 'page' => 1]) }}"
+                        <a href="{{ route('category.products', $category->slug) }}"
                             class="">
                             <img src='{{ asset("storage/category/$category->icon") }}' alt="{{ $category->name }}">
                             <div class="card-body text-center">
                                 <h5 class="card-title text-white mb-0">{{ $category['name'] }}</h5>
-                                <p class="card-text text-white p-0 m-0">{{ $productCount }} Products</p>
+                                <p class="card-text text-white p-0 m-0">{{ $category->Products->count() }} Products</p>
                             </div>
                         </a>
                     </div>
@@ -329,12 +326,9 @@
             </div>
             <div class="row gap-0">
                 @foreach ($categories as $category)
-                    @php
-                        $productCount = $productCounts[$category->id] ?? 0;
-                    @endphp
                     <div class="col-4 px-2 pb-3">
                         <div style="background: #f26d21" class="category-item card">
-                            <a href="{{ route('products', ['id' => $category['id'], 'data_from' => 'category', 'page' => 1]) }}"
+                            <a href="{{ route('category.products', $category->slug) }}"
                                 class="stretched-link">
                                 <div class="image-box">
                                     <img src="{{ asset("storage/category/$category->icon") }}"
@@ -342,7 +336,7 @@
                                 </div>
                                 <div class="card-body text-center p-1">
                                     <h5 class="card-title text-white mb-0">{{ $category['name'] }}</h5>
-                                    <p class="card-text text-white p-0 m-0 text-dark">{{ $productCount }} Products</p>
+                                    <p class="card-text text-white p-0 m-0 text-dark">{{ $category->Products->count() }} Products</p>
                                 </div>
                             </a>
                         </div>
@@ -480,8 +474,8 @@
                 </div>
                 <div class="row product-grid">
                     <!-- Your product columns go here -->
-                   
-                    @foreach ($category['products'] as $key => $product)
+
+                    @foreach ($category->products as $key => $product)
                         @if ($key < 12)
                             @include('web-views.products.product_box', [
                                 'dataCategory' => "category_$category->id",

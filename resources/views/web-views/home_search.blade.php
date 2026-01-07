@@ -1,5 +1,5 @@
 @extends('layouts.front-end.app')
-@section('title', ' products')
+@section('title', 'Search products')
 @push('css_or_js')
     <meta property="og:image" content="{{ asset('storage/company') }}/{{ $web_config['web_logo'] }}" />
     <meta property="og:title" content="Products of {{ $web_config['name'] }} " />
@@ -21,12 +21,8 @@
                 <div class="col text-center">
                     <div class="section-heading-title">
                         <h3>
-                            @if (!empty($data['cat']->name) && !empty($data['subCat']->name) && !empty($data['childCat']->name))
-                                {{ $data['childCat']->name }}
-                            @elseif (!empty($data['cat']->name) && !empty($data['subCat']->name))
-                                {{ $data['subCat']->name }}
-                            @elseif (!empty($data['cat']->name))
-                                {{ $data['cat']->name }}
+                            @if (!empty($keyword))
+                                {{ $keyword }}
                             @else
                                 All Products
                             @endif
@@ -70,10 +66,12 @@
                 </div>
             </div>
 
-            @if (count($products) > 0)
-                <div class="row product-grid" id="ajax-products">
+            @if (count($searchProducts) > 0)
+                <div class="row product-grid">
                     <!-- Your product columns go here -->
-                    @include('web-views.products._ajax-products', ['products' => $products])
+                    @foreach ($searchProducts as $product)
+                        @include('web-views.products.product_box', ['dataCategory' => 'category'])
+                    @endforeach
                 </div>
                 <hr class="my-3">
                 <!-- Pagination-->
@@ -81,7 +79,7 @@
                 <div class="row">
                     <div class="col-12 d-flex align-items-center justify-content-center">
                         <nav class="d-flex justify-content-between pt-2" aria-label="Page navigation">
-                            {!! $products->links() !!}
+                            {!! $searchProducts->links() !!}
                         </nav>
                     </div>
                 </div>
@@ -90,15 +88,6 @@
                     <h2>Product Coming Soon!</h2>
                 </div>
             @endif
-
-            {{-- <div class="row my-3">
-                <div class="col-md-12">
-                    <div class="big-banner">
-                        <img src="{{ asset('asstes/front-end') }}/images/product-banner/main-banner3.jpg"
-                            alt="">
-                    </div>
-                </div>
-            </div> --}}
         </div>
     </section>
 @endsection
@@ -113,7 +102,7 @@
                 item_list_id: "category_{{ $category->slug ?? 'default' }}",
                 item_list_name: "{{ $data['data_from'] ?? 'Product List' }}",
                 items: [
-                    @foreach ($products as $index => $product)
+                    @foreach ($searchProducts as $index => $product)
                         {
                             item_id: "{{ $product->id }}",
                             item_name: "{{ $product->name }}",

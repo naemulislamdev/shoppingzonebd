@@ -2091,4 +2091,5 @@
   'Pending User-info List' => 'Pending User-info List',
   'Pending_user_info' => 'Pending user info',
   'pending_user-info' => 'Pending user-info',
+  'Order Number' => 'Order Number',
 );

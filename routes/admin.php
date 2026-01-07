@@ -92,7 +92,6 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::post('order-stats', 'order_stats')->name('order-stats');
             Route::post('business-overview', 'business_overview')->name('business-overview');
             Route::get('/admin/report/order/filter', 'OrderReportFilter')->name('order.report.filter');
-
         });
         Route::get('/complain/list', [ComplainAdminController::class, 'list'])->name('complain.list');
         Route::get('/complain/view/{id}', [ComplainAdminController::class, 'view'])->name('complain.view');
@@ -176,8 +175,6 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('remove/feature-list', 'removeFeatureList')->name('remove_feature_list');
             Route::get('remove/landing-page/section', 'removePageSection')->name('remove_page_section');
             Route::get('remove/landing-page/{id}', 'removeLandingPage')->name('remove_landing_page');
-
-
         });
 
         Route::controller(EmployeeController::class)->prefix('/employee')->as('employee.')->middleware('module:employee_section')->group(function () {
@@ -205,16 +202,16 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('/sub-category/fetch', 'fetch')->name('fetch');
             Route::post('/sub-category/store', 'store')->name('store');
             Route::post('/sub-category/edit', 'edit')->name('edit');
-            Route::post('/sub-category/update', 'update')->name('update');
+            Route::post('/sub-category/update/{id}', 'update')->name('update');
             Route::post('/sub-category/delete', 'delete')->name('delete');
         });
 
-        Route::controller(SubSubCategoryController::class)->prefix('/sub-sub-category')->as('sub-sub-category.')->middleware('module:product_management')->group(function () {
+        Route::controller(SubSubCategoryController::class)->prefix('/child-category')->as('child-category.')->middleware('module:product_management')->group(function () {
             Route::get('view', 'index')->name('view');
             Route::get('fetch', 'fetch')->name('fetch');
             Route::post('store', 'store')->name('store');
             Route::post('edit', 'edit')->name('edit');
-            Route::post('update', 'update')->name('update');
+            Route::post('update/{id}', 'update')->name('update');
             Route::post('delete', 'delete')->name('delete');
             Route::post('get-sub-category', 'getSubCategory')->name('getSubCategory');
             Route::post('get-category-id', 'getCategoryId')->name('getCategoryId');
@@ -429,6 +426,9 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('CampaingDelete/{id}', 'CampaingDelete')->name('CampaingDelete');
             Route::get('productsearch', 'productsearch')->name('productsearch');
             Route::get('updateProductFlatDiscount', 'updateProductFlatDiscount')->name('updateProductFlatDiscount');
+
+            Route::get('/get-subcategories/{category_id}', 'getSubCategories')->name('get-subcategories');
+            Route::get('/get-child-categories/{subcategory_id}', 'getChildCategories')->name('get-child-categories');
         });
 
         Route::controller(DiscountManageController::class)->prefix('/discount')->as('discount.')->middleware('module:product_management')->group(function () {
@@ -629,7 +629,6 @@ Route::prefix('/admin')->as('admin.')->group(function () {
                 Route::post('analytics-update', 'analytics_update')->name('analytics-update');
                 Route::post('analytics-update-google-tag', 'google_tag_analytics_update')->name('analytics-update-google-tag');
             });
-
         });
 
         // Blogs Mangement
@@ -684,7 +683,6 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::post('/delete', 'delete')->name('delete');
             Route::post('/status', 'status')->name('status');
             Route::get('bulk-export', 'bulk_export_dataJobsInfo')->name('bulk-export');
-
         });
         // applications routes
         Route::controller(JobApplicationController::class)->prefix("/application")->as('application.')->group(function () {
@@ -760,7 +758,6 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::post('delete', 'investorsDestroy')->name('delete');
             Route::post('update/remark', 'updateInvestorRemark')->name('update_remark');
             Route::get('bulk-export', 'bulk_export_investors')->name('bulk-export');
-
         });
         Route::controller(ContactController::class)->prefix('/leads')->as('leads.')->middleware('module:support_section')->group(function () {
             Route::get('list', 'leadsList')->name('list');

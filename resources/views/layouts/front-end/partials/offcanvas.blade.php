@@ -26,16 +26,14 @@
     <div class="offcanvas-body">
         <div class="row">
             <div class="col-md-12">
-                <form action="{{ route('products') }}" type="submit" class="search_form">
+                <form action="{{route('home.search')}}" method="GET" class="search_form">
                     <div class="input-group mb-3">
-                        <input type="text" class="form-control" placeholder="Search your product" name="name"
+                        <input type="text" class="form-control" placeholder="Search your product" name="search"
                             id="searchInput">
                         <div class="input-group-append">
                             <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i></button>
                         </div>
                     </div>
-                    <input name="data_from" value="search" hidden>
-                    <input name="page" value="1" hidden>
                 </form>
             </div>
         </div>

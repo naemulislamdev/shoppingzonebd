@@ -4,20 +4,22 @@
             <div class="col-md-3 d-none d-lg-flex align-items-center flex-row gap-5">
                 <!-- <a class="navbar-brand" href="index.html">Shopping Zone BD</a> -->
                 <a href="{{ route('home') }}">
-                    <img class="header-logo"
-                        src="{{ asset('storage/company') . '/' . $web_config['web_logo']->value }}"
+                    <img class="header-logo" src="{{ asset('storage/company') . '/' . $web_config['web_logo']->value }}"
                         onerror="this.src='{{ asset('assets/front-end/img/image-place-holder.png') }}'"
                         alt="{{ $web_config['name']->value }}">
                 </a>
                 <div class="ml-5">
-                     <a target="_blank" title="Go Whatsapp" style="font-size: 18px; font-weight: 600; " class="text-success d-flex align-items-center" href="https://wa.me/8801406667669?text=Is%20anyone%20available%20to%20chat%3F">
-                        <img style="width: 40px;" src="{{asset('assets/front-end/images/logo/whatsapp.png')}}" alt="whatsapp icon">
+                    <a target="_blank" title="Go Whatsapp" style="font-size: 18px; font-weight: 600; "
+                        class="text-success d-flex align-items-center"
+                        href="https://wa.me/8801406667669?text=Is%20anyone%20available%20to%20chat%3F">
+                        <img style="width: 40px;" src="{{ asset('assets/front-end/images/logo/whatsapp.png') }}"
+                            alt="whatsapp icon">
                         <span class="ml-1">01406667669</span>
                     </a>
                 </div>
             </div>
             <div class="col-md-7">
-                @php $categories = \App\CPU\CategoryManager::parents(); @endphp
+                @php $categories = \App\Model\Category::where('home_status', 1)->orderBy('order_number')->get(); @endphp
                 @php
                     $discountOffer = \App\Models\DiscountOffer::where('status', 1)->first();
                 @endphp
@@ -40,41 +42,29 @@
                                         @foreach ($categories as $category)
                                             <div class="col-md-4 mb-2">
                                                 <div class="m-category-box">
-                                                    <a
-                                                        href="{{ route('products', ['id' => $category['id'], 'data_from' => 'category', 'page' => 1]) }}">
+                                                    <a href="{{ route('category.products', $category->slug) }}">
                                                         <img src="{{ asset("storage/category/$category->icon") }}"
                                                             onerror="this.src='{{ asset('assets/front-end/img/image-place-holder.png') }}'">
                                                         {{ $category['name'] }} <i
-                                                            class="fa fa-angle-right float-right mt-1"></i></a>
+                                                            class="fa fa-angle-right float-right mt-1"></i>
+                                                        </a>
                                                 </div>
-                                                @if ($category->childes->count() > 0)
+
+                                                @if ($category->subCategory->count() > 0)
                                                     <div class="s-category-box">
                                                         <ul class="w-nav-list level_3 ml-4">
-                                                            @foreach ($category['childes'] as $subCategory)
+                                                            @foreach ($category->subCategory as $subCat)
                                                                 <li class="s-category"><a
-                                                                        href="{{ route('products', ['id' => $subCategory['id'], 'data_from' => 'category', 'page' => 1]) }}">{{ $subCategory['name'] }}
+                                                                        href="{{ route('category.products', [$category->slug, $subCat->slug]) }}">{{ $subCat['name'] }}
                                                                     </a>
 
-                                                                    @if ($subCategory->childes->count() > 0)
+                                                                    @if ($subCat->childes->count() > 0)
                                                                         <div class="dropdown-menuc">
                                                                             <ul class="w-nav-list level_3 ml-3">
-                                                                                @php
-                                                                                    $specificSlugs = [
-                                                                                        'two-piece',
-                                                                                        'three-piece',
-                                                                                        'unstitched-three-piece',
-                                                                                        'ready-three-piece',
-                                                                                    ];
-                                                                                @endphp @foreach ($subCategory['childes'] as $subSubCategory)
-                                                                                    @if (in_array($subSubCategory['slug'], $specificSlugs))
-                                                                                        <li><a
-                                                                                                href="{{ route('products', ['id' => $subSubCategory['id'], 'data_from' => 'category', 'page' => 1]) }}">{{ $subSubCategory['name'] }}</a>
-                                                                                        </li>
-                                                                                    @else
-                                                                                        <li><a
-                                                                                                href="{{ route('products', ['id' => $subSubCategory['id'], 'data_from' => 'category', 'page' => 1]) }}">{{ $subSubCategory['name'] }}</a>
-                                                                                        </li>
-                                                                                    @endif
+                                                                                @foreach ($subCat->childes as $childCat)
+                                                                                    <li><a
+                                                                                            href="{{ route('category.products', [$category->slug, $subCat->slug, $childCat->slug]) }}">{{ $childCat['name'] }}</a>
+                                                                                    </li>
                                                                                 @endforeach
                                                                             </ul>
                                                                         </div>
@@ -93,24 +83,7 @@
                             </li>
                             <li><a href="{{ route('video_shopping') }}">{{ \App\CPU\translate('video shopping') }}</a>
                             </li>
-                            {{-- <li><a href="{{ route('campain') }}">{{\App\CPU\translate('Campaign')}}</i></a> --}}
-                            {{-- <li class="dd-btn1"><a href="#">{{ \App\CPU\translate('Offer') }} <i
-                                        class="fa fa-angle-down"></i></a>
-                                @php($landingPages = \App\Model\LandingPages::where('status', 1)->get())
-                                <div class="dropdown-menu1 offer-dropdown">
-                                    <ul>
-                                        <li>
-                                            <a
-                                                href="{{ route('campain') }}">{{ \App\CPU\translate('Campaign') }}</i></a>
-                                        </li>
-                                        @foreach ($landingPages as $landingPage)
-                                            <li><a
-                                                    href="{{ route('landing_page', $landingPage->slug) }}">{{ $landingPage->title }}</i></a>
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            </li> --}}
+
 
                             <li><a href="{{ route('offers.product') }}"><img style="height: 30px; width: auto;"
                                         src="{{ asset('assets/front-end/img/sp_offer.png') }}" alt="special image"></a>
@@ -180,7 +153,8 @@ $company_mobile_logo = \App\Model\BusinessSetting::where('type', 'company_mobile
         <div class="accordion" id="accordionExample">
             <div class="menu-box">
                 <div class="menu-link">
-                    <a href="{{ route('home') }}"><i class="fa fa-ptab3 mr-2"></i>{{ \App\CPU\translate('Home') }}</a>
+                    <a href="{{ route('home') }}"><i
+                            class="fa fa-ptab3 mr-2"></i>{{ \App\CPU\translate('Home') }}</a>
                 </div>
             </div>
             <div class="menu-box">
@@ -197,38 +171,38 @@ $company_mobile_logo = \App\Model\BusinessSetting::where('type', 'company_mobile
                             @foreach ($categories as $category)
                                 <li class="mega-dd-btn-2">
                                     <div class="menu-link d-flex justify-content-between">
-                                        <a
-                                            href="{{ route('products', ['id' => $category['id'], 'data_from' => 'category', 'page' => 1]) }}">{{ $category['name'] }}</a>
+                                        <a href="{{ route('category.products', $category->slug) }}">{{ $category['name'] }}</a>
                                         <a data-toggle="collapse" type="button"
                                             data-target="#category__{{ $category['id'] }}" aria-expanded="true"><i
                                                 class="fa fa-plus"></i></a>
                                     </div>
-                                    @if ($category->childes->count() > 0)
+                                    @if ($category->subCategory->count() > 0)
                                         <div class="collapse" id="category__{{ $category['id'] }}">
                                             <div class="card card-body">
                                                 <ul class="mega-item">
-                                                    @foreach ($category['childes'] as $subCategory)
+                                                    @foreach ($category->subCategory as $subCat)
                                                         <li class="mega-dd-btn-2">
                                                             <div class="menu-link d-flex justify-content-between">
-                                                                <a
-                                                                    href="{{ route('products', ['id' => $subCategory['id'], 'data_from' => 'category', 'page' => 1]) }}">{{ $subCategory['name'] }}</a>
+                                                                <a href="{{ route('category.products', [$category->slug, $subCat->slug]) }}">{{ $subCat['name'] }}</a>
                                                                 <a type="button" data-toggle="collapse"
-                                                                    data-target="#subCategory__{{ $subCategory['id'] }}"
+                                                                    data-target="#subCategory__{{ $subCat['id'] }}"
                                                                     aria-expanded="true"><i
                                                                         class="fa fa-plus"></i></a>
                                                             </div>
-                                                            <div class="collapse"
-                                                                id="subCategory__{{ $subCategory['id'] }}">
-                                                                <div class="card card-body">
-                                                                    <ul class="mega-item">
-                                                                        @foreach ($subCategory['childes'] as $subSubCategory)
-                                                                            <li><a
-                                                                                    href="{{ route('products', ['id' => $subSubCategory['id'], 'data_from' => 'category', 'page' => 1]) }}">{{ $subSubCategory['name'] }}</a>
-                                                                            </li>
-                                                                        @endforeach
-                                                                    </ul>
+                                                            @if ($subCat->childes->count() > 0)
+                                                                <div class="collapse"
+                                                                    id="subCategory__{{ $subCat['id'] }}">
+                                                                    <div class="card card-body">
+                                                                        <ul class="mega-item">
+                                                                            @foreach ($subCat->childes as $childCat)
+                                                                                <li><a
+                                                                                        href="{{ route('category.products', [$category->slug, $subCat->slug, $childCat->slug]) }}">{{ $childCat['name'] }}</a>
+                                                                                </li>
+                                                                            @endforeach
+                                                                        </ul>
+                                                                    </div>
                                                                 </div>
-                                                            </div>
+                                                            @endif
                                                         </li>
                                                     @endforeach
                                                 </ul>
@@ -253,29 +227,6 @@ $company_mobile_logo = \App\Model\BusinessSetting::where('type', 'company_mobile
                         {{ \App\CPU\translate('Video Shopping') }}</a>
                 </div>
             </div>
-            {{-- <div class="menu-box">
-                <div class="menu-link" id="headingTwo">
-                    <a class="mmenu-btn menu-link-active" type="button" data-toggle="collapse"
-                        data-target="#offers" aria-expanded="true"><i
-                            class="fa fa-ptab3 mr-2"></i>{{ \App\CPU\translate('Offer') }}<i
-                            class="fa fa-plus"></i></a>
-                </div>
-                <div id="offers" class="menu-body collapse" aria-labelledby="headingTwo"
-                    data-parent="#accordionExample">
-                    <div class="card-body">
-                        <ul>
-                            <li>
-                                <a href="{{ route('campain') }}"><i
-                                        class="fa fa-ptab3 mr-2"></i>{{ \App\CPU\translate('Campaign') }}</i></a>
-                            </li>
-                            @foreach ($landingPages as $landingPage)
-                                <li><a href="{{ route('landing_page', $landingPage->slug) }}"><i
-                                            class="fa fa-ptab3 mr-2"></i>{{ $landingPage->title }}</i></a></li>
-                            @endforeach
-                        </ul>
-                    </div>
-                </div>
-            </div> --}}
             <div class="menu-box">
                 <div class="menu-link">
                     <a href="{{ route('offers.product') }}"><i

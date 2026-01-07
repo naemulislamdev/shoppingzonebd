@@ -17,6 +17,7 @@
             display: none;
             /* Hide the actual file input */
         }
+
         .custom-file-label {
             display: inline-block;
             background-color: #007bff;
@@ -139,15 +140,12 @@
                                     <div class="col-md-4">
                                         <label for="name">{{ \App\CPU\translate('Category') }} <span
                                                 class="text-danger">*</span></label>
-                                        <select
-                                            class="js-example-basic-multiple js-states js-example-responsive form-control"
-                                            name="category_id" id="category_id"
-                                            onchange="getRequest('{{ url('/') }}/admin/product/get-categories?parent_id='+this.value,'sub-category-select','select')">
-                                            <option value="0" selected disabled>
+                                        <select class="form-control" name="category_id" id="category_id">
+                                            <option selected disabled>
                                                 ---{{ \App\CPU\translate('Select') }}---</option>
                                             @foreach ($categories as $category)
                                                 <option value="{{ $category['id'] }}"
-                                                    {{ $category->id == $product_category[0]->id ? 'selected' : '' }}>
+                                                    {{ $category->id == $product->category_id ? 'selected' : '' }}>
                                                     {{ $category['name'] }}</option>
                                             @endforeach
                                         </select>
@@ -157,21 +155,26 @@
                                     </div>
                                     <div class="col-md-4">
                                         <label for="name">{{ \App\CPU\translate('Sub Category') }}</label>
-                                        <select
-                                            class="js-example-basic-multiple js-states js-example-responsive form-control"
-                                            name="sub_category_id" id="sub-category-select"
-                                            data-id="{{ count($product_category) >= 2 ? $product_category[1]->id : '' }}"
-                                            onchange="getRequest('{{ url('/') }}/admin/product/get-categories?parent_id='+this.value,'sub-sub-category-select','select')">
+                                        <select class="form-control" name="sub_category_id" id="sub_category_select">
+                                            @foreach ($subCategories as $subCategory)
+                                                <option value="{{ $subCategory['id'] }}"
+                                                    {{ $subCategory->id == $product->sub_category_id ? 'selected' : '' }}>
+                                                    {{ $subCategory['name'] }}
+                                                </option>
+                                            @endforeach
                                         </select>
                                     </div>
                                     <div class="col-md-4">
                                         <label for="name">{{ \App\CPU\translate('Sub Sub Category') }}</label>
-
-                                        <select
-                                            class="js-example-basic-multiple js-states js-example-responsive form-control"
-                                            data-id="{{ count($product_category) >= 3 ? $product_category[2]->id : '' }}"
-                                            name="sub_sub_category_id" id="sub-sub-category-select">
-
+                                        <select class="form-control" name="child_category_id" id="child_category_select">
+                                            @if ($product->child_category_id)
+                                                @foreach ($childCategories as $childCategory)
+                                                    <option value="{{ $childCategory['id'] }}"
+                                                        {{ $childCategory->id == $product->child_category_id ? 'selected' : '' }}>
+                                                        {{ $childCategory['name'] }}
+                                                    </option>
+                                                @endforeach
+                                            @endif
                                         </select>
                                     </div>
                                 </div>
@@ -552,10 +555,9 @@
                     <div class="card mt-2 rest-part">
                         <div class="card-body">
                             <div class="row">
-                                 <div class="col-md-8 mb-4">
+                                <div class="col-md-8 mb-4">
                                     <label class="control-label">ALT Text</label>
-                                    <input type="text" name="alt_text"
-                                        placeholder="Product ALT Text"
+                                    <input type="text" name="alt_text" placeholder="Product ALT Text"
                                         class="form-control">
                                     @error('alt_text')
                                         <span class="text-danger">{{ $message }}</span>
@@ -1009,12 +1011,12 @@
         $(document).ready(function() {
             setTimeout(function() {
                 let category = $("#category_id").val();
-                let sub_category = $("#sub-category-select").attr("data-id");
-                let sub_sub_category = $("#sub-sub-category-select").attr("data-id");
+                let sub_category = $("#sub_category_select").attr("data-id");
+                let sub_sub_category = $("#child_category_select").attr("data-id");
                 getRequest('{{ url('/') }}/admin/product/get-categories?parent_id=' + category +
-                    '&sub_category=' + sub_category, 'sub-category-select', 'select');
+                    '&sub_category=' + sub_category, 'sub_category_select', 'select');
                 getRequest('{{ url('/') }}/admin/product/get-categories?parent_id=' + sub_category +
-                    '&sub_category=' + sub_sub_category, 'sub-sub-category-select', 'select');
+                    '&sub_category=' + sub_sub_category, 'child_category_select', 'select');
             }, 100)
             // color select select2
             $('.color-var-select').select2({
@@ -1097,6 +1099,58 @@
             $('#summernote').summernote();
             $('#summernote1').summernote();
             $('#summernote2').summernote();
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+
+            // When Category changes
+            $('#category_id').on('change', function() {
+                let category_id = $(this).val();
+
+                $('#sub_category_select').html('<option selected disabled>Loading...</option>');
+                $('#child_category_select').html('<option selected disabled>---Select---</option>');
+
+                if (category_id) {
+                    $.ajax({
+                        //user route
+                        url: "{{ route('admin.product.get-subcategories', '') }}/" + category_id,
+                        type: "GET",
+                        success: function(data) {
+                            let html = '<option selected disabled>---Select---</option>';
+                            $.each(data, function(key, value) {
+                                html +=
+                                    `<option value="${value.id}">${value.name}</option>`;
+                            });
+                            $('#sub_category_select').html(html);
+                        }
+                    });
+                }
+            });
+
+            // When Sub Category changes
+            $('#sub_category_select').on('change', function() {
+                let sub_category_id = $(this).val();
+
+                $('#child_category_select').html('<option selected disabled>Loading...</option>');
+
+                if (sub_category_id) {
+                    $.ajax({
+                        url: "{{ route('admin.product.get-child-categories', '') }}/" +
+                            sub_category_id,
+                        type: "GET",
+                        success: function(data) {
+                            let html = '<option selected disabled>---Select---</option>';
+                            $.each(data, function(key, value) {
+                                html +=
+                                    `<option value="${value.id}">${value.name}</option>`;
+                            });
+                            $('#child_category_select').html(html);
+                        }
+                    });
+                }
+            });
+
         });
     </script>
 @endpush

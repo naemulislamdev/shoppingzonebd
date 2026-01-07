@@ -325,6 +325,14 @@
         });
     </script>
     <script>
+        ttq.track('Purchase', {
+            content_id: '{{ $order->id }}',
+            value:  {{ \App\CPU\Helpers::currency_converter($order->order_amount) ?? 0 }},
+            currency: 'BDT'
+        });
+    </script>
+
+    <script>
         ttq.identify({
             "email": "<hashed_email_address>", // string. The email of the customer if available. It must be hashed with SHA-256 on the client side.
             "phone_number": "<hashed_phone_number>", // string. The phone number of the customer if available. It must be hashed with SHA-256 on the client side.
