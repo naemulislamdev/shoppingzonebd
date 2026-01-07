@@ -1299,6 +1299,21 @@
                                     }]
                                 }
                             });
+                            // FB AddToCart Event
+                            fbq('track', 'AddToCart', {
+                                content_ids: [data.product.id],
+                                content_type: 'product',
+                                value: parseFloat(data.product.price),
+                                currency: 'BDT'
+                            });
+
+                            //Tiktok AddToCart Event
+                            ttq.track('AddToCart', {
+                                content_id: data.product.id,
+                                quantity: parseInt(data.product.quantity),
+                                value: parseFloat(data.product.price),
+                                currency: 'BDT'
+                            });
                         }
                         // END DATALAYER PUSH
                         // Product AI API integration

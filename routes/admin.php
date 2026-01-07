@@ -202,16 +202,16 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('/sub-category/fetch', 'fetch')->name('fetch');
             Route::post('/sub-category/store', 'store')->name('store');
             Route::post('/sub-category/edit', 'edit')->name('edit');
-            Route::post('/sub-category/update', 'update')->name('update');
+            Route::post('/sub-category/update/{id}', 'update')->name('update');
             Route::post('/sub-category/delete', 'delete')->name('delete');
         });
 
-        Route::controller(SubSubCategoryController::class)->prefix('/sub-sub-category')->as('sub-sub-category.')->middleware('module:product_management')->group(function () {
+        Route::controller(SubSubCategoryController::class)->prefix('/child-category')->as('child-category.')->middleware('module:product_management')->group(function () {
             Route::get('view', 'index')->name('view');
             Route::get('fetch', 'fetch')->name('fetch');
             Route::post('store', 'store')->name('store');
             Route::post('edit', 'edit')->name('edit');
-            Route::post('update', 'update')->name('update');
+            Route::post('update/{id}', 'update')->name('update');
             Route::post('delete', 'delete')->name('delete');
             Route::post('get-sub-category', 'getSubCategory')->name('getSubCategory');
             Route::post('get-category-id', 'getCategoryId')->name('getCategoryId');
@@ -426,6 +426,9 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('CampaingDelete/{id}', 'CampaingDelete')->name('CampaingDelete');
             Route::get('productsearch', 'productsearch')->name('productsearch');
             Route::get('updateProductFlatDiscount', 'updateProductFlatDiscount')->name('updateProductFlatDiscount');
+
+            Route::get('/get-subcategories/{category_id}', 'getSubCategories')->name('get-subcategories');
+            Route::get('/get-child-categories/{subcategory_id}', 'getChildCategories')->name('get-child-categories');
         });
 
         Route::controller(DiscountManageController::class)->prefix('/discount')->as('discount.')->middleware('module:product_management')->group(function () {

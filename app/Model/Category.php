@@ -3,6 +3,8 @@
 namespace App\Model;
 
 use App\CPU\Helpers;
+use App\Models\ChildCategory;
+use App\Models\SubCategory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\App;
@@ -18,20 +20,25 @@ class Category extends Model
         'home_status' => 'integer',
         'priority' => 'integer'
     ];
+    protected $guarded = ['id'];
 
     public function translations()
     {
         return $this->morphMany('App\Model\Translation', 'translationable');
     }
 
-    public function parent()
-    {
-        return $this->belongsTo(Category::class, 'parent_id')->orderBy('priority','desc');
-    }
 
+    public function subCategory()
+    {
+        return $this->hasMany(SubCategory::class)->orderBy('order_number','asc');
+    }
     public function childes()
     {
-        return $this->hasMany(Category::class, 'parent_id')->orderBy('priority','desc');
+        return $this->hasMany(ChildCategory::class)->orderBy('order_number','asc');
+    }
+    public function countProduct()
+    {
+        return $this->hasMany(Product::class, 'category_id');
     }
 
     public function getNameAttribute($name)

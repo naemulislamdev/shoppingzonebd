@@ -41,26 +41,29 @@
             </div>
             <div class="row">
                 <div class="col-md-12">
+                    @php $categories = \App\Model\Category::where('home_status', 1)->orderBy('order_number')->get(); @endphp
                     <h4 class="color-heading">Categories:</h4>
                     <!--start Filter Category-->
                     <div class="category-filter">
-                        @foreach(\App\CPU\CategoryManager::parents() as $category)
+                        @foreach($categories as $category)
                         <div class="category">
                             <div class="category-header">
-                                <a href="{{route('products',['id'=> $category['id'],'data_from'=>'category','page'=>1])}}">{{$category['name']}}</a>
+                                <a href="{{ route('category.products', $category->slug) }}">{{$category['name']}}</a>
                                 <span class="toggle-icon" data-toggle="category_{{$category['id']}}">+</span>
                             </div>
                             <div class="sub-categories" id="category_{{$category['id']}}">
-                                @foreach($category->childes as $child)
+                                @foreach($category->subCategory as $subCat)
                                 <div class="sub-category">
                                     <div class="sub-category-header">
-                                        <a href="{{route('products',['id'=> $child['id'],'data_from'=>'category','page'=>1])}}">{{$child['name']}}</a>
-                                        <span class="toggle-icon" data-toggle="subCategory_{{$child['name']}}">+</span>
+                                        <a href="{{ route('category.products', [$category->slug, $subCat->slug]) }}">{{$subCat['name']}}</a>
+                                        <span class="toggle-icon" data-toggle="subCategory_{{$subCat['name']}}">+</span>
                                     </div>
-                                    <div class="child-categories" id="subCategory_{{$child['name']}}">
-                                        @foreach($child->childes as $ch)
-                                        <a href="{{route('products',['id'=> $ch['id'],'data_from'=>'category','page'=>1])}}">{{$ch['name']}}</a><br>
+                                    <div class="child-categories" id="subCategory_{{$subCat['name']}}">
+                                        @if ($subCat->childes->count() > 0)
+                                        @foreach($subCat->childes as $childCat)
+                                        <a href="{{ route('category.products', [$category->slug, $subCat->slug, $childCat->slug]) }}">{{$childCat['name']}}</a><br>
                                         @endforeach
+                                        @endif
                                     </div>
                                 </div>
                                 @endforeach
@@ -77,7 +80,7 @@
                         <h4 class="color-heading">Brand:</h4>
                         <div class="brand-filter">
                             @foreach(\App\CPU\BrandManager::get_brands() as $brand)
-                            <div class="form-check" onclick="location.href='{{route('products',['id'=> $brand['id'],'data_from'=>'brand','page'=>1])}}'">
+                            <div class="form-check">
                                 <input class="form-check-input" type="radio" name="brand"
                                     id="brandNike__{{ $brand['id'] }}" value="{{ $brand['name'] }}">
                                 <label class="form-check-label" for="brandNike__{{ $brand['id'] }}">

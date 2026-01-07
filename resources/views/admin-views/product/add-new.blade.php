@@ -14,7 +14,8 @@
         }
 
         .custom-file-input {
-            display: none; /* Hide the actual file input */
+            display: none;
+            /* Hide the actual file input */
         }
 
         .custom-file-label {
@@ -106,8 +107,8 @@
                                 <label class="input-label" for="name">{{ \App\CPU\translate('name') }}<span
                                         class="text-danger">*</span>
                                 </label>
-                                <input type="text" name="name" class="form-control" placeholder="Enter product name" required
-                                    value="{{ old('name') }}">
+                                <input type="text" name="name" class="form-control" placeholder="Enter product name"
+                                    required value="{{ old('name') }}">
                                 @error('name')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
@@ -142,10 +143,8 @@
                                     <div class="col-md-4">
                                         <label for="name">{{ \App\CPU\translate('Category') }} <span
                                                 class="text-danger">*</span></label>
-                                        <select class="js-example-basic-multiple form-control" name="category_id"
-                                            onchange="getRequest('{{ url('/') }}/admin/product/get-categories?parent_id='+this.value,'sub-category-select','select')">
-                                            <option value="{{ old('category_id') }}" selected disabled>---Select---
-                                            </option>
+                                        <select class="form-control" name="category_id" id="category_id">
+                                            <option selected disabled>---Select---</option>
                                             @foreach ($cat as $c)
                                                 <option value="{{ $c['id'] }}"
                                                     {{ old('name') == $c['id'] ? 'selected' : '' }}>
@@ -159,15 +158,14 @@
                                     </div>
                                     <div class="col-md-4">
                                         <label for="name">{{ \App\CPU\translate('Sub Category') }}</label>
-                                        <select class="js-example-basic-multiple form-control" name="sub_category_id"
-                                            id="sub-category-select"
-                                            onchange="getRequest('{{ url('/') }}/admin/product/get-categories?parent_id='+this.value,'sub-sub-category-select','select')">
+                                        <select class="form-control" name="sub_category_id"
+                                            id="sub_category_select">
                                         </select>
                                     </div>
                                     <div class="col-md-4">
-                                        <label for="name">{{ \App\CPU\translate('Sub Sub Category') }}</label>
-                                        <select class="js-example-basic-multiple form-control" name="sub_sub_category_id"
-                                            id="sub-sub-category-select">
+                                        <label for="name">Child Category</label>
+                                        <select class="form-control" name="child_category_id"
+                                            id="child_category_select">
 
                                         </select>
                                     </div>
@@ -475,8 +473,7 @@
                             <div class="row">
                                 <div class="col-md-8 mb-4">
                                     <label class="control-label">ALT Text</label>
-                                    <input type="text" name="alt_text"
-                                        placeholder="Product ALT Text"
+                                    <input type="text" name="alt_text" placeholder="Product ALT Text"
                                         class="form-control">
                                     @error('alt_text')
                                         <span class="text-danger">{{ $message }}</span>
@@ -512,7 +509,8 @@
                                             style="color: red">* ( {{ \App\CPU\translate('ratio') }} 1:1 )</small>
                                     </div>
                                     <div class="upload-container">
-                                        <input type="file" id="image-upload" name="images[]" multiple accept="image/*" class="custom-file-input">
+                                        <input type="file" id="image-upload" name="images[]" multiple
+                                            accept="image/*" class="custom-file-input">
                                         <label for="image-upload" class="custom-file-label">Select Product Images</label>
                                         <div id="image-preview" class="image-preview-container"></div>
                                     </div>
@@ -596,49 +594,49 @@
     <script src="{{ asset('assets/back-end/js/spartan-multi-image-picker.js') }}"></script>
     <script>
         $(document).ready(function() {
-             const previewContainer = $("#image-preview");
-             $("#image-upload").on("change", function(event) {
-                 previewContainer.empty(); // Clear existing previews
-                 const files = event.target.files;
+            const previewContainer = $("#image-preview");
+            $("#image-upload").on("change", function(event) {
+                previewContainer.empty(); // Clear existing previews
+                const files = event.target.files;
 
-                 if (files) {
-                     $.each(files, function(index, file) {
-                         const reader = new FileReader();
-                         reader.onload = function(e) {
-                             const previewItem = $(`
+                if (files) {
+                    $.each(files, function(index, file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const previewItem = $(`
                                  <div class="preview-item">
                                      <img src="${e.target.result}" class="preview-image">
                                      <button type="button" class="remove-icon" data-index="${index}">&#10005;</button>
                                  </div>
                              `);
-                             previewContainer.append(previewItem);
-                         };
-                         reader.readAsDataURL(file);
-                     });
-                 }
-             });
+                            previewContainer.append(previewItem);
+                        };
+                        reader.readAsDataURL(file);
+                    });
+                }
+            });
 
-             // Handle image removal
-             previewContainer.on("click", ".remove-icon", function() {
-                 const indexToRemove = $(this).data("index");
-                 $(this).parent().remove();
-                 // Remove the corresponding file from the input (file list cannot be modified directly, so create a new list)
-                 const input = document.getElementById("image-upload");
-                 const dataTransfer = new DataTransfer();
-                 const files = input.files;
+            // Handle image removal
+            previewContainer.on("click", ".remove-icon", function() {
+                const indexToRemove = $(this).data("index");
+                $(this).parent().remove();
+                // Remove the corresponding file from the input (file list cannot be modified directly, so create a new list)
+                const input = document.getElementById("image-upload");
+                const dataTransfer = new DataTransfer();
+                const files = input.files;
 
-                 // Add all files except the one to be removed
-                 for (let i = 0; i < files.length; i++) {
-                     if (i !== indexToRemove) {
-                         dataTransfer.items.add(files[i]);
-                     }
-                 }
+                // Add all files except the one to be removed
+                for (let i = 0; i < files.length; i++) {
+                    if (i !== indexToRemove) {
+                        dataTransfer.items.add(files[i]);
+                    }
+                }
 
-                 // Update the input files
-                 input.files = dataTransfer.files;
-             });
-         });
-     </script>
+                // Update the input files
+                input.files = dataTransfer.files;
+            });
+        });
+    </script>
     <script>
         $(function() {
             $("#size_chart").spartanMultiImagePicker({
@@ -907,6 +905,57 @@
             $('#summernote').summernote();
             $('#summernote1').summernote();
             $('#summernote2').summernote();
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+
+            // When Category changes
+            $('#category_id').on('change', function() {
+                let category_id = $(this).val();
+
+                $('#sub_category_select').html('<option selected disabled>Loading...</option>');
+                $('#child_category_select').html('<option selected disabled>---Select---</option>');
+
+                if (category_id) {
+                    $.ajax({
+                        //user route
+                        url: "{{ route('admin.product.get-subcategories', '') }}/" + category_id,
+                        type: "GET",
+                        success: function(data) {
+                            let html = '<option selected disabled>---Select---</option>';
+                            $.each(data, function(key, value) {
+                                html +=
+                                    `<option value="${value.id}">${value.name}</option>`;
+                            });
+                            $('#sub_category_select').html(html);
+                        }
+                    });
+                }
+            });
+
+            // When Sub Category changes
+            $('#sub_category_select').on('change', function() {
+                let sub_category_id = $(this).val();
+
+                $('#child_category_select').html('<option selected disabled>Loading...</option>');
+
+                if (sub_category_id) {
+                    $.ajax({
+                        url: "{{ route('admin.product.get-child-categories', '') }}/" + sub_category_id,
+                        type: "GET",
+                        success: function(data) {
+                            let html = '<option selected disabled>---Select---</option>';
+                            $.each(data, function(key, value) {
+                                html +=
+                                    `<option value="${value.id}">${value.name}</option>`;
+                            });
+                            $('#child_category_select').html(html);
+                        }
+                    });
+                }
+            });
+
         });
     </script>
 @endpush

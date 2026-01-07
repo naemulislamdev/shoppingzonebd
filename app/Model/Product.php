@@ -39,6 +39,10 @@ class Product extends Model
     {
         return $this->morphMany('App\Model\Translation', 'translationable');
     }
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'category_id');
+    }
 
     public function scopeActive($query)
     {

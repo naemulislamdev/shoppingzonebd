@@ -25,6 +25,8 @@ use function App\CPU\translate;
 use App\Model\Cart;
 use App\campaing_detalie;
 use App\Http\Requests\ProductRequest;
+use App\Models\ChildCategory;
+use App\Models\SubCategory;
 use Illuminate\Http\Client\Request as ClientRequest;
 use Illuminate\Support\Facades\Request as FacadesRequest;
 use Illuminate\Support\Facades\Storage;
@@ -42,7 +44,7 @@ class ProductController extends BaseController
     }
     public function add_new()
     {
-        $cat = Category::where(['parent_id' => 0])->get();
+        $cat = Category::where('home_status', 1)->get();
         $br = Brand::orderBY('name', 'ASC')->get();
         return view('admin-views.product.add-new', compact('cat', 'br'));
     }
@@ -112,32 +114,13 @@ class ProductController extends BaseController
         $p->added_by = "admin";
         $p->name = $request->name;
         $p->code = $request->code;
-        $p->slug = Str::slug($request->name).'-'. $request->code;
+        $p->slug = Str::slug($request->name) . '-' . $request->code;
 
-        $category = [];
+        $p->category_id = $request->category_id;
+        $p->sub_category_id = $request->sub_category_id;
+        $p->child_category_id = $request->child_category_id;
 
-        if ($request->category_id != null) {
-            array_push($category, [
-                'id' => $request->category_id,
-                'position' => 1,
-            ]);
-        }
-
-        if ($request->sub_category_id != null) {
-            array_push($category, [
-                'id' => $request->sub_category_id,
-                'position' => 2,
-            ]);
-        }
-
-        if ($request->sub_sub_category_id != null) {
-            array_push($category, [
-                'id' => $request->sub_sub_category_id,
-                'position' => 3,
-            ]);
-        }
-
-        $p->category_ids = json_encode($category);
+        $p->category_ids = null;
         $p->brand_id = $request->brand_id;
         $p->unit = $request->unit;
         $p->details = $request->description;
@@ -441,21 +424,43 @@ class ProductController extends BaseController
         return response()->json([], 200);
     }
 
-    public function get_categories(Request $request)
+    // Get Sub Categories
+    public function getSubCategories($category_id)
     {
-        $cat = Category::where(['parent_id' => $request->parent_id])->get();
-        $res = '<option value="' . 0 . '" disabled selected>---Select---</option>';
-        foreach ($cat as $row) {
-            if ($row->id == $request->sub_category) {
-                $res .= '<option value="' . $row->id . '" selected >' . $row->name . '</option>';
-            } else {
-                $res .= '<option value="' . $row->id . '">' . $row->name . '</option>';
-            }
-        }
-        return response()->json([
-            'select_tag' => $res,
-        ]);
+        $subCategories = SubCategory::where('category_id', $category_id)
+            ->where('status', 1)
+            ->select('id', 'name')
+            ->get();
+
+        return response()->json($subCategories);
     }
+
+    // Get Child Categories
+    public function getChildCategories($subcategory_id)
+    {
+        $childCategories = ChildCategory::where('sub_category_id', $subcategory_id)
+            ->where('status', 1)
+            ->select('id', 'name')
+            ->get();
+
+        return response()->json($childCategories);
+    }
+
+    // public function get_categories(Request $request)
+    // {
+    //     $cat = Category::where(['parent_id' => $request->parent_id])->get();
+    //     $res = '<option value="' . 0 . '" disabled selected>---Select---</option>';
+    //     foreach ($cat as $row) {
+    //         if ($row->id == $request->sub_category) {
+    //             $res .= '<option value="' . $row->id . '" selected >' . $row->name . '</option>';
+    //         } else {
+    //             $res .= '<option value="' . $row->id . '">' . $row->name . '</option>';
+    //         }
+    //     }
+    //     return response()->json([
+    //         'select_tag' => $res,
+    //     ]);
+    // }
 
     public function sku_combination(Request $request)
     {
@@ -516,40 +521,27 @@ class ProductController extends BaseController
         $campaingDetalies = campaing_detalie::where(['product_id' => $product->id])->get();
         $product_category = json_decode($product->category_ids);
         $product->colors = json_decode($product->colors);
-        $categories = Category::where(['parent_id' => 0])->get();
+        $categories = Category::where('home_status', 1)->get();
+        $subCategories = SubCategory::where('status', 1)->get();
+        $childCategories = ChildCategory::where('status', 1)->get();
         $br = Brand::orderBY('name', 'ASC')->get();
 
-        return view('admin-views.product.edit', compact('categories', 'br', 'product', 'product_category', 'campaingDetalies'));
+        return view('admin-views.product.edit', compact('categories', 'subCategories', 'childCategories', 'br', 'product', 'product_category', 'campaingDetalies'));
     }
 
     public function update(ProductRequest $request, $id)
     {
 
         $product = Product::find($id);
-        $product_slug = Str::slug($request->name).'-'. $request->code;
+        $product_slug = Str::slug($request->name) . '-' . $request->code;
         $product->name = $request->name;
         $product->slug = $product_slug;
 
-        $category = [];
-        if ($request->category_id != null) {
-            array_push($category, [
-                'id' => $request->category_id,
-                'position' => 1,
-            ]);
-        }
-        if ($request->sub_category_id != null) {
-            array_push($category, [
-                'id' => $request->sub_category_id,
-                'position' => 2,
-            ]);
-        }
-        if ($request->sub_sub_category_id != null) {
-            array_push($category, [
-                'id' => $request->sub_sub_category_id,
-                'position' => 3,
-            ]);
-        }
-        $product->category_ids = json_encode($category);
+        $product->category_id = $request->category_id;
+        $product->sub_category_id = $request->sub_category_id;
+        $product->child_category_id = $request->child_category_id;
+
+        $product->category_ids = null;
         $product->brand_id = $request->brand_id;
         $product->unit = $request->unit;
         $product->code = $request->code;

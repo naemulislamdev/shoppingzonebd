@@ -145,68 +145,19 @@
             transition: opacity 0.3s ease;
         }
 
-        .p-dtls-box>table>tbody>tr {
-            display: block !important;
-            justify-content: space-between;
-            border: 1px solid #ddd;
-        }
-
-        .shipping-box {
-            border: 1px solid #ddd;
-            padding: 7px;
-            border-radius: 5px;
-            display: flex;
-            justify-content: space-evenly;
-            cursor: pointer;
-            align-items: center;
-            transition: 0.3s all ease-in-out;
-        }
-
-        .shipping-box input[type="radio"]:checked+.shipping-title {
-            font-weight: bold;
-            color: #f26d21;
-        }
-
-        .v-color-box>.color-label,
-        .v-size-box>.size-label {
-            cursor: pointer;
-            border: 2px solid #ccc;
-            padding: 0 !important;
-            border-radius: 5px;
-            width: 100%;
-            text-align: center;
-            height: 100px !important;
-            position: relative;
-            font-size: 18px !important;
-            font-weight: 600 !important;
-        }
-
-        .v-color-box>input:checked+.color-label::after {
-            content: '✔';
-            color: green;
-            font-size: 22px !important;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        .v-color-box,
-        .v-size-box {
-            margin-right: 0.925rem !important;
-        }
-
-        .btn-number {
-            width: 30px;
-            height: 30px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 0 !important;
-            line-height: 30px;
-            font-size: 16px !important;
-            text-align: center;
-        }
+        /* .color-label {
+                    cursor: pointer;
+                    margin-right: 8px;
+                    border-radius: 6px;
+                    overflow: hidden;
+                }
+                .color-label img {
+                    border: 2px solid transparent;
+                    transition: border 0.3s;
+                }
+                input[name="color"]:checked + .color-label img {
+                    border: 2px solid #007bff;
+                } */
     </style>
     <?php
     $overallRating = \App\CPU\ProductManager::get_overall_rating($product->reviews);
@@ -886,176 +837,9 @@
             </div>
             <div class="row product-grid">
                 <!-- Your product columns go here -->
-                @if (count($relatedProducts) > 0)
-                    @foreach ($relatedProducts as $key => $product)
-                        <div class="col-md-2 col-sm-6 product-column" data-category="category3">
-                            <div class="product-box product-box-col-2" data-category="category3">
-                                <div class="product-image2 product-image2-col-2" data-category="category1">
-                                    @if ($product->discount > 0)
-                                        <div class="discount-box float-end">
-                                            <span>
-                                                @if ($product->discount_type == 'percent')
-                                                    {{ round($product->discount, $decimal_point_settings) }}%
-                                                @elseif($product->discount_type == 'flat')
-                                                    {{ \App\CPU\Helpers::currency_converter($product->discount) }}
-                                                @endif
-                                            </span>
-                                        </div>
-                                    @endif
-                                    <a href="{{ route('product', $product->slug) }}">
-                                        <img class="pic-1"
-                                            src="{{ \App\CPU\ProductManager::product_image_path('thumbnail') }}/{{ $product['thumbnail'] }}"
-                                            alt="{{ $product['name'] }}">
-                                        <img class="pic-2"
-                                            src="{{ \App\CPU\ProductManager::product_image_path('thumbnail') }}/{{ $product['thumbnail'] }}"
-                                            alt="{{ $product['name'] }}">
-                                    </a>
-                                    <ul class="social">
-                                        <li><a href="{{ route('product', $product->slug) }}" data-tip="Quick View"><i
-                                                    class="fa fa-eye"></i></a></li>
-
-                                        <li><a style="cursor: pointer" data-toggle="modal"
-                                                data-target="#addToCartModal_{{ $product->id }}"
-                                                data-tip="Add to Cart"><i class="fa fa-shopping-cart"></i></a>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="product-content">
-                                    <h3 class="title"><a
-                                            href="{{ route('product', $product->slug) }}">{{ Str::limit($product['name'], 50) }}</a>
-                                    </h3>
-                                    <div class="price d-flex justify-content-center align-content-center">
-                                        @if ($product->discount > 0)
-                                            <span
-                                                class="mr-2">{{ \App\CPU\Helpers::currency_converter(
-                                                    $product->unit_price - \App\CPU\Helpers::get_product_discount($product, $product->unit_price),
-                                                ) }}</span>
-                                            <del>{{ \App\CPU\Helpers::currency_converter($product->unit_price) }}</del>
-                                        @else
-                                            <span>{{ \App\CPU\Helpers::currency_converter($product->unit_price) }}</span>
-                                        @endif
-                                    </div>
-                                    <button type="button" style="cursor: pointer;" class="btn btn-primary"
-                                        onclick="buy_now('form-{{ $product->id }}')">অর্ডার করুন</button>
-                                </div>
-                            </div>
-                        </div>
-                        {{-- AddToCart Modal --}}
-                        <div class="modal fade" id="addToCartModal_{{ $product->id }}" tabindex="-1" role="dialog"
-                            aria-labelledby="exampleModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered" role="document">
-                                <form id="form-{{ $product->id }}" class="mb-2">
-                                    @csrf
-                                    <input type="hidden" name="id" value="{{ $product->id }}">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <button type="button" class="close" data-dismiss="modal"
-                                                aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div class="product-modal-box d-flex align-items-center mb-3">
-                                                <div class="img mr-3">
-                                                    <img src="{{ \App\CPU\ProductManager::product_image_path('thumbnail') }}/{{ $product['thumbnail'] }}"
-                                                        alt="{{ $product->name }}" style="width: 80px;">
-                                                </div>
-                                                <div class="p-name">
-                                                    <h5 class="title">{{ Str::limit($product['name'], 50) }}</h5>
-                                                    <span
-                                                        class="mr-2">{{ \App\CPU\Helpers::currency_converter(
-                                                            $product->unit_price - \App\CPU\Helpers::get_product_discount($product, $product->unit_price),
-                                                        ) }}</span>
-                                                </div>
-                                            </div>
-                                            @if (count(json_decode($product->colors)) > 0)
-                                                <div class="row">
-                                                    <div class="col-12">
-                                                        <h4>Color</h4>
-                                                    </div>
-                                                    <div class="col-12">
-                                                        <div class="d-flex">
-                                                            @foreach (json_decode($product->colors) as $key => $color)
-                                                                <div class="v-color-box">
-                                                                    <input type="radio"
-                                                                        id="{{ $product->id }}-color-{{ $key }}"
-                                                                        name="color" value="{{ $color }}"
-                                                                        @if ($key == 0) checked @endif>
-                                                                    <label style="background: {{ $color }}"
-                                                                        for="{{ $product->id }}-color-{{ $key }}"
-                                                                        class="color-label"></label>
-                                                                </div>
-                                                            @endforeach
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            @endif
-
-                                            @if (count(json_decode($product->choice_options)) > 0)
-                                                @foreach (json_decode($product->choice_options) as $key => $choice)
-                                                    <div class="row mb-3">
-                                                        <div class="col-12">
-                                                            <h4 style="font-size: 18px; margin:0;">{{ $choice->title }}
-                                                            </h4>
-                                                        </div>
-                                                        <div class="col-12">
-                                                            <div class="d-flex">
-                                                                @foreach ($choice->options as $key => $option)
-                                                                    <div class="v-size-box">
-                                                                        <input type="radio"
-                                                                            id="{{ $product->id }}-size-{{ $key }}"
-                                                                            name="{{ $choice->name }}"
-                                                                            value="{{ $option }}"
-                                                                            @if ($key == 0) checked @endif>
-                                                                        <label
-                                                                            for="{{ $product->id }}-size-{{ $key }}"
-                                                                            class="size-label">{{ $option }}</label>
-                                                                    </div>
-                                                                @endforeach
-                                                            </div>
-                                                        </div>
-
-                                                    </div>
-                                                @endforeach
-                                            @endif
-                                            <div class="row">
-                                                <div class="col-md-10 mx-auto">
-                                                    <div class="product-quantity d-flex align-items-center">
-                                                        <div class="input-group input-group--style-2 pr-3"
-                                                            style="width: 160px;">
-                                                            <span class="input-group-btn">
-                                                                <button class="btn btn-number" type="button"
-                                                                    data-type="minus" data-field="quantity"
-                                                                    disabled="disabled" style="padding: 10px">
-                                                                    -
-                                                                </button>
-                                                            </span>
-                                                            <input type="text" name="quantity"
-                                                                class="form-control input-number text-center cart-qty-field"
-                                                                placeholder="1" value="1" min="1"
-                                                                max="100">
-                                                            <span class="input-group-btn">
-                                                                <button class="btn btn-number" type="button"
-                                                                    data-type="plus" data-field="quantity"
-                                                                    style="padding: 10px">
-                                                                    +
-                                                                </button>
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <a href="{{ route('product', $product->slug) }}"
-                                                class="btn btn-secondary">View Details</a>
-                                            <button type="button" class="btn btn-danger"
-                                                onclick="addToCart('form-{{ $product->id }}')">Add To Cart</button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
+                @if ($relatedProducts->isNotEmpty())
+                    @foreach ($relatedProducts as $product)
+                        @include('web-views.products.product_box', ['dataCategory' => 'category3'])
                     @endforeach
                 @else
                     <div class="col-12">
@@ -1092,14 +876,6 @@
     <script>
         fbq('track', 'ViewContent', {
             content_ids: ['{{ $product->id }}'],
-            content_type: 'product',
-            value: {{ \App\CPU\Helpers::currency_converter($product->unit_price) ?? 0 }},
-            currency: 'BDT'
-        });
-    </script>
-    <script>
-        ttq.track('ViewContent', {
-            content_id: '{{ $product->id }}',
             content_type: 'product',
             value: {{ \App\CPU\Helpers::currency_converter($product->unit_price) ?? 0 }},
             currency: 'BDT'

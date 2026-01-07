@@ -117,6 +117,7 @@ Route::controller(WebController::class)->middleware(['customer'])->group(functio
     //wallet payment
     Route::controller(WebController::class)->group(function () {
         Route::get('checkout-complete-wallet', 'checkout_complete_wallet')->name('checkout-complete-wallet');
+        Route::get('set-category-all-product', 'get_category_all_product');
 
         Route::post('subscription', 'subscription')->name('subscription');
         Route::get('search-shop', 'search_shop')->name('search-shop');
@@ -135,7 +136,8 @@ Route::controller(WebController::class)->middleware(['customer'])->group(functio
         Route::get('/video-shopping', 'videoShopping')->name('video_shopping');
         Route::get('/campaign', 'campaing_products')->name('campain');
         Route::get('/product/{slug}', 'product')->name('product');
-        Route::get('products', 'products')->name('products');
+        Route::get('category/{category?}/{subcategory?}/{childcategory?}', 'products')->name('category.products');
+        Route::get('search', 'homeSearch')->name('home.search');
         Route::get('orderDetails', 'orderdetails')->name('orderdetails');
         Route::get('discounted-products', 'discounted_products')->name('discounted-products');
         Route::get('/product_search', 'searchProducts')->name('product_search');
