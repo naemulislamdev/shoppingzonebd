@@ -185,6 +185,115 @@
             width: 100%;
         }
     }
+
+    /* apple store and play store animation style */
+    .store-btn {
+        display: inline-block;
+        animation: zoomFloat 4s ease-in-out infinite;
+    }
+
+    .store-btn img {
+        max-width: 160px;
+        transition: transform 0.4s ease;
+    }
+
+    /* Slight delay so both don’t animate together */
+    .playstore {
+        animation-delay: 0s;
+    }
+
+    .appstore {
+        animation-delay: 2s;
+    }
+
+    /* Smooth zoom + float */
+    @keyframes zoomFloat {
+        0% {
+            transform: scale(1) translateY(0);
+            /* box-shadow: 0 0 0 rgba(0,0,0,0); */
+        }
+
+        50% {
+            transform: scale(1.03) translateY(-6px);
+            /* box-shadow: 0 14px 30px rgba(255, 153, 0, 0.35); */
+        }
+
+        100% {
+            transform: scale(1) translateY(0);
+            /* box-shadow: 0 0 0 rgba(0,0,0,0); */
+        }
+    }
+
+    .p-dtls-box>table>tbody>tr {
+        display: block !important;
+        justify-content: space-between;
+        border: 1px solid #ddd;
+    }
+
+    .shipping-box {
+        border: 1px solid #ddd;
+        padding: 7px;
+        border-radius: 5px;
+        display: flex;
+        justify-content: space-evenly;
+        cursor: pointer;
+        align-items: center;
+        transition: 0.3s all ease-in-out;
+    }
+
+    .shipping-box input[type="radio"]:checked+.shipping-title {
+        font-weight: bold;
+        color: #f26d21;
+    }
+
+    .v-color-box>.color-label,
+    .v-size-box>.size-label {
+        cursor: pointer;
+        border: 2px solid #ccc;
+        padding: 0 !important;
+        border-radius: 5px;
+        width: 100%;
+        text-align: center;
+        height: 100px !important;
+        position: relative;
+        font-size: 18px !important;
+        font-weight: 600 !important;
+    }
+
+    .v-color-box>input:checked+.color-label::after {
+        content: '✔';
+        color: green;
+        font-size: 22px !important;
+        position: absolute;
+        top: 42%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .v-color-box,
+    .v-size-box {
+        margin-right: 0.925rem !important;
+    }
+
+    .btn-number {
+        width: 30px;
+        height: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0 !important;
+        line-height: 30px;
+        font-size: 16px !important;
+        text-align: center;
+    }
+
+    .addToCartModalCls .modal-content {
+        top: 35px;
+    }
+
+    .close {
+        margin: -15px -12px -1rem auto !important;
+    }
 </style>
 @section('title', \App\CPU\translate('Welcome To') . ' ' . $web_config['name']->value)
 
@@ -223,8 +332,7 @@
                 @if ($arrival_products->count() > 0)
                     <!-- Your product columns go here -->
                     @foreach ($arrival_products as $product)
-                        <div class="product-column"
-                            data-category="{{ $dataCategory ?? '' }}">
+                        <div class="product-column" data-category="{{ $dataCategory ?? '' }}">
                             <div class="product-box product-box-col-2" data-category="{{ $dataCategory ?? '' }}">
                                 <input type="hidden" name="quantity" value="{{ $product->minimum_order_qty ?? 1 }}"
                                     min="{{ $product->minimum_order_qty ?? 1 }}" max="100">
@@ -270,7 +378,6 @@
                             </div>
                         </div>
                         <!-- AddToCart Modal -->
-
                     @endforeach
 
                 @endif
@@ -289,9 +396,27 @@
             <div class="row mb-5">
                 <div class="col text-center">
                     <div class="section-heading-title position-relative z-30">
-                        <h3>Shop By Category</h3>
-                        <div class="heading-border"></div>
+                        <div style="justify-content: space-evenly;" class="d-flex  align-items-center">
+                            <div class="bg-white rounded">
+                                <a class="store-btn playstore"
+                                    href="https://play.google.com/store/apps/details?id=com.shoppingzonebd.android"
+                                    target="_blank" rel="noopener noreferrer">
+                                    <i class="animation"></i>
+                                    <img src="{{ asset('assets/front-end') }}/images/logo/android.webp"
+                                        alt="Google Play Store" style="height: auto; width: 120px;">
+                                    <i class="animation"></i>
+                                </a>
 
+                            </div>
+                            <h3>Categories</h3>
+                            <div class="bg-dark rounded">
+                                <a class="store-btn appstore" href="#" target="_blank" rel="noopener noreferrer">
+                                    <img src="{{ asset('assets/front-end') }}/images/logo/apple.png" alt="Apple Store"
+                                        style="height: auto; width: 120px;">
+                                </a>
+                            </div>
+                        </div>
+                        <div class="heading-border"></div>
                     </div>
                 </div>
             </div>
@@ -321,9 +446,23 @@
             <div class="row">
                 <div class="col text-center">
                     <div class="section-heading-title position-relative z-30">
-                        <h3>Shop By Category</h3>
+                        <div style="justify-content: space-evenly; grid-gap: 20px" class="d-flex  align-items-center">
+                            <div class="bg-white rounded">
+                                <a class="store-btn appstore" target="_blank"
+                                    href="https://play.google.com/store/apps/details?id=com.shoppingzonebd.android">
+                                    <img src="{{ asset('assets/front-end') }}/images/logo/android.webp"
+                                        alt="Google Play Store" style="width: 80px; height: auto;">
+                                </a>
+                            </div>
+                            <h3>Categories</h3>
+                            <div class="bg-dark rounded">
+                                <a class="store-btn appstore" href="#">
+                                    <img src="{{ asset('assets/front-end') }}/images/logo/apple.png" alt="apple Store"
+                                        style="width: 80px; height: auto;">
+                                </a>
+                            </div>
+                        </div>
                         <div class="heading-border"></div>
-
                     </div>
                 </div>
             </div>
@@ -480,7 +619,7 @@
                 </div>
                 <div class="row product-grid">
                     <!-- Your product columns go here -->
-                   
+
                     @foreach ($category['products'] as $key => $product)
                         @if ($key < 12)
                             @include('web-views.products.product_box', [
@@ -607,5 +746,44 @@
                 $('#popup-modal').modal('hide');
             });
         });
+    </script>
+    <script>
+        $(document).ready(function() {
+
+            // When any add-to-cart modal is shown
+            $('.modal').on('shown.bs.modal', function() {
+
+                let modal = $(this);
+                let mainImage = modal.find('.main-image');
+
+                if (!mainImage.length) return;
+
+                // Click on color image
+                modal.find('.color-label img').off('click').on('click', function() {
+
+                    let newSrc = $(this).data('image');
+
+                    if (!newSrc) return;
+
+                    mainImage.fadeOut(150, function() {
+                        mainImage.attr('src', newSrc).fadeIn(150);
+                    });
+
+                });
+            });
+
+        });
+    </script>
+    <script type="text/javascript">
+        cartQuantityInitialize();
+        getVariantPrice();
+        $('#add-to-cart-form input').on('change', function() {
+            getVariantPrice();
+        });
+
+        function showInstaImage(link) {
+            $("#attachment-view").attr("src", link);
+            $('#show-modal-view').modal('toggle')
+        }
     </script>
 @endpush

@@ -385,8 +385,18 @@
             left: 50%;
             transform: translate(-50%, -50%);
         }
-        .v-color-box, .v-size-box {
+
+        .v-color-box,
+        .v-size-box {
             margin-right: 0.925rem !important;
+        }
+
+        .incDecBtn {
+            width: 30px;
+            height: 30px;
+            padding: 0;
+            line-height: 30px;
+            text-align: center;
         }
     </style>
 @endpush
@@ -731,10 +741,13 @@
                                                                 <div>
                                                                     <p class="m-0">
                                                                         {{ $productLandingPage->product->name }} <i
-                                                                            class="fa fa-close"></i> 1</p>
+                                                                            class="fa fa-close"></i> <span
+                                                                            class="min-item">1</span></p>
                                                                     <div>
                                                                         <span class="sp-price">৳
                                                                             {{ \App\CPU\Helpers::get_price_range($productLandingPage->product) }}</span>
+
+
                                                                     </div>
                                                                     @if ($productLandingPage->product->discount > 0)
                                                                         <span class="discount-price">
@@ -748,6 +761,20 @@
                                                                             @endif
                                                                         </span>
                                                                     @endif
+
+                                                                    <div class="mt-3 d-flex align-items-center"
+                                                                        style="grid-gap: 10px;">
+                                                                        <button title="Decrement" type="button"
+                                                                            class="btn btn-danger btn-sm rounded-circle incDecBtn"><i
+                                                                                class="fa fa-minus "></i></button>
+
+                                                                        <span class="font-weight-bold">1</span>
+                                                                        <input id="quantity" type="hidden"
+                                                                            value="10" name="quantity">
+                                                                        <button title="Increment" type="button"
+                                                                            class="btn btn-success btn-sm rounded-circle incDecBtn"><i
+                                                                                class="fa fa-plus"></i></button>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                             <div class="p-variant">
@@ -822,7 +849,8 @@
                                                                             <div class="col-12 mb-3">
                                                                                 <div class="d-flex">
                                                                                     @foreach (json_decode($productLandingPage->product->color_variant) as $key => $color)
-                                                                                        <div class="v-color-box position-relative">
+                                                                                        <div
+                                                                                            class="v-color-box position-relative">
                                                                                             <input type="radio"
                                                                                                 id="{{ $productLandingPage->product->id }}-color-{{ $key }}"
                                                                                                 name="color"
@@ -838,7 +866,8 @@
                                                                                                     style="max-width:100%; height:auto;">
                                                                                             </label>
 
-                                                                                            <span class="d-inline-block" style="height: 20px; width: 20px; border-radius: 50%; position: absolute;
+                                                                                            <span class="d-inline-block"
+                                                                                                style="height: 20px; width: 20px; border-radius: 50%; position: absolute;
                                                                                             right: -11px;
                                                                                             top: -34px;
                                                                                             background: {{ $color->code }}"></span>
@@ -890,8 +919,7 @@
                                                                                     <div class="col-md-6">
                                                                                         <label class="shipping-box"
                                                                                             for="shipping_{{ $shipping['id'] }}">
-                                                                                            <input type="radio"
-                                                                                                required
+                                                                                            <input type="radio" required
                                                                                                 name="shipping_method"
                                                                                                 class="shipping-method"
                                                                                                 id="shipping_{{ $shipping['id'] }}"
@@ -1096,6 +1124,35 @@
                     });
                 }
             });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+
+            $('.incDecBtn').on('click', function() {
+
+                let $btn = $(this);
+                let $span = $btn.siblings('span');
+                let $span2 = $('.min-item');
+                let $input = $('#quantity');
+                let currentVal = parseInt($span.text());
+
+                if ($btn.attr('title') === 'Increment') {
+                    currentVal++;
+                }
+
+                if ($btn.attr('title') === 'Decrement' && currentVal > 1) {
+                    currentVal--;
+                }
+
+                // update UI + hidden input
+                $span.text(currentVal);
+                $input.val(currentVal);
+                $span2.text(currentVal);
+
+
+            });
+
         });
     </script>
 @endpush

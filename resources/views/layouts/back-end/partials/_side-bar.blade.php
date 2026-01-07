@@ -1176,7 +1176,7 @@ $route = request()->route()->getName();
                                     href="{{ route('admin.leads.list') }}">
                                     <i class="tio-messages nav-icon"></i>
                                     <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">
-                                        Leads Info
+                                        Franchise Info
                                     </span>
                                 </a>
                             </li>

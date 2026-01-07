@@ -3,7 +3,7 @@
 @section('title', $product['name'])
 
 @push('css_or_js')
-    <meta name="description" content="{{ $product->slug }}">
+    <meta name="description" content="{{ strip_tags($product->meta_description) }}">
     <meta name="keywords" content="@foreach (explode(' ', $product['name']) as $keyword) {{ $keyword . ' , ' }} @endforeach">
     @if ($product->added_by == 'seller')
         <meta name="author" content="{{ $product->seller->shop ? $product->seller->shop->name : $product->seller->f_name }}">
@@ -145,19 +145,68 @@
             transition: opacity 0.3s ease;
         }
 
-        /* .color-label {
-                cursor: pointer;
-                margin-right: 8px;
-                border-radius: 6px;
-                overflow: hidden;
-            }
-            .color-label img {
-                border: 2px solid transparent;
-                transition: border 0.3s;
-            }
-            input[name="color"]:checked + .color-label img {
-                border: 2px solid #007bff;
-            } */
+        .p-dtls-box>table>tbody>tr {
+            display: block !important;
+            justify-content: space-between;
+            border: 1px solid #ddd;
+        }
+
+        .shipping-box {
+            border: 1px solid #ddd;
+            padding: 7px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-evenly;
+            cursor: pointer;
+            align-items: center;
+            transition: 0.3s all ease-in-out;
+        }
+
+        .shipping-box input[type="radio"]:checked+.shipping-title {
+            font-weight: bold;
+            color: #f26d21;
+        }
+
+        .v-color-box>.color-label,
+        .v-size-box>.size-label {
+            cursor: pointer;
+            border: 2px solid #ccc;
+            padding: 0 !important;
+            border-radius: 5px;
+            width: 100%;
+            text-align: center;
+            height: 100px !important;
+            position: relative;
+            font-size: 18px !important;
+            font-weight: 600 !important;
+        }
+
+        .v-color-box>input:checked+.color-label::after {
+            content: '✔';
+            color: green;
+            font-size: 22px !important;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .v-color-box,
+        .v-size-box {
+            margin-right: 0.925rem !important;
+        }
+
+        .btn-number {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0 !important;
+            line-height: 30px;
+            font-size: 16px !important;
+            text-align: center;
+        }
     </style>
     <?php
     $overallRating = \App\CPU\ProductManager::get_overall_rating($product->reviews);
@@ -239,7 +288,6 @@
                                 </div>
                             </div>
                         @else
-                            {{-- product zoomer --}}
                             <div class="row mb-2">
                                 <div class="col-md-11 mx-auto">
                                     <div class="main-image mb-3 float-right" id="img-zoom">
@@ -276,6 +324,7 @@
                         <div class="col-md-7 mb-3">
                             <div class="p-details">
                                 <h1 class="product-name mb-2">{{ $product->name }}</h1>
+
                                 <div>
                                     <span class="product-price">
                                         {{ \App\CPU\Helpers::get_price_range($product) }}
@@ -286,7 +335,7 @@
                                     <span class="discount-price">
                                         <del>৳ {{ \App\CPU\Helpers::currency_converter($product->unit_price) }} </del> -
                                         @if ($product->discount_type == 'percent')
-                                            {{ round($product->discount, $decimal_point_settings) }}%
+                                            {{ $product->discount }}%
                                         @elseif($product->discount_type == 'flat')
                                             {{ \App\CPU\Helpers::currency_converter($product->discount) }}৳
                                         @endif
@@ -304,29 +353,37 @@
                                     @if (count(json_decode($product->colors)) > 0)
                                         <div class="row mb-4">
                                             <div class="col-12 mb-3">
-                                                <h4 style="font-size: 18px;">Color</h4>
+                                                <h4 style="font-size: 18px; font-weight: bold;">Color</h4>
                                             </div>
                                             @if ($product->color_variant != null)
-                                                <div class="col-12 mb-3">
+                                                <div class="col-12 mb-3 mt-3">
                                                     <div class="d-flex">
                                                         @foreach (json_decode($product->color_variant) as $key => $color)
-                                                            <div class="v-color-box">
+                                                            <div class="v-color-box position-relative">
                                                                 <input type="radio"
                                                                     id="{{ $product->id }}-color-{{ $key }}"
                                                                     name="color" value="{{ $color->code }}"
                                                                     @if ($key == 0) checked @endif>
                                                                 <label for="{{ $product->id }}-color-{{ $key }}"
                                                                     class="color-label"
-                                                                    style="background-color: {{ $color->code }}">
+                                                                    style="background-color: {{ $color->code }}; overflow: hidden;">
                                                                     <img src="{{ asset($color->image) }}"
                                                                         data-image="{{ asset($color->image) }}"
                                                                         alt="{{ $color->color }}"
-                                                                        style="width:100%; height:60px;">
+                                                                        style="max-width:100%; height:auto;">
                                                                 </label>
+
+                                                                <span class="d-inline-block"
+                                                                    style="height: 20px; width: 20px; border-radius: 50%; position: absolute;
+                                                                                            right: -14px;
+                                                                                            top: -48px;
+                                                                                            background: {{ $color->code }}"></span>
+
                                                             </div>
                                                         @endforeach
                                                     </div>
                                                 </div>
+
                                             @endif
                                         </div>
                                     @endif
@@ -340,10 +397,10 @@
                                     @endphp
                                     @foreach (json_decode($product->choice_options) as $key => $choice)
                                         <div class="row">
-                                            <div class="col-12 mb-3">
+                                            <div class="col-12 mb-3 mt-3">
                                                 <h4 style="font-size: 18px; margin:0;">{{ $choice->title }}</h4>
                                             </div>
-                                            <div class="col-12 mb-3">
+                                            <div class="col-12 ">
                                                 <div class="d-flex">
                                                     @foreach ($choice->options as $key => $option)
                                                         <div class="v-size-box">
@@ -351,7 +408,8 @@
                                                                 id="{{ $choice->name }}-{{ $option }}"
                                                                 name="{{ $choice->name }}" value="{{ $option }}"
                                                                 @if ($key == 0) checked @endif>
-                                                            <label for="{{ $choice->name }}-{{ $option }}"
+                                                            <label style="height: 35px !important; "
+                                                                for="{{ $choice->name }}-{{ $option }}"
                                                                 class="size-label">{{ $option }}</label>
                                                         </div>
                                                     @endforeach
@@ -360,28 +418,47 @@
                                         </div>
                                     @endforeach
 
-                                    <div class="row mb-3">
+                                    <div class="row mb-5 mt-3 align-items-center">
                                         <div class="col-md-4 mb-2">
+                                            <h4 style="font-size: 18px; margin:0;" class="mb-2">Quantity:</h4>
+
                                             <div class="product-quantity d-flex align-items-center">
-                                                <div class="input-group input-group--style-2 pr-3" style="width: 160px;">
-                                                    <span class="input-group-btn">
-                                                        <button class="btn btn-number" type="button" data-type="minus"
-                                                            data-field="quantity" disabled="disabled"
-                                                            style="padding: 10px">
-                                                            -
-                                                        </button>
-                                                    </span>
-                                                    <input type="text" name="quantity"
-                                                        class="form-control input-number text-center cart-qty-field"
+                                                <div class="input-group input-group--style-2 pr-3 d-flex align-items-center"
+                                                    style="width: 160px; ">
+
+                                                    <button class="btn btn-danger btn-number rounded-circle"
+                                                        type="button" data-type="minus" data-field="quantity"
+                                                        style="padding: 10px">
+                                                        <i class="fa fa-minus "></i>
+                                                    </button>
+
+                                                    <input style="font-size: 20px; font-weight: 600" type="text"
+                                                        readonly name="quantity" disabled="disabled"
+                                                        class="form-control bg-transparent input-number text-center cart-qty-field border-0 p-0"
                                                         placeholder="1" value="1" min="1" max="100">
-                                                    <span class="input-group-btn">
-                                                        <button class="btn btn-number" type="button" data-type="plus"
-                                                            data-field="quantity" style="padding: 10px">
-                                                            +
-                                                        </button>
-                                                    </span>
+
+                                                    <button class="btn btn-success rounded-circle btn-number"
+                                                        type="button" data-type="plus" data-field="quantity"
+                                                        style="padding: 10px">
+                                                        <i class="fa fa-plus "></i>
+                                                    </button>
+
                                                 </div>
+
                                             </div>
+                                            {{-- <div class="mt-3 d-flex align-items-center" style="grid-gap: 10px;">
+                                                <button data-type="minus" data-field="quantity" disabled="disabled"
+                                                    title="Decrement" type="button"
+                                                    class="btn btn-danger btn-sm rounded-circle incDecBtn btn-number"><i
+                                                        class="fa fa-minus "></i></button>
+
+                                                <span class="font-weight-bold">1</span>
+                                                <input id="quantity" type="hidden" value="" name="quantity">
+                                                <button data-type="plus" data-field="quantity" title="Increment"
+                                                    type="button"
+                                                    class="btn btn-success btn-sm rounded-circle incDecBtn btn-number"><i
+                                                        class="fa fa-plus"></i></button>
+                                            </div> --}}
                                         </div>
                                         <div class="col-md-8">
                                             <div class="d-flex justify-content-between mt-2" id="chosen_price_div">
@@ -1021,6 +1098,14 @@
         });
     </script>
     <script>
+        ttq.track('ViewContent', {
+            content_id: '{{ $product->id }}',
+            content_type: 'product',
+            value: {{ \App\CPU\Helpers::currency_converter($product->unit_price) ?? 0 }},
+            currency: 'BDT'
+        });
+    </script>
+    <script>
         //Product description collapse
         $(document).ready(function() {
             $('.collapse').on('show.bs.collapse', function() {
@@ -1179,6 +1264,7 @@
                         // After fade out, change image
                         setTimeout(() => {
                             mainImage.src = newSrc;
+                            mainImage.setAttribute('xoriginal', newSrc);
                             mainImage.style.opacity = '1';
                         }, 300);
                     });

@@ -92,7 +92,6 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::post('order-stats', 'order_stats')->name('order-stats');
             Route::post('business-overview', 'business_overview')->name('business-overview');
             Route::get('/admin/report/order/filter', 'OrderReportFilter')->name('order.report.filter');
-
         });
         Route::get('/complain/list', [ComplainAdminController::class, 'list'])->name('complain.list');
         Route::get('/complain/view/{id}', [ComplainAdminController::class, 'view'])->name('complain.view');
@@ -176,8 +175,6 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::get('remove/feature-list', 'removeFeatureList')->name('remove_feature_list');
             Route::get('remove/landing-page/section', 'removePageSection')->name('remove_page_section');
             Route::get('remove/landing-page/{id}', 'removeLandingPage')->name('remove_landing_page');
-
-
         });
 
         Route::controller(EmployeeController::class)->prefix('/employee')->as('employee.')->middleware('module:employee_section')->group(function () {
@@ -629,7 +626,6 @@ Route::prefix('/admin')->as('admin.')->group(function () {
                 Route::post('analytics-update', 'analytics_update')->name('analytics-update');
                 Route::post('analytics-update-google-tag', 'google_tag_analytics_update')->name('analytics-update-google-tag');
             });
-
         });
 
         // Blogs Mangement
@@ -684,7 +680,6 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::post('/delete', 'delete')->name('delete');
             Route::post('/status', 'status')->name('status');
             Route::get('bulk-export', 'bulk_export_dataJobsInfo')->name('bulk-export');
-
         });
         // applications routes
         Route::controller(JobApplicationController::class)->prefix("/application")->as('application.')->group(function () {
@@ -760,13 +755,13 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::post('delete', 'investorsDestroy')->name('delete');
             Route::post('update/remark', 'updateInvestorRemark')->name('update_remark');
             Route::get('bulk-export', 'bulk_export_investors')->name('bulk-export');
-
         });
         Route::controller(ContactController::class)->prefix('/leads')->as('leads.')->middleware('module:support_section')->group(function () {
             Route::get('list', 'leadsList')->name('list');
             Route::post('delete', 'leadDestroy')->name('delete');
             Route::post('view', 'leadView')->name('view');
             Route::post('update/remark', 'updateLeadRemark')->name('update_remark');
+            Route::post('leads/status', 'leadsStatus')->name('leads_status');
             Route::get('bulk-export', 'bulk_export_LeadsData')->name('bulk-export');
         });
         // wholesale routes

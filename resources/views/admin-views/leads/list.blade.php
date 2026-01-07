@@ -1,5 +1,5 @@
 @extends('layouts.back-end.app')
-@section('title', \App\CPU\translate('leads List'))
+@section('title', \App\CPU\translate('Franchise List'))
 @push('css_or_js')
     <!-- Custom styles for this page -->
     <link href="{{ asset('assets/back-end') }}/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
@@ -11,12 +11,12 @@
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">{{ \App\CPU\translate('Dashboard') }}</a>
                 </li>
-                <li class="breadcrumb-item" aria-current="page">{{ \App\CPU\translate('Customer Message') }}</li>
+                <li class="breadcrumb-item" aria-current="page">{{ \App\CPU\translate('Franchise Message') }}</li>
             </ol>
         </nav>
         <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-between mb-2">
-            <h1 class="h3 mb-0 text-black-50">{{ \App\CPU\translate('Customer') }} {{ \App\CPU\translate('leads') }}
+            <h1 class="h3 mb-0 text-black-50">{{ \App\CPU\translate('Franchise ') }}
                 {{ \App\CPU\translate('List') }}</h1>
         </div>
 
@@ -27,7 +27,7 @@
 
                         <div class="row justify-content-between align-items-center flex-grow-1">
                             <div class="flex-start col-lg-3 mb-3 mb-lg-0">
-                                <h5>{{ \App\CPU\translate('Customer') }} {{ \App\CPU\translate('Leads') }}
+                                <h5>{{ \App\CPU\translate('Franchise ') }}
                                     {{ \App\CPU\translate('table') }} </h5>
                                 <h5
                                     style="color: red; margin-{{ Session::get('direction') === 'rtl' ? 'right' : 'left' }}: 5px">
@@ -67,15 +67,15 @@
                                 style="width:100%;">
                                 <thead class="thead-light">
                                     <tr>
-                                        <th style="width: 5%">{{ \App\CPU\translate('SL') }}#</th>
+                                        <th style="width: 3%">{{ \App\CPU\translate('SL') }}#</th>
                                         <th style="width: 5%">{{ \App\CPU\translate('Date') }}</th>
                                         <th style="width: 15%">{{ \App\CPU\translate('Name') }}</th>
                                         <th style="width: 15%">{{ \App\CPU\translate('Phone') }}</th>
                                         <th style="width: 15%">{{ \App\CPU\translate('Address') }}</th>
                                         <th style="width: 15%">{{ \App\CPU\translate('Division') }}</th>
                                         <th style="width: 40%">{{ \App\CPU\translate('District') }}</th>
-                                        <th style="width: 40%">{{ \App\CPU\translate('Status') }}</th>
-                                        <th style="width: 10%;">Remark</th>
+                                        <th style="width: 10%">{{ \App\CPU\translate('Status') }}</th>
+                                        <th style="width: 12%;">{{ \App\CPU\translate('Franchise_Status') }}</th>
                                         <th style="width: 10%">{{ \App\CPU\translate('action') }}</th>
                                     </tr>
                                 </thead>
@@ -91,15 +91,30 @@
                                             <td style="width: 15%">{{ $lead['division'] }}</td>
                                             <td style="width: 30%;">{{ $lead['district'] }}</td>
                                             <td class="status_{{$lead->id}}" style="width: 10%;">{{ $lead['status'] == 0 ? 'Unseen' : 'Seen' }}</td>
-                                            <td id="remark_td_{{$lead->id}}">
-                                                @if ($lead->remark != null)
-                                                    {{ $lead->remark }}
-                                                @else
-                                                    <a href="javascript:;" class="btn btn-sm btn-primary my-2"
-                                                        data-toggle="modal"
-                                                        data-target="#remarkAddModal_{{ $lead->id }}">Add
-                                                    </a>
-                                                @endif
+
+                                            <td class="m-0 p-0">
+                                                <div class="form-group">
+                                                    <div class="hs-unfold float-right">
+                                                        <div class="dropdown">
+                                                            <select name="lead_status"
+                                                                onchange="lead_status(this.value, {{ $lead['id'] }})"
+                                                                class="status form-control status_select_{{$lead->id}}"
+                                                                data-id="{{ $lead['id'] }}">
+
+                                                                <option value="pending"
+                                                                    {{ $lead->lead_status == 'pending' ? 'selected' : '' }}>
+                                                                    {{ \App\CPU\translate('Pending') }}</option>
+                                                                <option value="confirmed"
+                                                                    {{$lead->lead_status == 'confirmed' ? 'selected' : '' }}>
+                                                                    {{ \App\CPU\translate('Confirmed') }}</option>
+                                                                <option value="canceled"
+                                                                    {{ $lead->lead_status == 'canceled' ? 'selected' : '' }}>
+                                                                    {{ \App\CPU\translate('Canceled') }} </option>
+
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </td>
                                             <td style="width: 10%">
                                                 <div class="d-flex justify-content-between">
@@ -120,44 +135,7 @@
 
                                             </td>
                                         </tr>
-                                        {{-- remark modal --}}
-                                        <div class="modal fade" id="remarkAddModal_{{ $lead->id }}" tabindex="-1"
-                                            data-backdrop="static" role="dialog" aria-labelledby="exampleModalLabel"
-                                            aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered" role="document">
-                                                <form class="remarkForm" action="{{ route('admin.leads.update_remark', $lead->id) }}"
-                                                    method="POST">
-                                                    @csrf
-                                                    <input type="hidden" name="id" value="{{ $lead->id }}">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title" id="exampleModalLabel">Update Remark
-                                                            </h5>
-                                                            <button type="button" class="close" data-dismiss="modal"
-                                                                aria-label="Close">
-                                                                <span aria-hidden="true">&times;</span>
-                                                            </button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <div class="form-group">
-                                                                <label>Remark <span class="text-danger">*</span></label>
-                                                                <textarea name="remark" class="form-control" placeholder="Enter your remark"></textarea>
-                                                                @error('remark')
-                                                                    <span class="text-danger">{{ $message }}</span>
-                                                                @enderror
-                                                            </div>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary"
-                                                                data-dismiss="modal">Close</button>
-                                                            <button type="submit" class="btn btn-primary">Save
-                                                                changes</button>
-                                                        </div>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                        {{-- remark modal --}}
+
                                         <!-- view investor Modal start-->
                                         <div class="modal fade" id="viewLeadsModal_{{ $lead['id'] }}"
                                             tabindex="-1" aria-labelledby="viewCareerModalLabel" aria-hidden="true">
@@ -177,7 +155,7 @@
                                                             <div class="row">
                                                                 <div class="col-12 mb-3">
                                                                     <div class="row">
-                                                                        <div class="col-3">Investor Name</div>
+                                                                        <div class="col-3">Name</div>
                                                                         <div class="col-2">:</div>
                                                                         <div class="col-7">
                                                                             <strong>{{ $lead->name }}</strong>
@@ -190,6 +168,15 @@
                                                                         <div class="col-2">:</div>
                                                                         <div class="col-7">
                                                                             <strong>{{ $lead->phone }}</strong>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-12 mb-3">
+                                                                    <div class="row">
+                                                                        <div class="col-3">Showroom Size</div>
+                                                                        <div class="col-2">:</div>
+                                                                        <div class="col-7">
+                                                                            <strong>{{ $lead->showroom_size }} (Square Fit)</strong>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -224,10 +211,10 @@
                                                                 </div>
                                                                 <div class="col-12 mb-3">
                                                                     <div class="row">
-                                                                        <div class="col-3">Remark Note</div>
+                                                                        <div class="col-3">Franchise Note</div>
                                                                         <div class="col-2">:</div>
                                                                         <div class="col-7">
-                                                                            <strong>{{ $lead->remark }}</strong>
+                                                                            <strong class="note_{{$lead->id}}">{{ $lead->status_note ? $lead->status_note : "N/A" }}</strong>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -240,6 +227,7 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
+
                                                             </div>
                                                             <div class="modal-footer border-t-0">
                                                                 <button type="button" class="btn btn-secondary"
@@ -336,44 +324,143 @@
                 }
             });
         });
+    </script>
+
+      <script>
+        function lead_status(status, id) {
+            var orderStatus = status ? status : 'pending';
 
 
+            if (status === 'confirmed') {
+                Swal.fire({
+                    title: '{{ \App\CPU\translate('Are you sure Change this?') }}!',
+                    text: "{{ \App\CPU\translate('Think before you completed') }}.",
+                    html: `
+                        <br />
+                        <form class="form-horizontal" action="{{ route('admin.leads.leads_status') }}" method="post">
+                            <input type="hidden" name="lead_status" value="${status}">
+                            <input type="hidden" name="id" value="${id}">
+                            <input required
+                                class="form-control wedding-input-text wizard-input-pad"
+                                type="text"
+                                name="status_note"
+                                id="note"
+                                placeholder="For ${status} note">
+                        </form>
+                    `,
+                    showCancelButton: true,
+                    confirmButtonColor: '#377dff',
+                    cancelButtonColor: 'secondary',
+                    confirmButtonText: '{{ \App\CPU\translate('Yes, Change it') }}!'
+                }).then((result) => {
+                    if (result.value) {
+                        $.ajaxSetup({
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                            }
+                        });
+                        $.ajax({
+                            url: "{{ route('admin.leads.leads_status') }}",
+                            method: 'POST',
+                            data: $("form").serialize(),
+                            success: function(data) {
+                                toastr.success('Status Change successfully');
+                                $(`.note_${data.id}`).html(data.note);
 
 
-        // 2.  for remark ajax
-        $(document).on('submit', '.remarkForm', function(e) {
-            e.preventDefault();
-
-            let form = $(this);
-            let modal = form.closest('.modal'); // ✅ exact modal
-            let formData = form.serialize();
-
-            $.ajax({
-                url: "{{ route('admin.leads.update_remark') }}",
-                type: "POST",
-                data: formData,
-                success: function(response) {
-
-                    if (response.status === true) {
-
-                        // ✅ Update TD
-                        $('#remark_td_' + response.id).html(
-                            '<span class="remark_text">' + response.remark + '</span>'
-                        );
-
-                        // ✅ Hide modal (Bootstrap fix)
-                        modal.modal('hide');
-
-                        // ✅ Remove backdrop manually (IMPORTANT)
-                        $('.modal-backdrop').remove();
-                        // ✅ Reset form
-                        form[0].reset();
+                            },
+                            error: function(data) {
+                                toastr.warning('Something went wrong !');
+                            }
+                        });
                     }
-                },
-                error: function(xhr) {
-                    console.log(xhr.responseText);
-                }
-            });
-        });
+                });
+            } else if (status === 'canceled') {
+                Swal.fire({
+                    title: 'Are you sure Change this?',
+                    text: "You won't be able to revert this!",
+                    html: `
+                        <br />
+                        <form class="form-horizontal" action="{{ route('admin.leads.leads_status') }}" method="post">
+                            <input type="hidden" name="lead_status" value="canceled">
+                            <input type="hidden" name="id" value="${id}">
+                            <input required class="form-control wedding-input-text wizard-input-pad" type="text" name="status_note" id="note" placeholder="For ${status} note">
+                        </form>
+                    `,
+                    showCancelButton: true,
+                    confirmButtonColor: '#377dff',
+                    cancelButtonColor: 'secondary',
+                    confirmButtonText: 'Yes, Change it!',
+                }).then((result) => {
+                    if (result.value) {
+                        $.ajaxSetup({
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                            }
+                        });
+                        $.ajax({
+                            url: "{{ route('admin.leads.leads_status') }}",
+                            method: 'POST',
+                            data: $("form").serialize(),
+                            success: function(data) {
+
+                                toastr.success('Status Change successfully');
+                                $(`.note_${data.id}`).html(data.note);
+                            },
+                            error: function(data) {
+                                toastr.warning('Something went wrong !');
+                            }
+                        });
+                    }
+                });
+            } else {
+                Swal.fire({
+                    title: '{{ \App\CPU\translate('Are you sure Change this') }}?',
+                    text: "You won't be able to revert this!",
+                    html: `
+                            <br />
+                            <form class="form-horizontal" action="{{ route('admin.leads.leads_status') }}" method="post">
+                                <input type="hidden" name="leads_status" value="${status}">
+                                <input type="hidden" name="id" value="${id}">
+                                <input
+                                    required
+                                    class="form-control wedding-input-text wizard-input-pad"
+                                    type="text"
+                                    name="status_note"
+                                    id="note"
+                                    placeholder="For ${status} note"
+                                >
+                            </form>
+                        `,
+                    showCancelButton: true,
+                    confirmButtonColor: '#377dff',
+                    cancelButtonColor: 'secondary',
+                    confirmButtonText: '{{ \App\CPU\translate('Yes, Change it') }}!'
+                }).then((result) => {
+                    if (result.value) {
+                        $.ajaxSetup({
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                            }
+                        });
+                        $.ajax({
+                            url: "{{ route('admin.leads.leads_status') }}",
+                            method: 'POST',
+                            data: $("form").serialize(),
+                            success: function(data) {
+
+                                toastr.success('Status Change successfully');
+                                $(`.note_${data.id}`).html(data.note);
+
+                            },
+                            error: function(data) {
+                                toastr.warning('Something went wrong !');
+                            }
+                        });
+                    }
+                });
+            }
+
+        }
     </script>
 @endpush

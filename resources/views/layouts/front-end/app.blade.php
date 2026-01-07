@@ -6,22 +6,29 @@
     <title>
         @yield('title')
     </title>
+    <meta name="meta_title" content="@yield('title')">
+    <meta name="keywords" content="@yield('meta_keywords')">
+    <meta name="description" content="@yield('meta_description')">
+
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <!--<meta name="google-site-verification" content="xOGzRa1l3C3m53eRDwIa2qAgUrrO-93lo2toQtsYbr4" />-->
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <link rel="apple-touch-icon" sizes="180x180"
         href="{{ asset('storage/company') }}/{{ $web_config['fav_icon']->value }}">
     <link rel="icon" type="image/png" sizes="32x32"
         href="{{ asset('storage/company') }}/{{ $web_config['fav_icon']->value }}">
-
-    <!-- Font Awesome cdn link -->
-    <link rel="stylesheet" href="{{ asset('assets/front-end') }}/css/font-awesome.min.css" />
+    <!-- bootstrap icons -->
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.13.1/font/bootstrap-icons.min.css"
         integrity="sha512-t7Few9xlddEmgd3oKZQahkNI4dS6l80+eGEzFQiqtyVYdvcSG2D3Iub77R20BdotfRPA9caaRkg1tyaJiPmO0g=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Font Awesome cdn link -->
+    <link rel="stylesheet" href="{{ asset('assets/front-end') }}/css/font-awesome.min.css" />
     <link rel="stylesheet" href="{{ asset('assets/front-end') }}/css/animate.min.css" />
     <link rel="stylesheet" href="{{ asset('assets/front-end') }}/css/xzoom.min.css" />
+    <link rel="stylesheet" href="{{ asset('assets/front-end') }}/css/slick.css" />
+    <link rel="stylesheet" href="{{ asset('assets/front-end') }}/css/slick.theme.css" />
     <!-- Owl-carosul css cdn link -->
     <link rel="stylesheet" href="{{ asset('assets/back-end') }}/css/toastr.css" />
     <link rel="stylesheet" href="{{ asset('assets/front-end') }}/css/owl.carousel.min.css" />
@@ -33,14 +40,18 @@
     <link rel="stylesheet" href="{{ asset('assets/front-end') }}/css/bs_customize.css">
     <link rel="stylesheet" href="{{ asset('assets/front-end/css/user_account.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/front-end/css/custome.css') }}">
+    <!--<link rel="stylesheet" href="{{ asset('assets/front-end') }}/css/style.css">-->
     <link rel="stylesheet" href="{{ asset('assets/front-end') }}/css/responsive.css">
-    <meta name="meta_title" content="@yield('title')">
-    <meta name="keywords" content="@yield('meta_keywords')">
-    <meta name="description" content="@yield('meta_description')">
+
     {{-- dont touch this --}}
     @stack('css_or_js')
     <meta name="_token" content="{{ csrf_token() }}">
     <style>
+        td.order_status {
+            display: inline-block;
+            width: 120px;
+        }
+
         .v-color-box input,
         .v-size-box input {
             display: none;
@@ -59,7 +70,7 @@
         .v-color-box>.color-label,
         .v-size-box>.size-label {
             cursor: pointer;
-            border: 2px solid #ccc;
+            border: 4px solid #ccc;
             padding: 2px 6px !important;
             border-radius: 5px;
             width: 100%;
@@ -70,14 +81,14 @@
 
         .v-color-box>input:checked+.color-label,
         .v-size-box>input:checked+.size-label {
-            border: .25rem solid #02ab16 !important;
+            border: 4px solid #02ab16 !important;
         }
 
         .v-size-box>input:checked+.size-label::after {
             content: '✓';
             position: absolute;
             color: green !important;
-            font-size: 1.1875rem !important;
+            font-size: 19px !important;
             top: 51% !important;
             left: 77% !important;
             font-weight: bolder;
@@ -130,15 +141,16 @@
             margin-top: 10px;
             font-size: 17px;
             font-weight: 600;
-            bottom: 0rem;
+            bottom: 0px;
             position: absolute;
             left: 0px;
             right: 0px;
             width: 100%;
         }
 
+
         .product-box {
-            box-shadow: rgba(0, 0, 0, 0.24) 0rem .1875rem .5rem;
+            box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
         }
 
         .product-box-col-2 {
@@ -166,11 +178,266 @@
         }
 
         .product-image2-col-2 {
-            height: 270px
+            height: 325px
         }
 
         .product-box .title {
+
             text-align: left;
+        }
+
+        /* new header style*/
+        header {
+            background: #fff;
+        }
+
+        .topbar-section {
+            background: #ff5d00;
+        }
+
+        .menu-area>ul>li>a {
+            color: var(--text-black);
+        }
+
+        .menu-area>ul>li>a:hover {
+            color: #ff5d00;
+        }
+
+        .header-icon>a>.fa,
+        .slider-content-box>h3,
+        .slider-content-box>h5,
+        .slider-inner-btn>a {
+            color: var(--text-black);
+        }
+
+        header.scrolled {
+            background-color: #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .topbar-contact,
+        .topbar-contact>a,
+        header.scrolled .header-icon>a>.fa,
+        header.scrolled .menu-area a,
+        header.scrolled .navbar-brand {
+            color: #000;
+        }
+
+        .header-logo {
+            width: 80px;
+        }
+
+        @media (max-width: 768px) {
+            .menu-icon {
+                color: #ff5d00;
+            }
+
+            .header-icon>a>.fa {
+                color: #000;
+            }
+        }
+
+        @media (max-width: 1080px) {
+            header.scrolled .menu-icon {
+                color: #ff5d00;
+            }
+        }
+
+        .chat-wrapper {
+            position: fixed;
+            right: 0;
+            bottom: 9%;
+            z-index: 9999;
+            text-align: center;
+            border-radius: 40px;
+            padding-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .chat-wrapper.active {
+            background-color: #fff;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+        }
+
+        .chat-toggle {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            border: none;
+            background: #ff5d00;
+            color: #fff;
+            font-size: 22px;
+            cursor: pointer;
+            box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+            z-index: 10000;
+            position: relative;
+        }
+
+        .chat-toggle:focus {
+            outline: none;
+            border: none;
+        }
+
+        .chat-box {
+            background: #fff;
+            padding: 12px;
+            margin-bottom: 14px;
+            border-radius: 40px 40px 0 0;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+
+            opacity: 0;
+            transform: translateY(10px) scale(0.95);
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        .chat-wrapper.active .chat-box {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+
+        .chat-item {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 22px;
+            text-decoration: none;
+            transition: transform 0.2s;
+        }
+
+        .chat-item:hover {
+            transform: scale(1.1);
+            color: #fff;
+        }
+
+        .messenger {
+            background: #0084ff;
+        }
+
+        .whatsapp {
+            background: #25d366;
+        }
+
+        @media (max-width: 768px) {
+            .chat-wrapper {
+                left: auto !important;
+                /* ignore saved left */
+                right: 10px !important;
+                /* always right */
+                bottom: 80px;
+                /* adjust for toggle button */
+            }
+        }
+
+        .menu-area>ul>li>a {
+            padding: 0;
+
+        }
+
+        /* slick slider style here */
+        .slick-dots {
+            list-style: none !important;
+            display: flex;
+            grid-gap: 10px;
+            margin-bottom: 0;
+            justify-content: center;
+            position: relative;
+            bottom: 20px !important;
+        }
+
+        .slick-initialized .slick-slide {
+            display: flex !important;
+            justify-content: center;
+        }
+
+        .slick-dots li button {
+            font-size: 0 !important;
+            border: none;
+            outline: none !important;
+        }
+
+        .slick-dots li button:before {
+            content: '•';
+        }
+
+        .slick-dots {
+            bottom: -35px;
+        }
+
+        .slick-dots li {
+            border: none;
+            width: 16px;
+            height: 16px;
+            margin: 0 6px;
+            cursor: pointer;
+        }
+
+        .slick-dots li button {
+            width: 100%;
+            height: 100%;
+            border: none;
+            padding: 0;
+            background: #7f8c8d;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all .3s ease;
+        }
+
+        /* active */
+        .slick-dots li.slick-active button {
+            background: #ff5d00;
+            width: 30px;
+        }
+
+        /* header dropdown */
+        .dropdown-menu1 {
+            max-height: 75vh;
+            min-height: 60vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scrollbar-width: thin;
+            top: 56px;
+            left: -260px;
+            width: 1046px;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 14px 28px -14px rgba(0, 0, 0, 0.25),
+                0 10px 10px -10px rgba(0, 0, 0, 0.22);
+        }
+
+        .m-category-box>a>img {
+            height: 50px;
+            width: 50px;
+            object-fit: contain;
+            border-radius: 50%;
+        }
+
+        /* Chrome, Edge, Safari */
+        .dropdown-menu1::-webkit-scrollbar {
+            width: 2px !important;
+
+        }
+
+        .dropdown-menu1::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .dropdown-menu1::-webkit-scrollbar-thumb {
+            background: rgba(255, 93, 0, 0.5);
+            border-radius: 10px;
+        }
+
+        .m-category-box>a>img {
+            height: auto;
+            width: 40px;
+            object-fit: contain;
+            border-radius: 12px;
         }
     </style>
     @php
@@ -262,25 +529,19 @@
     </script>
     <!-- TikTok Pixel Code End -->
 
-
-    <!-- Google Tag Manager -->
+    <!-- Google tag (gtag.js) new added -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-382728824"></script>
     <script>
-        (function(w, d, s, l, i) {
-            w[l] = w[l] || [];
-            w[l].push({
-                'gtm.start': new Date().getTime(),
-                event: 'gtm.js'
-            });
-            var f = d.getElementsByTagName(s)[0],
-                j = d.createElement(s),
-                dl = l != 'dataLayer' ? '&l=' + l : '';
-            j.async = true;
-            j.src =
-                'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
-            f.parentNode.insertBefore(j, f);
-        })(window, document, 'script', 'dataLayer', 'GTM-PLM9XQ7X');
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+
+        gtag('config', 'AW-382728824');
     </script>
-    <!-- End Google Tag Manager -->
+
 
     <!-- Google Tag Manager -->
     <script>
@@ -305,7 +566,7 @@
 </head>
 <!-- Body-->
 
-<body class="toolbar-enabled position-relative">
+<body class="toolbar-enabled">
     <!-- Google Tag Manager (noscript) -->
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WQ6FD77Z" height="0" width="0"
             style="display:none;visibility:hidden"></iframe></noscript>
@@ -314,18 +575,28 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-6">
-
-
-                    <a href="https://wa.me/8801406667669?text=Is%20anyone%20available%20to%20chat%3F"
+                    <a target="_blank" href="https://wa.me/8801406667669?text=Is%20anyone%20available%20to%20chat%3F"
                         class="cs_header_number_wrap d-flex flex-row align-items-center justify-content-end g-2">
-                        <div><i style="font-size: 2.1875rem; color:#fff;" class="fa fa-whatsapp"></i></div>
+                        <div><i style="font-size: 2.1875rem; color: #fff" class="fa fa-whatsapp"></i></div>
                         <div class="d-flex flex-column ml-2">
                             <span style=" color:#fff;"
                                 class="cs_accent_color cs_fs_24 cs_header_number">{{ \App\CPU\Helpers::get_business_settings('company_hotline') }}</span>
                             <span class="cs_header_number_text">24/7 Support Center</span>
                         </div>
                     </a>
-
+                    <!--<a href="tel:{{ \App\CPU\Helpers::get_business_settings('company_hotline') }}"-->
+                    <!--    class="cs_header_number_wrap float-right">-->
+                    <!--    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24"-->
+                    <!--        fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"-->
+                    <!--        stroke-linejoin="round" class="lucide lucide-headset">-->
+                    <!--        <path-->
+                    <!--            d="M3 11h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5Zm0 0a9 9 0 1 1 18 0m0 0v5a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3Z" />-->
+                    <!--        <path d="M21 16v2a4 4 0 0 1-4 4h-5" />-->
+                    <!--    </svg>-->
+                    <!--    <span-->
+                    <!--        class="cs_accent_color cs_fs_24 cs_header_number">{{ \App\CPU\Helpers::get_business_settings('company_hotline') }}</span>-->
+                    <!--    <span class="cs_header_number_text">24/7 Support Center</span>-->
+                    <!--</a>-->
                     {{-- <div>
                         <span class="topbar-contact">{{ \App\CPU\translate('Hotline') }}: <a
                                 href="tel:{{ \App\CPU\Helpers::get_business_settings('company_hotline') }}">{{ \App\CPU\Helpers::get_business_settings('company_hotline') }}</a></span>
@@ -359,7 +630,8 @@
                                                         width="20"
                                                         src="{{ asset('assets/front-end') }}/img/flags/{{ $data['code'] }}.png"
                                                         alt="{{ $data['name'] }}" />
-                                                    <span style="text-transform: capitalize">{{ $data['name'] }}</span>
+                                                    <span
+                                                        style="text-transform: capitalize">{{ $data['name'] }}</span>
                                                 </a>
                                             @endif
                                         @endforeach
@@ -431,26 +703,7 @@
     </div>
     {{-- loader --}}
 
-    {{-- Whatsapp Start --}}
-
-    {{-- <div class="chat-wrapper draggable" id="chat-wrapper">
-        <!-- Social Box -->
-        <div class="chat-box" id="chatBox">
-            <a title="Messenger" href="https://m.me/shoppingzonebd300" target="_blank" class="chat-item messenger">
-                <i class="bi bi-messenger"></i>
-            </a>
-            <a title="WhatsApp" href="https://wa.me/8801406667669?text=Is%20anyone%20available%20to%20chat%3F"
-                target="_blank" class="chat-item whatsapp">
-                <i class="bi bi-whatsapp"></i>
-            </a>
-        </div>
-
-        <!-- Toggle Button -->
-        <button class="chat-toggle" id="chatToggle">
-            <i class="bi bi-chat-right-text"></i>
-        </button>
-    </div> --}}
-
+    <!-- Multi social start-->
     <div class="chat-wrapper draggable" id="chat-wrapper">
         <div class="chat-box" id="chatBox">
             <a title="Messenger" href="https://m.me/shoppingzonebd300" target="_blank" class="chat-item messenger">
@@ -466,7 +719,6 @@
             <i class="bi bi-chat-right-text"></i>
         </button>
     </div>
-
 
 
     <!-- Page Content-->
@@ -488,10 +740,15 @@
     <script src="{{ asset('assets/front-end') }}/js/xzoom_setup.js"></script>
     <script src="{{ asset('assets/front-end') }}/js/spartan-multi-image-picker-min.js"></script>
     <script src="{{ asset('assets/front-end') }}/js/scrolltotop.js"></script>
-    <script src="https://unpkg.com/interactjs/dist/interact.min.js"></script>
+    <!--<script src="https://unpkg.com/interactjs/dist/interact.min.js"></script>-->
     <script src="{{ asset('assets/front-end') }}/js/sweet_alert.js"></script>
+
     {{-- Toastr --}}
     <script src={{ asset('assets/back-end/js/toastr.js') }}></script>
+    <script src="{{ asset('assets/front-end') }}/js/slick.min.js"></script>
+
+    <script src="{{ asset('assets/front-end') }}/js/myscript.js"></script>
+
     {!! Toastr::message() !!}
     @if (Session::has('success'))
         <script>
@@ -509,11 +766,12 @@
         </script>
     @endif
     @if (Session::has('warning'))
-        3B413D
         <script>
             toastr.warning("{{ Session::get('warning') }}")
         </script>
     @endif
+
+    <!-- multi social toggle and drag and drop-->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const wrapper = document.getElementById('chat-wrapper');
@@ -582,140 +840,18 @@
         // this function is used later in the resizing and gesture demos
         window.dragMoveListener = dragMoveListener
     </script>
-
-    {{-- Multi social toggle and drag --}}
-    {{-- <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const wrapper = document.getElementById('chat-wrapper');
-            const toggleBtn = document.getElementById('chatToggle');
-            const icon = toggleBtn.querySelector('i');
-
-            // Toggle
-            toggleBtn.addEventListener('click', () => {
-                wrapper.classList.toggle('active');
-                if (wrapper.classList.contains('active')) {
-                    icon.classList.remove('bi-chat-right-text');
-                    icon.classList.add('bi-x-circle');
-                } else {
-                    icon.classList.remove('bi-x-circle');
-                    icon.classList.add('bi-chat-right-text');
-                }
-            });
-
-            // Drag
-            let isDragging = false,
-                offsetX = 0,
-                offsetY = 0;
-
-            const startDrag = (e) => {
-                e.preventDefault();
-                const evt = e.touches ? e.touches[0] : e;
-                offsetX = evt.clientX - wrapper.offsetLeft;
-                offsetY = evt.clientY - wrapper.offsetTop;
-                isDragging = true;
-            };
-
-            const doDrag = (e) => {
-                if (!isDragging) return;
-                const evt = e.touches ? e.touches[0] : e;
-
-                let x = evt.clientX - offsetX;
-                let y = evt.clientY - offsetY;
-
-                // Clamp
-                const maxX = window.innerWidth - wrapper.offsetWidth;
-                const maxY = window.innerHeight - wrapper.offsetHeight;
-                x = Math.max(0, Math.min(x, maxX));
-                y = Math.max(0, Math.min(y, maxY));
-
-                wrapper.style.left = x + 'px';
-                wrapper.style.top = y + 'px';
-            };
-
-            const endDrag = () => {
-                if (!isDragging) return;
-                isDragging = false;
-                sessionStorage.setItem('chatPosition', JSON.stringify({
-                    left: wrapper.offsetLeft,
-                    top: wrapper.offsetTop
-                }));
-            };
-
-            // Load position
-            const saved = JSON.parse(sessionStorage.getItem('chatPosition'));
-            if (saved) {
-                wrapper.style.left = saved.left + 'px';
-                wrapper.style.top = saved.top + 'px';
-                wrapper.style.right = 'auto';
-                wrapper.style.bottom = 'auto';
-            }
-
-            // Events
-            wrapper.addEventListener('mousedown', startDrag);
-            document.addEventListener('mousemove', doDrag);
-            document.addEventListener('mouseup', endDrag);
-
-            wrapper.addEventListener('touchstart', startDrag, {
-                passive: false
-            });
-            document.addEventListener('touchmove', doDrag, {
-                passive: false
-            });
-            document.addEventListener('touchend', endDrag);
-        });
-    </script> --}}
-
-    {{-- owl carosel  --}}
     <script>
-        // $(document).ready(function() {
-        //     $('.new-arrivals-section .owl-carousel').each(function() {
-
-        //         $(this).owlCarousel({
-        //             loop: true,
-        //             margin: 10,
-        //             autoplay: false,
-        //             autoplayTimeout: 2000,
-        //             autoplayHoverPause: true,
-        //             smartSpeed: 500,
-        //             nav: true,
-        //             navText: [
-        //                 '<i class="fa fa-chevron-left text-white"></i>',
-        //                 '<i class="fa fa-chevron-right text-white"></i>'
-        //             ],
-        //             responsive: {
-        //                 0: {
-        //                     items: 2
-        //                 },
-        //                 768: {
-        //                     items: 3
-        //                 },
-        //                 992: {
-        //                     items: 6
-        //                 }
-        //             }
-        //         });
-        //     });
-        // });
-
         $(document).ready(function() {
             $('.new-arrivals-section .owl-carousel').each(function() {
 
-                let $owl = $(this);
-                let total = $owl.find('.item').length;
-
-                // Determine itemsToShow based on device width
-                let itemsToShow = window.innerWidth < 768 ? 2 :
-                    window.innerWidth < 992 ? 3 : 6;
-
-                // If not enough items → no slide + hide nav
-                let enableSlide = total > itemsToShow;
-
-                $owl.owlCarousel({
-                    loop: enableSlide,
-                    autoplay: enableSlide,
+                $(this).owlCarousel({
+                    loop: true,
                     margin: 10,
+                    autoplay: false,
+                    autoplayTimeout: 3000,
+                    autoplayHoverPause: true,
                     smartSpeed: 500,
-                    nav: enableSlide,
+                    nav: true,
                     navText: [
                         '<i class="fa fa-chevron-left text-white"></i>',
                         '<i class="fa fa-chevron-right text-white"></i>'
@@ -723,45 +859,6 @@
                     responsive: {
                         0: {
                             items: 2
-                        },
-                        768: {
-                            items: 3
-                        },
-                        992: {
-                            items: 6
-                        }
-                    },
-                    onInitialized: function() {
-                        if (!enableSlide) {
-                            $owl.find('.owl-nav').hide(); // force hide nav
-                        }
-                    }
-                });
-            });
-        });
-    </script>
-    <script>
-        $(document).ready(function() {
-            $('.owl-carousel.category-carosel').each(function() {
-
-                $(this).owlCarousel({
-                    loop: true,
-                    margin: 20,
-                    autoplay: true,
-                    autoplayTimeout: 2000,
-                    smartSpeed: 500,
-                    nav: true,
-                    dots: false,
-                    autoplayHoverPause: true,
-                    responsiveRefreshRate: 0,
-                    navText: [
-                        '<i title="Prev" class="fa fa-chevron-left text-white"></i>',
-                        '<i title="Next" class="fa fa-chevron-right text-white"></i>'
-                    ],
-                    responsive: {
-                        0: {
-                            margin: 10,
-                            items: 3
                         },
                         768: {
                             items: 3
@@ -808,7 +905,40 @@
             });
         });
     </script>
+    <script>
+        $(document).ready(function() {
+            $('.owl-carousel.category-carosel').each(function() {
 
+                $(this).owlCarousel({
+                    loop: true,
+                    margin: 20,
+                    autoplay: true,
+                    autoplayTimeout: 3000,
+                    autoplayHoverPause: true,
+                    smartSpeed: 500,
+                    nav: true,
+                    dots: false,
+                    responsiveRefreshRate: 0,
+                    navText: [
+                        '<i title="Prev" class="fa fa-chevron-left text-white"></i>',
+                        '<i title="Next" class="fa fa-chevron-right text-white"></i>'
+                    ],
+                    responsive: {
+                        0: {
+                            margin: 10,
+                            items: 3
+                        },
+                        768: {
+                            items: 3
+                        },
+                        992: {
+                            items: 6
+                        }
+                    }
+                });
+            });
+        });
+    </script>
     <script>
         $(document).ready(function() {
             /*mobile menu*/
@@ -986,6 +1116,17 @@
         });
     </script>
     <script>
+        //When scroll display block in filter section other wise display none
+        // window.addEventListener('scroll', function() {
+        //     const header = document.getElementById('filter-box');
+        //     if (window.scrollY > 750) {
+        //         header.classList.add('scrolled');
+        //     } else {
+        //         header.classList.remove('scrolled');
+        //     }
+        // });
+    </script>
+    <script>
         //category filter category show and hide
         $(document).ready(function() {
             $('.category-header').on('click', function() {
@@ -1095,8 +1236,6 @@
         }
 
         function addToCart(form_id, redirect_to_checkout = false) {
-
-
             if (form_id) {
                 $.ajaxSetup({
                     headers: {
@@ -1135,14 +1274,12 @@
                             ProgressBar: true
                         });
 
+
                         $('#total_cart_count').text(data.count);
                         updateNavCart();
                         if (redirect_to_checkout) {
                             location.href = "{{ route('shop-cart') }}";
                         }
-                        console.log(data.product.id);
-
-
                         if (data.product) {
                             window.dataLayer = window.dataLayer || [];
 
@@ -1189,12 +1326,12 @@
         }
 
         function buy_now(form_id) {
-
-
+            console.log(form_id);
             addToCart(form_id, true);
         }
         $('.new-av-product').on('click', function() {
             var product_id = $(this).data('pid');
+            console.log(product_id);
             addToCart(product_id, true);
         });
 
@@ -1225,9 +1362,7 @@
             }, function(data) {
                 updateTotalCart();
                 updateNavCart();
-                $('#checkout-cart-items').empty().html(data.html);
-                $('.summary-cart').empty().html(data.html2);
-                // $('#grand-total').empty().text(data.total_amount);
+                $('#cart-summary').empty().html(data);
                 toastr.info('Item has been removed from cart', {
                     CloseButton: true,
                     ProgressBar: true
@@ -1368,9 +1503,10 @@
                         ProgressBar: true
                     });
                     updateNavCart();
-                    $('#cart-summary').empty().html(data.html);
-                    $('.summary-cart').empty().html(data.html2);
+
+                    $('#cart-summary').empty().html(data);
                 }
+
 
             });
         }
@@ -1567,6 +1703,25 @@
 
         gtag('config', 'G-CMPYP8JY4C');
     </script>
+
+    <!--Start of Tawk.to Script
+<script type="text/javascript">
+    var Tawk_API = Tawk_API || {},
+        Tawk_LoadStart = new Date();
+    (function() {
+        var s1 = document.createElement("script"),
+            s0 = document.getElementsByTagName("script")[0];
+        s1.async = true;
+        s1.src = 'https://embed.tawk.to/68d4e0f40b3c9c192892bce6/1j5votfuu';
+        s1.charset = 'UTF-8';
+        s1.setAttribute('crossorigin', '*');
+        s0.parentNode.insertBefore(s1, s0);
+    })();
+</script>
+End of Tawk.to Script-->
+    <script>
+        window.axios.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
+    </script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const lazyImages = document.querySelectorAll(".lazy-image");
@@ -1587,8 +1742,6 @@
             });
         });
     </script>
-
-
 
     @stack('scripts')
 </body>

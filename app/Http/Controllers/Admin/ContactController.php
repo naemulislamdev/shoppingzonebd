@@ -132,6 +132,20 @@ class ContactController extends Controller
         $leads = $leads->latest()->paginate(Helpers::pagination_limit())->appends($query_param);
         return view('admin-views.leads.list', compact('leads', 'search'));
     }
+    public function leadsStatus(Request $request)
+    {
+
+        $lead = Lead::find($request->id);
+        $lead->lead_status = $request->lead_status;
+        $lead->status_note = $request->status_note;
+        $lead->save();
+
+        return response()->json([
+            'status' => true,
+            'id' => $lead->id,
+            'note' => $lead->status_note
+        ]);
+    }
 
     public function leadView(Request $request)
     {
@@ -380,7 +394,7 @@ class ContactController extends Controller
                 'seen_by' => auth('admin')->user()->name,
             ]);
         }
-        if($item->seen_by == null){
+        if ($item->seen_by == null) {
             $data = [
                 'seen_by' => $item->seen_by
             ];
@@ -1051,6 +1065,7 @@ class ContactController extends Controller
             'note' => end($newNotes) // last added note frontend এ পাঠানো
         ]);
     }
+
 
     //--- User Information Management end---//
 

@@ -56,6 +56,8 @@
                                                 </option>
                                                 <option value="Main Section Banner">
                                                     {{ \App\CPU\translate('Main Section Banner') }}</option>
+                                                <option value="promo_offer">{{ \App\CPU\translate('Promo Offer') }}
+                                                </option>
                                             </select>
                                         </div>
 

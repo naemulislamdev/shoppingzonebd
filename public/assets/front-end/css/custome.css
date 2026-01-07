@@ -4,6 +4,7 @@
     position: fixed;
     width: 100%;
 }
+
 .menu-area > ul > li > a,
 .p-banner-content > .p-banner-btn > a:hover,
 .slider-inner-btn > a:hover,
@@ -1554,7 +1555,6 @@ footer {
     text-align: center;
 }
 
-
 .chat-wrapper {
     position: fixed;
     right: 0;
@@ -1643,4 +1643,3 @@ footer {
         bottom: 80px; /* adjust for toggle button */
     }
 }
-
