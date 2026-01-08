@@ -1,35 +1,25 @@
-<header id="header p-0 " style="padding: 0 !important; box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;">
+<header id="header">
     <div class="container">
         <div class="row main_row align-items-lg-center">
-            <div class="col-md-3 col-sm-2 d-none d-lg-flex align-items-center flex-row gap-5 pr-0 pe-0">
+            <div class="col-md-3 d-none d-lg-flex align-items-center flex-row gap-5">
                 <!-- <a class="navbar-brand" href="index.html">Shopping Zone BD</a> -->
                 <a href="{{ route('home') }}">
                     <img class="header-logo" src="{{ asset('storage/company') . '/' . $web_config['web_logo']->value }}"
                         onerror="this.src='{{ asset('assets/front-end/img/image-place-holder.png') }}'"
                         alt="{{ $web_config['name']->value }}">
                 </a>
-                <div class="ml-4">
-                    <div class="d-flex align-items-center">
-                        <img style="height: 40px; width: auto;"
-                            src="{{ asset('assets/front-end/images/logo/whatsapp.png') }}" alt="whatsapp icon">
-                        <div class="ms-2">
-                            <a target="_blank" title="Go Whatsapp" style="font-size: 16px; font-weight: 600; "
-                                class="text-success d-flex align-items-center"
-                                href="https://wa.me/8801406667669?text=Is%20anyone%20available%20to%20chat%3F">
-                                <span class="ml-1">01406-667669</span>
-                            </a>
-
-                            <a target="_blank" title="Go Whatsapp" style="font-size: 16px; font-weight: 600; "
-                                class="text-success d-flex align-items-center"
-                                href="https://wa.me/8801805035050?text=Is%20anyone%20available%20to%20chat%3F">
-                                <span class="ml-1">01805-035050</span>
-                            </a>
-                        </div>
-                    </div>
+                <div class="ml-5">
+                    <a target="_blank" title="Go Whatsapp" style="font-size: 18px; font-weight: 600; "
+                        class="text-success d-flex align-items-center"
+                        href="https://wa.me/8801406667669?text=Is%20anyone%20available%20to%20chat%3F">
+                        <img style="width: 40px;" src="{{ asset('assets/front-end/images/logo/whatsapp.png') }}"
+                            alt="whatsapp icon">
+                        <span class="ml-1">01406667669</span>
+                    </a>
                 </div>
             </div>
-            <div class="col-md-7 col-sm-7 px-0 pl-2 ps-2">
-                @php $categories = \App\CPU\CategoryManager::parents(); @endphp
+            <div class="col-md-7">
+                @php $categories = \App\Model\Category::where('home_status', 1)->orderBy('order_number')->get(); @endphp
                 @php
                     $discountOffer = \App\Models\DiscountOffer::where('status', 1)->first();
                 @endphp
@@ -85,90 +75,60 @@
                                                     </div>
                                                 @endif
                                             </div>
-                                            @if ($category->childes->count() > 0)
-                                                <div class="s-category-box">
-                                                    <ul class="w-nav-list level_3 ml-4">
-                                                        @foreach ($category['childes'] as $subCategory)
-                                                            <li class="s-category"><a
-                                                                    href="{{ route('products', ['id' => $subCategory['id'], 'data_from' => 'category', 'page' => 1]) }}">{{ $subCategory['name'] }}
-                                                                </a>
-                                                                @if ($subCategory->childes->count() > 0)
-                                                                    <div class="dropdown-menuc">
-                                                                        <ul class="w-nav-list level_3 ml-3">
-                                                                            @php
-                                                                                $specificSlugs = [
-                                                                                    'two-piece',
-                                                                                    'three-piece',
-                                                                                    'unstitched-three-piece',
-                                                                                    'ready-three-piece',
-                                                                                ];
-                                                                            @endphp @foreach ($subCategory['childes'] as $subSubCategory)
-                                                                                @if (in_array($subSubCategory['slug'], $specificSlugs))
-                                                                                    <li><a
-                                                                                            href="{{ route('products', ['id' => $subSubCategory['id'], 'data_from' => 'category', 'page' => 1]) }}">{{ $subSubCategory['name'] }}</a>
-                                                                                    </li>
-                                                                                @else
-                                                                                    <li><a
-                                                                                            href="{{ route('products', ['id' => $subSubCategory['id'], 'data_from' => 'category', 'page' => 1]) }}">{{ $subSubCategory['name'] }}</a>
-                                                                                    </li>
-                                                                                @endif
-                                                                            @endforeach
-                                                                        </ul>
-                                                                    </div>
-                                                                @endif
-                                                            </li>
-                                                        @endforeach
-                                                    </ul>
-                                                </div>
-                                            @endif
+                                        @endforeach
                                     </div>
-                                    @endforeach
                                 </div>
+                            </li>
+                            <li><a href="{{ route('shop') }}">{{ \App\CPU\translate('Shop') }}</a>
+                            </li>
+                            <li><a href="{{ route('video_shopping') }}">{{ \App\CPU\translate('video shopping') }}</a>
+                            </li>
+
+
+                            <li><a href="{{ route('offers.product') }}"><img style="height: 30px; width: auto;"
+                                        src="{{ asset('assets/front-end/img/sp_offer.png') }}" alt="special image"></a>
+                            </li>
+                            <li><a href="{{ route('outlets') }}">{{ \App\CPU\translate('Our outlets') }}</a></li>
+                            <li><a href="{{ route('careers') }}">{{ \App\CPU\translate('Careers') }}</a></li>
+                        </ul>
                     </div>
-                    </li>
-                    <li><a href="{{ route('shop') }}">{{ \App\CPU\translate('Shop') }}</a>
-                    </li>
-                    <li><a href="{{ route('video_shopping') }}">{{ \App\CPU\translate('video shopping') }}</a>
-                    </li>
 
-                    <li><a href="{{ route('offers.product') }}">{{ \App\CPU\translate('Special Offers') }}</a>
-                    </li>
-                    <li><a href="{{ route('outlets') }}">{{ \App\CPU\translate('Our outlets') }}</a></li>
-                    <li><a href="{{ route('careers') }}">{{ \App\CPU\translate('Career') }}</a></li>
-                    </ul>
+                    <i class="fa fa-bars menu-icon"></i>
+                </nav>
             </div>
+            <div class="col-md-2 ms-auto">
+                <div class="header-icon ms-5 align-items-center">
+                    @if ($discountOffer != null)
+                        <a class="d-block d-lg-none"
+                            href="{{ route('discount.offers', ['slug' => $discountOffer->slug ?? '']) }}"><img
+                                style="height: 60px; width: auto;"
+                                src="{{ asset('storage/offer') }}/{{ $discountOffer['image'] }}"
+                                alt="offer image"></a>
+                    @endif
 
-            <i class="fa fa-bars menu-icon"></i>
-            </nav>
-        </div>
-        <div class="col-md-2 col-sm-2 ps-0 ">
-            <div class="header-icon align-items-center pt-0 mt-0">
-                @if ($discountOffer != null)
-                    <a class="d-block d-lg-none"
-                        href="{{ route('discount.offers', ['slug' => $discountOffer->slug ?? '']) }}"><img
-                            style="height: 60px; width: auto;"
-                            src="{{ asset('storage/offer') }}/{{ $discountOffer['image'] }}" alt="offer image"></a>
-                @endif
-                <a data-bs-toggle="offcanvas" href="#searchOffcanvas" role="button" aria-controls="searchOffcanvas"><i
-                        class="fa fa-search" aria-hidden="true"></i></a>
-                <a href="{{ route('wishlists') }}"><i class="fa fa-heart-o" aria-hidden="true"></i>
-                    <span
-                        class="badge badge-danger countWishlist">{{ session()->has('wish_list') ? count(session('wish_list')) : 0 }}</span></a>
-                <a data-bs-toggle="offcanvas" href="#shoppingCartOffcanvas" role="button"
-                    aria-controls="shoppingCartOffcanvas"><i class="fa fa-shopping-cart" aria-hidden="true"></i><span
-                        class="badge badge-danger" id="total_cart_count">
-                        {{ session()->has('cart') ? count(session()->get('cart')) : 0 }}
-                    </span></a>
-                @if (auth('customer')->check())
-                    <a href="{{ route('user-account') }}" class="d-lg-none"><i class="fa fa-user"
-                            aria-hidden="true"></i></a>
-                @else
-                    <a href="{{ route('customer.auth.login') }}" class="d-lg-none"><i class="fa fa-user"
-                            aria-hidden="true"></i></a>
-                @endif
+
+                    <a data-bs-toggle="offcanvas" href="#searchOffcanvas" role="button"
+                        aria-controls="searchOffcanvas"><i class="fa fa-search" aria-hidden="true"></i></a>
+                    <a href="{{ route('wishlists') }}"><i class="fa fa-heart-o" aria-hidden="true"></i>
+                        <span
+                            class="badge badge-danger countWishlist">{{ session()->has('wish_list') ? count(session('wish_list')) : 0 }}</span></a>
+                    <a data-bs-toggle="offcanvas" href="#shoppingCartOffcanvas" role="button"
+                        aria-controls="shoppingCartOffcanvas"><i class="fa fa-shopping-cart"
+                            aria-hidden="true"></i><span class="badge badge-danger" id="total_cart_count">
+                            {{ session()->has('cart') ? count(session()->get('cart')) : 0 }}
+                        </span></a>
+                    @if (auth('customer')->check())
+                        <a href="{{ route('user-account') }}" class="d-lg-none"><i class="fa fa-user"
+                                aria-hidden="true"></i></a>
+                    @else
+                        <a href="{{ route('customer.auth.login') }}" class="d-lg-none"><i class="fa fa-user"
+                                aria-hidden="true"></i></a>
+                    @endif
+
+
+                </div>
             </div>
         </div>
-    </div>
     </div>
 </header>
 
@@ -272,7 +232,7 @@ $company_mobile_logo = \App\Model\BusinessSetting::where('type', 'company_mobile
             <div class="menu-box">
                 <div class="menu-link">
                     <a href="{{ route('offers.product') }}"><i
-                            class="fa fa-ptab3 mr-2"></i>{{ \App\CPU\translate('Special Offers') }}</a>
+                            class="fa fa-ptab3 mr-2"></i>{{ \App\CPU\translate('Special Offer') }}</a>
                 </div>
             </div>
             <div class="menu-box">
@@ -284,7 +244,7 @@ $company_mobile_logo = \App\Model\BusinessSetting::where('type', 'company_mobile
             <div class="menu-box">
                 <div class="menu-link">
                     <a href="{{ route('careers') }}"><i
-                            class="fa fa-ptab3 mr-2"></i>{{ \App\CPU\translate('Career') }}</a>
+                            class="fa fa-ptab3 mr-2"></i>{{ \App\CPU\translate('Careers') }}</a>
                 </div>
             </div>
             <div class="menu-box mt-2 text-white">

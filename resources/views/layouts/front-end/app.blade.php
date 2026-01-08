@@ -40,7 +40,7 @@
     <link rel="stylesheet" href="{{ asset('assets/front-end') }}/css/bs_customize.css">
     <link rel="stylesheet" href="{{ asset('assets/front-end/css/user_account.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/front-end/css/custome.css') }}">
-    <!--<link rel="stylesheet" href="{{ asset('assets/front-end') }}/css/style.css">-->
+    {{-- <link rel="stylesheet" href="{{ asset('assets/front-end') }}/css/style.css"> --}}
     <link rel="stylesheet" href="{{ asset('assets/front-end') }}/css/responsive.css">
 
     {{-- dont touch this --}}

@@ -427,7 +427,7 @@
                             <img src='{{ asset("storage/category/$category->icon") }}' alt="{{ $category->name }}">
                             <div class="card-body text-center">
                                 <h5 class="card-title text-white mb-0">{{ $category['name'] }}</h5>
-                                <p class="card-text text-white p-0 m-0">{{ $category->Products->count() }} Products</p>
+                                {{-- <p class="card-text text-white p-0 m-0">{{ $category->Products->count() }} Products</p> --}}
                             </div>
                         </a>
                     </div>
@@ -473,8 +473,8 @@
                                 </div>
                                 <div class="card-body text-center p-1">
                                     <h5 class="card-title text-white mb-0">{{ $category['name'] }}</h5>
-                                    <p class="card-text text-white p-0 m-0 text-dark">{{ $category->Products->count() }}
-                                        Products</p>
+                                    {{-- <p class="card-text text-white p-0 m-0 text-dark">{{ $category->Products->count() }}
+                                        Products</p> --}}
                                 </div>
                             </a>
                         </div>
@@ -613,13 +613,13 @@
                 <div class="row product-grid">
                     <!-- Your product columns go here -->
 
-                    @foreach ($category->products as $key => $product)
+                    {{-- @foreach ($category->products as $key => $product)
                         @if ($key < 12)
                             @include('web-views.products.product_box', [
                                 'dataCategory' => "category_$category->id",
                             ])
                         @endif
-                    @endforeach
+                    @endforeach --}}
                 </div>
             @endforeach
             @foreach (\App\Model\Banner::where('banner_type', 'Footer Banner')->where('published', 1)->orderBy('id', 'desc')->take(3)->get() as $banner)

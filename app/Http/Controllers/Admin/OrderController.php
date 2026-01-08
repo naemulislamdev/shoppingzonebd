@@ -668,6 +668,7 @@ class OrderController extends Controller
 
     public function bulk_export_data(Request $request, $status)
     {
+
         $from = $request['from'];
         $to = $request['to'];
 
@@ -690,6 +691,7 @@ class OrderController extends Controller
                 $query->whereBetween('created_at', [$from . ' 00:00:00', $to . ' 23:59:59']);
             })->orderBy('id', 'DESC')->get();
 
+        dd($orders);
         if ($orders->count() == 0) {
             Toastr::warning(\App\CPU\translate('Data is Not available!!!'));
             return back();
@@ -708,6 +710,7 @@ class OrderController extends Controller
                 'order_id' => $item->id,
                 'Customer Id' => $item->customer_id,
                 'Customer Name' => isset($item->customer) ? $item->customer->f_name . ' ' . $item->customer->l_name : 'not found',
+                'Customer Phone' => isset($item->customer) ? $item->customer->phone : 'not found',
                 'Order Group Id' => $item->order_group_id,
                 'Order Status' => $item->order_status,
                 'Order Amount' => Helpers::currency_converter($order_amount),

@@ -89,7 +89,6 @@ Route::middleware(['maintenance_mode'])->group(function () {
     Route::controller(InvestorController::class)->group(function () {
         Route::get('/investor', 'create')->name('investor.crate');
         Route::post('/investor/store', 'store')->name('investor.store');
-
     });
     // Wholesale routes
     Route::controller(WholesaleController::class)->group(function () {
@@ -106,7 +105,7 @@ Route::middleware(['maintenance_mode'])->group(function () {
         Route::get('/collections/{slug}', 'multiCollection')->name('collections');
     });
 
-Route::controller(WebController::class)->middleware(['customer'])->group(function () {
+    Route::controller(WebController::class)->middleware(['customer'])->group(function () {
         Route::get('checkout-shipping', 'checkout_shipping')->name('checkout-shipping');
         Route::get('checkout-payment', 'checkout_payment')->name('checkout-payment');
         Route::get('checkout-review', 'checkout_review')->name('checkout-review');
