@@ -11,7 +11,7 @@ class CategoryManager
     {
         $x = Category::with(['childes.childes'])->where('position', 0)->priority()->get();
         return $x;
-        // naim edit
+   
     }
 
     public static function child($parent_id)
