@@ -36,7 +36,7 @@ class Category extends Model
     {
         return $this->hasMany(ChildCategory::class)->orderBy('order_number','asc');
     }
-    public function countProduct()
+    public function Products()
     {
         return $this->hasMany(Product::class, 'category_id');
     }
