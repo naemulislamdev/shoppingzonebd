@@ -145,19 +145,68 @@
             transition: opacity 0.3s ease;
         }
 
-        /* .color-label {
-                    cursor: pointer;
-                    margin-right: 8px;
-                    border-radius: 6px;
-                    overflow: hidden;
-                }
-                .color-label img {
-                    border: 2px solid transparent;
-                    transition: border 0.3s;
-                }
-                input[name="color"]:checked + .color-label img {
-                    border: 2px solid #007bff;
-                } */
+        .p-dtls-box>table>tbody>tr {
+            display: block !important;
+            justify-content: space-between;
+            border: 1px solid #ddd;
+        }
+
+        .shipping-box {
+            border: 1px solid #ddd;
+            padding: 7px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-evenly;
+            cursor: pointer;
+            align-items: center;
+            transition: 0.3s all ease-in-out;
+        }
+
+        .shipping-box input[type="radio"]:checked+.shipping-title {
+            font-weight: bold;
+            color: #f26d21;
+        }
+
+        .v-color-box>.color-label,
+        .v-size-box>.size-label {
+            cursor: pointer;
+            border: 2px solid #ccc;
+            padding: 0 !important;
+            border-radius: 5px;
+            width: 100%;
+            text-align: center;
+            height: 100px !important;
+            position: relative;
+            font-size: 18px !important;
+            font-weight: 600 !important;
+        }
+
+        .v-color-box>input:checked+.color-label::after {
+            content: '✔';
+            color: green;
+            font-size: 22px !important;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .v-color-box,
+        .v-size-box {
+            margin-right: 0.925rem !important;
+        }
+
+        .btn-number {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0 !important;
+            line-height: 30px;
+            font-size: 16px !important;
+            text-align: center;
+        }
     </style>
     <?php
     $overallRating = \App\CPU\ProductManager::get_overall_rating($product->reviews);
@@ -369,8 +418,8 @@
                                         </div>
                                     @endforeach
 
-                                    <div class="row mb-5 mt-3 align-items-center">
-                                        <div class="col-md-4 mb-2">
+                                    <div class="row mb-3 mt-3 align-items-center">
+                                        <div class="col-6 mb-2">
                                             <h4 style="font-size: 18px; margin:0;" class="mb-2">Quantity:</h4>
 
                                             <div class="product-quantity d-flex align-items-center">
@@ -411,7 +460,7 @@
                                                         class="fa fa-plus"></i></button>
                                             </div> --}}
                                         </div>
-                                        <div class="col-md-8">
+                                        <div class="col-6 ">
                                             <div class="d-flex justify-content-between mt-2" id="chosen_price_div">
 
                                                 <span class="instock">Instock: {{ $product->current_stock }}</span>
@@ -420,14 +469,27 @@
                                     </div>
 
                                     <div class="row mb-3">
-                                        <div class="col-md-6 mb-3">
+                                        <div class="col-6 ">
                                             <button type="button" onclick="buy_now('form-{{ $product->id }}')"
                                                 href="javascript:void(0);" class="w-100 common-btn border-0">অর্ডার
                                                 করুন</button>
                                         </div>
-                                        <div class="col-md-6">
-                                            <button type="button" class="btn btn-dark d-block w-100"
+                                        <div class="col-6">
+                                            <button type="button" class="btn btn-dark d-block w-100 font-weight-bold"
                                                 onclick="addToCart('form-{{ $product->id }}')">কার্টে যোগ করুন</button>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-12">
+                                            <div>
+                                                <a target="_blank" title="Go Whatsapp"
+                                                    style="  font-size: 18px; font-weight: 600; box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px; background: #f26d21;"
+                                                    class="text-white d-flex align-items-center border p-2 px-3 rounded"
+                                                    href="https://wa.me/8801406667669?text=Is%20anyone%20available%20to%20chat%3F">
+                                                    <i style="font-size: 30px" class="fa fa-whatsapp me-2 mr-2"></i>
+                                                    <span class="ml-1">01406667669</span>
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 </form>
@@ -876,6 +938,14 @@
     <script>
         fbq('track', 'ViewContent', {
             content_ids: ['{{ $product->id }}'],
+            content_type: 'product',
+            value: {{ \App\CPU\Helpers::currency_converter($product->unit_price) ?? 0 }},
+            currency: 'BDT'
+        });
+    </script>
+    <script>
+        ttq.track('ViewContent', {
+            content_id: '{{ $product->id }}',
             content_type: 'product',
             value: {{ \App\CPU\Helpers::currency_converter($product->unit_price) ?? 0 }},
             currency: 'BDT'

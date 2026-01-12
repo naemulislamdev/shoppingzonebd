@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Model\CartShipping;
 use App\Model\Color;
 use App\Model\Order;
+use App\Model\OrderDetail;
 use App\Model\Product;
 use App\Model\ShippingAddress;
 use App\Model\ShippingMethod;
@@ -261,12 +262,12 @@ class SystemController extends Controller
                 'created_at' => now()
             ];
 
-            $order_id = Order::create($or);
+            $order = Order::create($or);
 
             foreach (session('cart') as $c) {
                 $product = Product::where(['id' => $c['id']])->first();
                 $or_d = [
-                    'order_id' => $order_id,
+                    'order_id' => $order->id,
                     'product_id' => $c['id'],
                     'seller_id' => $product->added_by == 'seller' ? $product->user_id : '0',
                     'product_details' => $product,
@@ -304,8 +305,9 @@ class SystemController extends Controller
                     ]);
                 }
 
+                //DB::table('order_details')->insert($or_d);
+                $orderDetils = OrderDetail::create($or_d);
 
-                DB::table('order_details')->insert($or_d);
             }
 
             $userInfo = UserInfo::where('session_id', $request->input('session_id'))
@@ -323,7 +325,7 @@ class SystemController extends Controller
                     $data = [
                         'title' => 'Order',
                         'description' => $value,
-                        'order_id' => $order_id,
+                        'order_id' => $order->id,
                         'image' => '',
                     ];
                     Helpers::send_push_notif_to_device($fcm_token, $data);
@@ -340,7 +342,7 @@ class SystemController extends Controller
             session()->forget('shipping_method_id');
 
             //return view('web-views.checkout-complete', compact('order'));
-            return redirect()->route('customer.checkout-complete', ['id' => $order_id]);
+            return redirect()->route('customer.checkout-complete', ['id' => $order->id]);
         } else {
             return "something went wrong please try again";
         }
@@ -444,11 +446,11 @@ class SystemController extends Controller
                 'created_at' => now()
             ];
 
-            $order_id = DB::table('orders')->insertGetId($or);
+            $order = Order::create($or);
 
             $product = Product::where(['id' => $request['product_id']])->first();
             $or_d = [
-                'order_id' => $order_id,
+                'order_id' => $order->id,
                 'product_id' => $request['product_id'],
                 'seller_id' => $product->added_by == 'seller' ? $product->user_id : '0',
                 'product_details' => $product,
@@ -486,7 +488,8 @@ class SystemController extends Controller
             }
 
 
-            DB::table('order_details')->insert($or_d);
+            //DB::table('order_details')->insert($or_d);
+            $orderDetils = OrderDetail::create($or_d);
 
             $userInfo = UserInfo::where('session_id', $request->input('session_id'))
                 ->where('order_process', 'pending')
@@ -503,7 +506,7 @@ class SystemController extends Controller
                     $data = [
                         'title' => 'Order',
                         'description' => $value,
-                        'order_id' => $order_id,
+                        'order_id' => $order->id,
                         'image' => '',
                     ];
                     Helpers::send_push_notif_to_device($fcm_token, $data);
@@ -518,10 +521,9 @@ class SystemController extends Controller
             session()->forget('payment_method');
             session()->forget('customer_info');
             session()->forget('shipping_method_id');
-            dd($order_id);
 
             //return view('web-views.checkout-complete', compact('order'));
-            return redirect()->route('customer.checkout-complete', ['id' => $order_id]);
+            return redirect()->route('customer.checkout-complete', ['id' => $order->id]);
         } else {
             return "something went wrong please try again";
         }
