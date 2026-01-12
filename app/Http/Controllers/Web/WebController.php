@@ -281,7 +281,7 @@ class WebController extends Controller
                     ->orWhere('code', 'LIKE', "%{$query}%");
             })
             ->get();
-        $categories  = Category::where('position', 0)->where('name', 'LIKE', "%{$query}%")->priority()->get();
+        $categories  = Category::where('name', 'LIKE', "%{$query}%")->get();
 
         $output = '';
         if (count($products) > 0) {
@@ -311,7 +311,7 @@ class WebController extends Controller
                 $cates .= '
                 <div class="category-item">
                     <div>
-                    <a  href="' . route('products', ['id' => $category['id'], 'data_from' => 'category', 'page' => 1]) . '">
+                    <a  href="' . route('category.products', $category->slug) . '">
                     <p>' . $category->name . '</p>
                     </a>
                     </div>s

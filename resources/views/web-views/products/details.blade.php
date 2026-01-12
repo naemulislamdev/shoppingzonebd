@@ -145,6 +145,7 @@
             transition: opacity 0.3s ease;
         }
 
+<<<<<<< HEAD
         /* .color-label {
                                                                                                                                                                 cursor: pointer;
                                                                                                                                                                 margin-right: 8px;
@@ -158,6 +159,70 @@
                                                                                                                                                             input[name="color"]:checked + .color-label img {
                                                                                                                                                                 border: 2px solid #007bff;
                                                                                                                                                             } */
+=======
+        .p-dtls-box>table>tbody>tr {
+            display: block !important;
+            justify-content: space-between;
+            border: 1px solid #ddd;
+        }
+
+        .shipping-box {
+            border: 1px solid #ddd;
+            padding: 7px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-evenly;
+            cursor: pointer;
+            align-items: center;
+            transition: 0.3s all ease-in-out;
+        }
+
+        .shipping-box input[type="radio"]:checked+.shipping-title {
+            font-weight: bold;
+            color: #f26d21;
+        }
+
+        .v-color-box>.color-label,
+        .v-size-box>.size-label {
+            cursor: pointer;
+            border: 2px solid #ccc;
+            padding: 0 !important;
+            border-radius: 5px;
+            width: 100%;
+            text-align: center;
+            height: 100px !important;
+            position: relative;
+            font-size: 18px !important;
+            font-weight: 600 !important;
+        }
+
+        .v-color-box>input:checked+.color-label::after {
+            content: '✔';
+            color: green;
+            font-size: 22px !important;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .v-color-box,
+        .v-size-box {
+            margin-right: 0.925rem !important;
+        }
+
+        .btn-number {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0 !important;
+            line-height: 30px;
+            font-size: 16px !important;
+            text-align: center;
+        }
+>>>>>>> 96e4c04d190111a0fae64867b130a65e1fab1c58
     </style>
     <?php
     $overallRating = \App\CPU\ProductManager::get_overall_rating($product->reviews);
@@ -889,6 +954,14 @@
     <script>
         fbq('track', 'ViewContent', {
             content_ids: ['{{ $product->id }}'],
+            content_type: 'product',
+            value: {{ \App\CPU\Helpers::currency_converter($product->unit_price) ?? 0 }},
+            currency: 'BDT'
+        });
+    </script>
+    <script>
+        ttq.track('ViewContent', {
+            content_id: '{{ $product->id }}',
             content_type: 'product',
             value: {{ \App\CPU\Helpers::currency_converter($product->unit_price) ?? 0 }},
             currency: 'BDT'
