@@ -498,8 +498,7 @@
                                 <select required name="department" class="form-control" required>
                                     <option selected disabled value="">------</option>
                                     @foreach ($allDepartment as $dept)
-                                        <option 
-                                            value="{{ $dept->name }}">{{ $dept->name }}
+                                        <option value="{{ $dept->name }}">{{ $dept->name }}
                                         </option>
                                     @endforeach
                                 </select>

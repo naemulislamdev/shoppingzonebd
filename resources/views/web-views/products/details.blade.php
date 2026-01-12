@@ -146,18 +146,18 @@
         }
 
         /* .color-label {
-                    cursor: pointer;
-                    margin-right: 8px;
-                    border-radius: 6px;
-                    overflow: hidden;
-                }
-                .color-label img {
-                    border: 2px solid transparent;
-                    transition: border 0.3s;
-                }
-                input[name="color"]:checked + .color-label img {
-                    border: 2px solid #007bff;
-                } */
+                                                                                                                                                                cursor: pointer;
+                                                                                                                                                                margin-right: 8px;
+                                                                                                                                                                border-radius: 6px;
+                                                                                                                                                                overflow: hidden;
+                                                                                                                                                            }
+                                                                                                                                                            .color-label img {
+                                                                                                                                                                border: 2px solid transparent;
+                                                                                                                                                                transition: border 0.3s;
+                                                                                                                                                            }
+                                                                                                                                                            input[name="color"]:checked + .color-label img {
+                                                                                                                                                                border: 2px solid #007bff;
+                                                                                                                                                            } */
     </style>
     <?php
     $overallRating = \App\CPU\ProductManager::get_overall_rating($product->reviews);
@@ -369,8 +369,8 @@
                                         </div>
                                     @endforeach
 
-                                    <div class="row mb-5 mt-3 align-items-center">
-                                        <div class="col-md-4 mb-2">
+                                    <div class="row mb-3 mt-3 align-items-center">
+                                        <div class="col-6 mb-2">
                                             <h4 style="font-size: 18px; margin:0;" class="mb-2">Quantity:</h4>
 
                                             <div class="product-quantity d-flex align-items-center">
@@ -411,7 +411,7 @@
                                                         class="fa fa-plus"></i></button>
                                             </div> --}}
                                         </div>
-                                        <div class="col-md-8">
+                                        <div class="col-6 ">
                                             <div class="d-flex justify-content-between mt-2" id="chosen_price_div">
 
                                                 <span class="instock">Instock: {{ $product->current_stock }}</span>
@@ -420,14 +420,27 @@
                                     </div>
 
                                     <div class="row mb-3">
-                                        <div class="col-md-6 mb-3">
+                                        <div class="col-6 ">
                                             <button type="button" onclick="buy_now('form-{{ $product->id }}')"
                                                 href="javascript:void(0);" class="w-100 common-btn border-0">অর্ডার
                                                 করুন</button>
                                         </div>
-                                        <div class="col-md-6">
-                                            <button type="button" class="btn btn-dark d-block w-100"
+                                        <div class="col-6">
+                                            <button type="button" class="btn btn-dark d-block w-100 font-weight-bold"
                                                 onclick="addToCart('form-{{ $product->id }}')">কার্টে যোগ করুন</button>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-12">
+                                            <div>
+                                                <a target="_blank" title="Go Whatsapp"
+                                                    style="  font-size: 18px; font-weight: 600; box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px; background: #f26d21;"
+                                                    class="text-white d-flex align-items-center border p-2 px-3 rounded"
+                                                    href="https://wa.me/8801406667669?text=Is%20anyone%20available%20to%20chat%3F">
+                                                    <i style="font-size: 30px" class="fa fa-whatsapp me-2 mr-2"></i>
+                                                    <span class="ml-1">01406667669</span>
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 </form>

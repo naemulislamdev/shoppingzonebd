@@ -415,14 +415,28 @@ class ContactController extends Controller
 
         return response()->json();
     }
-    public function bulk_export_dataUserInfo()
+
+    public function bulk_export_dataUserInfo(Request $request)
     {
-        $userInfos = UserInfo::latest()->get();
-        //export from userInfos
+        $from = $request->from;
+        $to   = $request->to;
+        $query = UserInfo::query();
+
+        // Date filter
+        if (!empty($from) && !empty($to)) {
+            $query->whereBetween('created_at', [
+                Carbon::parse($from)->startOfDay(),
+                Carbon::parse($to)->endOfDay(),
+            ]);
+        }
+
+        $userInfos = $query->latest()->get();
+
+        // Export data
         $data = [];
         foreach ($userInfos as $item) {
             $data[] = [
-                'Date'          => Carbon::parse($item->created_at)->format('d F Y'),
+                'Date'          => Carbon::parse($item->created_at)->format('d F Y'), // 12 January 2026
                 'Time'          => Carbon::parse($item->created_at)->format('h:i A'),
 
                 'Name'          => $item->name ?? '',
@@ -441,14 +455,14 @@ class ContactController extends Controller
                 'Order Status'  => ucfirst($item->order_status ?? ''),
 
                 'Order Note'    => $item->order_note ?? '',
-
-
             ];
         }
+
         $headings = ['Date', 'Time', 'Name', 'Email', 'Phone', 'Address', 'Type', 'Status', 'Order Process', 'Order Status', 'Order Note'];
 
         return Excel::download(new DynamicExport($headings, $data), 'user_info.xlsx');
     }
+
     public function status(Request $request)
     {
         $userinfo = UserInfo::findOrFail($request->id);

@@ -9,9 +9,12 @@ class CategoryManager
 {
     public static function parents()
     {
-        $x = Category::with(['childes.childes'])->where('position', 0)->priority()->get();
+        $x = Category::where('position', 0)
+            ->orderBy('order_number', 'asc')
+            ->get();
         return $x;
     }
+
 
     public static function child($parent_id)
     {

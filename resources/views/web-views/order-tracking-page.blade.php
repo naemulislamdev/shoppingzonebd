@@ -1,24 +1,29 @@
 @extends('layouts.front-end.app')
 
-@section('title',\App\CPU\translate('Track Order Result'))
+@section('title', \App\CPU\translate('Track Order Result'))
 
 @push('css_or_js')
-    <meta property="og:image" content="{{asset('storage/company')}}/{{$web_config['web_logo']->value}}"/>
-    <meta property="og:title" content="{{$web_config['name']->value}} "/>
-    <meta property="og:url" content="{{env('APP_URL')}}">
-    <meta property="og:description" content="{!! substr($web_config['about']->value,0,100) !!}">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{{ strip_tags($web_config['name']->value) }}">
+    <meta property="og:description" content="{{ substr(strip_tags($web_config['about']->value), 0, 150) }}">
+    <meta property="og:image" content="{{ asset('storage/company/' . $web_config['web_logo']->value) }}">
+    <meta property="og:url" content="{{ url()->current() }}">
 
-    <meta property="twitter:card" content="{{asset('storage/company')}}/{{$web_config['web_logo']->value}}"/>
-    <meta property="twitter:title" content="{{$web_config['name']->value}}"/>
-    <meta property="twitter:url" content="{{env('APP_URL')}}">
-    <meta property="twitter:description" content="{!! substr($web_config['about']->value,0,100) !!}">
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ strip_tags($web_config['name']->value) }}">
+    <meta name="twitter:description" content="{{ substr(strip_tags($web_config['about']->value), 0, 150) }}">
+    <meta name="twitter:image" content="{{ asset('storage/company/' . $web_config['web_logo']->value) }}">
+    <meta name="twitter:url" content="{{ url()->current() }}">
     <style>
         .order-track {
-            height: 400px;
-            border: 1px solid rgb(189, 187, 187);
+
+            box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
             border-radius: 10px;
+            background: #ff5d00;
         }
-       .closet{
+
+        .closet {
             font-size: 1.5rem;
             font-weight: 300;
             line-height: 1;
@@ -26,26 +31,68 @@
             text-shadow: none;
             opacity: .5;
         }
+
+        .breadcrumb {
+            background: none;
+
+        }
+
+        .breadcrumb-link {
+            color: #f26d21;
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        .breadcrumb-link:hover {
+            color: #d85e1c;
+
+        }
+
+        .breadcrumb-active {
+            color: #f26d21;
+            font-weight: 600;
+        }
     </style>
 @endpush
 
 @section('content')
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb bg-transparent px-0 mb-2">
+                <li class="breadcrumb-item">
+                    <a href="{{ url('/') }}" class="breadcrumb-link">Home</a>
+                </li>
+                <li class="breadcrumb-item active breadcrumb-active" aria-current="page">
+                    Track Your Order
+                </li>
+            </ol>
+        </nav>
+    </div>
+
+
     <!-- Page Content-->
-    <div class="container rtl" style="text-align: {{Session::get('direction') === "rtl" ? 'right' : 'left'}};">
+    <div class="container rtl"
+        style="height: 100vh; text-align: {{ Session::get('direction') === 'rtl' ? 'right' : 'left' }};">
         <div class="row">
-            <div class="col-md-3 col-lg-3"></div>
-            <div class="col-md-7 col-lg-6">
+
+            <div class="col-md-6 col-lg-5 mx-auto">
                 <div class="container py-4 mb-2 mb-md-3">
 
-                    <div class="box-shadow-sm order-track">
+                    <div class=" order-track">
                         <div style="margin: 0 auto; padding: 15px;">
-                            <h1 style="padding: 20px; text-align: center;">{{\App\CPU\translate('track_order')}}</h1>
+                            <div class="text-center">
+                                <img style="width: 100px; border-radius: 50%"
+                                    src="{{ asset('assets/front-end/img/track-result/track.png') }}" alt="">
 
-                            <form action="{{route('track-order.result')}}" type="submit" method="post"
-                                  style="padding: 15px;">
+                                <h2 style="padding: 20px; text-align: center; color:#fff;">
+                                    {{ \App\CPU\translate('track_Your_Order') }}</h2>
+                            </div>
+
+                            <form action="{{ route('track-order.result') }}" type="submit" method="post"
+                                style="padding: 15px;">
                                 @csrf
 
-                                @if(session()->has('Error'))
+                                @if (session()->has('Error'))
                                     <div class="alert alert-danger alert-block">
                                         <span type="" class="closet " data-dismiss="alert">×</span>
                                         <strong>{{ session()->get('Error') }}</strong>
@@ -54,14 +101,16 @@
 
                                 <div class="form-group">
                                     <input class="form-control prepended-form-control" type="text" name="order_id"
-                                           placeholder="{{\App\CPU\translate('order_id')}}" required>
+                                        placeholder="{{ \App\CPU\translate('order_id') }}" required>
                                 </div>
                                 <div class="form-group">
                                     <input class="form-control prepended-form-control" type="text" name="phone_number"
-                                           placeholder="{{\App\CPU\translate('your_phone_number')}}" required>
+                                        placeholder="{{ \App\CPU\translate('your_phone_number') }}" required>
                                 </div>
-                                <div class="input-group-append">
-                                    <button class="btn btn-primary" type="submit" name="trackOrder">{{\App\CPU\translate('track_order')}}</button>
+                                <div class="input-group-append mx-auto">
+                                    <button class="btn btn-light w-50" type="submit" name="trackOrder">
+                                        <i class="fa fa-search" aria-hidden="true"></i>
+                                        {{ \App\CPU\translate('track_order') }}</button>
                                 </div>
                             </form>
                         </div>
@@ -76,6 +125,5 @@
 
 
 @push('scripts')
-    <script src="{{asset('assets/front-end')}}/vendor/nouislider/distribute/nouislider.min.js">
-    </script>
+    <script src="{{ asset('assets/front-end') }}/vendor/nouislider/distribute/nouislider.min.js"></script>
 @endpush

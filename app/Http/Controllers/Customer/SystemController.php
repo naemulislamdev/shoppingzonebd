@@ -207,6 +207,7 @@ class SystemController extends Controller
     }
     public function productCheckoutOrder(Request $request)
     {
+        dd($request->all());
         if (session('cart') == null || count(session('cart')) == 0) {
             Toastr::error('Your cart is empty');
             return redirect()->route('home');

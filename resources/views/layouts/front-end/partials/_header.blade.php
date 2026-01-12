@@ -1,4 +1,5 @@
-<header id="header">
+<header id="header py-1 "
+    style="box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;">
     <div class="container">
         <div class="row main_row align-items-lg-center">
             <div class="col-md-3 d-none d-lg-flex align-items-center flex-row gap-5">
@@ -8,17 +9,26 @@
                         onerror="this.src='{{ asset('assets/front-end/img/image-place-holder.png') }}'"
                         alt="{{ $web_config['name']->value }}">
                 </a>
-                <div class="ml-5">
-                    <a target="_blank" title="Go Whatsapp" style="font-size: 18px; font-weight: 600; "
-                        class="text-success d-flex align-items-center"
-                        href="https://wa.me/8801406667669?text=Is%20anyone%20available%20to%20chat%3F">
-                        <img style="width: 40px;" src="{{ asset('assets/front-end/images/logo/whatsapp.png') }}"
-                            alt="whatsapp icon">
-                        <span class="ml-1">01406667669</span>
-                    </a>
+                <div class="ml-5 d-flex align-items-center">
+                    <img style="width: 40px;" src="{{ asset('assets/front-end/images/logo/whatsapp.png') }}"
+                        alt="whatsapp icon">
+                    <div class="ml-2">
+                        <a class="text-success text-small" target="_blank" title="Go Whatsapp"
+                            style="font-size: 15px; font-weight: 600 "
+                            href="https://wa.me/8801406667669?text=Is%20anyone%20available%20to%20chat%3F">
+                            01406-667669
+                        </a>
+                        <a class="text-success text-small" target="_blank" title="Go Whatsapp"
+                            style="font-size: 15px; font-weight: 600 "
+                            href="https://wa.me/8801805035050?text=Is%20anyone%20available%20to%20chat%3F">
+                            01805-035050
+                        </a>
+                    </div>
                 </div>
             </div>
             <div class="col-md-7">
+
+
                 @php $categories = \App\Model\Category::where('home_status', 1)->orderBy('order_number')->get(); @endphp
                 @php
                     $discountOffer = \App\Models\DiscountOffer::where('status', 1)->first();
@@ -93,7 +103,29 @@
                         </ul>
                     </div>
 
-                    <i class="fa fa-bars menu-icon"></i>
+                    <div class="d-flex d-lg-none">
+                        <i class="fa fa-bars menu-icon"></i>
+
+                        <div class="ml-4 d-flex align-items-center flex-row gap-5">
+                            <!-- <a class="navbar-brand" href="index.html">Shopping Zone BD</a> -->
+                            <a href="{{ route('home') }}">
+                                <img style="width: 70px; height: auto;"
+                                    src="{{ asset('storage/company') . '/' . $web_config['web_logo']->value }}"
+                                    onerror="this.src='{{ asset('assets/front-end/img/image-place-holder.png') }}'"
+                                    alt="{{ $web_config['name']->value }}">
+                            </a>
+                            <div class="ml-4">
+                                <a target="_blank" title="Go Whatsapp" style="font-size: 18px; font-weight: 600; "
+                                    class="text-success d-flex align-items-center"
+                                    href="https://wa.me/8801406667669?text=Is%20anyone%20available%20to%20chat%3F">
+                                    <img style="width: 40px;"
+                                        src="{{ asset('assets/front-end/images/logo/whatsapp.png') }}"
+                                        alt="whatsapp icon">
+                                    <span class="ml-1"></span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </nav>
             </div>
             <div class="col-md-2 ms-auto">

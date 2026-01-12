@@ -96,6 +96,8 @@
     </style>
 @endpush
 
+
+
 @section('content')
     <div class="container pb-5 mb-2 mt-3">
         <div class="row">

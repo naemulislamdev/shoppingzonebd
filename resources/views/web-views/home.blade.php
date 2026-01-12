@@ -206,23 +206,6 @@
         animation-delay: 2s;
     }
 
-    /* Smooth zoom + float */
-    @keyframes zoomFloat {
-        0% {
-            transform: scale(1) translateY(0);
-            /* box-shadow: 0 0 0 rgba(0,0,0,0); */
-        }
-
-        50% {
-            transform: scale(1.03) translateY(-6px);
-            /* box-shadow: 0 14px 30px rgba(255, 153, 0, 0.35); */
-        }
-
-        100% {
-            transform: scale(1) translateY(0);
-            /* box-shadow: 0 0 0 rgba(0,0,0,0); */
-        }
-    }
 
     .p-dtls-box>table>tbody>tr {
         display: block !important;
@@ -293,6 +276,17 @@
 
     .close {
         margin: -15px -12px -1rem auto !important;
+    }
+
+    .mobile_category .bg-white,
+    .mobile_category .bg-dark {
+        box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+    }
+
+    @media (max-width: 768px) {
+        .small-title {
+            font-size: 20px;
+        }
     }
 </style>
 @section('title', \App\CPU\translate('Welcome To') . ' ' . $web_config['name']->value)
@@ -389,6 +383,9 @@
     </section>
 
 
+    <?php
+    $company_mobile_logo = \App\Model\BusinessSetting::where('type', 'company_web_logo')->first()->value;
+    ?>
 
     {{-- Category Section Start --}}
     <section class="category my-5 d-none d-lg-block">
@@ -396,24 +393,67 @@
             <div class="row mb-5">
                 <div class="col text-center">
                     <div class="section-heading-title position-relative z-30">
-                        <div style="justify-content: space-evenly;" class="d-flex  align-items-center">
-                            <div class="bg-white rounded">
-                                <a class="store-btn playstore"
-                                    href="https://play.google.com/store/apps/details?id=com.shoppingzonebd.android"
-                                    target="_blank" rel="noopener noreferrer">
-                                    <i class="animation"></i>
-                                    <img src="{{ asset('assets/front-end') }}/images/logo/android.webp"
-                                        alt="Google Play Store" style="height: auto; width: 120px;">
-                                    <i class="animation"></i>
-                                </a>
-
+                        <div class="row align-items-center">
+                            <div class="col-4">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div style="background: #fff; padding: 11px 18px;">
+                                        <a href="{{ route('home') }}">
+                                            <img style="max-width: 50px; height: auto;"
+                                                src="{{ asset("storage/company/$company_mobile_logo") }}"
+                                                onerror="this.src='{{ asset('assets/front-end/img/image-place-holder.png') }}'"
+                                                alt="">
+                                        </a>
+                                    </div>
+                                    <div class="bg-white rounded">
+                                        <a class="store-btn playstore"
+                                            href="https://play.google.com/store/apps/details?id=com.shoppingzonebd.android"
+                                            target="_blank" rel="noopener noreferrer">
+                                            <i class="animation"></i>
+                                            <img src="{{ asset('assets/front-end') }}/images/logo/android.webp"
+                                                alt="Google Play Store" style="height: auto; width: 120px;">
+                                            <i class="animation"></i>
+                                        </a>
+                                    </div>
+                                    <div class=" rounded">
+                                        <a class="store-btn appstore" href="#" target="_blank"
+                                            rel="noopener noreferrer">
+                                            <img src="{{ asset('assets/front-end') }}/images/logo/apple.png"
+                                                alt="Apple Store" style="height: auto; width: 120px;">
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
-                            <h3>Categories</h3>
-                            <div class="bg-dark rounded">
-                                <a class="store-btn appstore" href="#" target="_blank" rel="noopener noreferrer">
-                                    <img src="{{ asset('assets/front-end') }}/images/logo/apple.png" alt="Apple Store"
-                                        style="height: auto; width: 120px;">
-                                </a>
+                            <div class="col-4">
+                                <h3>Categories</h3>
+                            </div>
+                            <div class="col-4">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div style="background: #fff; padding: 11px 18px;">
+                                        <a target="_blank" href="https://asmishop.com/">
+                                            <img style="max-width: 50px; height: auto;"
+                                                src="{{ asset('assets/front-end') }}/images/logo/asmi.png"
+                                                onerror="this.src='{{ asset('assets/front-end/img/image-place-holder.png') }}'"
+                                                alt="">
+                                        </a>
+                                    </div>
+                                    <div class="bg-white rounded">
+                                        <a class="store-btn playstore"
+                                            href="https://play.google.com/store/apps/details?id=com.asmishop.android"
+                                            target="_blank" rel="noopener noreferrer">
+                                            <i class="animation"></i>
+                                            <img src="{{ asset('assets/front-end') }}/images/logo/android.webp"
+                                                alt="Google Play Store" style="height: auto; width: 120px;">
+                                            <i class="animation"></i>
+                                        </a>
+                                    </div>
+                                    <div class=" rounded">
+                                        <a class="store-btn appstore" href="#" target="_blank"
+                                            rel="noopener noreferrer">
+                                            <img src="{{ asset('assets/front-end') }}/images/logo/apple.png"
+                                                alt="Apple Store" style="height: auto; width: 120px;">
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="heading-border"></div>
@@ -439,23 +479,58 @@
     {{-- mobile category --}}
     <section class="mobile-category mt-4 d-block d-lg-none">
         <div class="container">
-            <div class="row">
-                <div class="col text-center">
-                    <div class="section-heading-title position-relative z-30">
-                        <div style="justify-content: space-evenly; grid-gap: 20px" class="d-flex  align-items-center">
-                            <div class="bg-white rounded">
-                                <a class="store-btn appstore" target="_blank"
-                                    href="https://play.google.com/store/apps/details?id=com.shoppingzonebd.android">
-                                    <img src="{{ asset('assets/front-end') }}/images/logo/android.webp"
-                                        alt="Google Play Store" style="width: 80px; height: auto;">
-                                </a>
+            <div>
+                <div class=" text-center">
+                    <div class="section-heading-title position-relative z-30 ">
+                        <div class="row align-items-center">
+                            <div style="box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;"
+                                class="col-4 d-flex justify-content-between align-items-center bg-white py-2 px-0 rounded">
+                                <div style="background: #fff;;">
+                                    <a href="{{ route('home') }}">
+                                        <img style="max-width: 40px; height: auto;"
+                                            src="{{ asset("storage/company/$company_mobile_logo") }}"
+                                            onerror="this.src='{{ asset('assets/front-end/img/image-place-holder.png') }}'"
+                                            alt="">
+                                    </a>
+                                </div>
+                                <div class="bg-white rounded">
+                                    <a class="store-btn appstore" target="_blank"
+                                        href="https://play.google.com/store/apps/details?id=com.shoppingzonebd.android">
+                                        <img src="{{ asset('assets/front-end') }}/images/logo/google-play.jpg"
+                                            alt="Google Play Store" style="width: 30px; height: auto;">
+                                    </a>
+                                </div>
+                                <div class="bg-white rounded">
+                                    <a class="store-btn appstore" href="#">
+                                        <img src="{{ asset('assets/front-end') }}/images/logo/apple_single.png"
+                                            alt="apple Store" style="width: 30px; height: auto;">
+                                    </a>
+                                </div>
                             </div>
-                            <h3>Categories</h3>
-                            <div class="bg-dark rounded">
-                                <a class="store-btn appstore" href="#">
-                                    <img src="{{ asset('assets/front-end') }}/images/logo/apple.png" alt="apple Store"
-                                        style="width: 80px; height: auto;">
-                                </a>
+                            <h3 class="col-4 small-title">Categories</h3>
+                            <div style="box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;"
+                                class="col-4 d-flex justify-content-between align-items-center bg-white py-2 px-0 rounded">
+                                <div style="background: #fff; ">
+                                    <a href="https://asmishop.com/">
+                                        <img style="max-width: 40px; height: auto;"
+                                            src="{{ asset('assets/front-end') }}/images/logo/asmi.png"
+                                            onerror="this.src='{{ asset('assets/front-end/img/image-place-holder.png') }}'"
+                                            alt="">
+                                    </a>
+                                </div>
+                                <div class="bg-white rounded">
+                                    <a class="store-btn appstore" target="_blank"
+                                        href="https://play.google.com/store/apps/details?id=com.asmishop.android">
+                                        <img src="{{ asset('assets/front-end') }}/images/logo/google-play.jpg"
+                                            alt="Google Play Store" style="width: 30px; height: auto;">
+                                    </a>
+                                </div>
+                                <div class="bg-dark rounded">
+                                    <a class="store-btn appstore" href="#">
+                                        <img src="{{ asset('assets/front-end') }}/images/logo/apple_single.png"
+                                            alt="apple Store" style="width: 30px; height: auto;">
+                                    </a>
+                                </div>
                             </div>
                         </div>
                         <div class="heading-border"></div>
@@ -565,6 +640,7 @@
                 </div>
             @endif
 
+
             @foreach ($home_categories as $category)
                 <div class="row mb-3">
                     <div class="col text-center">
@@ -613,13 +689,13 @@
                 <div class="row product-grid">
                     <!-- Your product columns go here -->
 
-                    {{-- @foreach ($category->products as $key => $product)
+                    @foreach ($category->products as $key => $product)
                         @if ($key < 12)
                             @include('web-views.products.product_box', [
                                 'dataCategory' => "category_$category->id",
                             ])
                         @endif
-                    @endforeach --}}
+                    @endforeach
                 </div>
             @endforeach
             @foreach (\App\Model\Banner::where('banner_type', 'Footer Banner')->where('published', 1)->orderBy('id', 'desc')->take(3)->get() as $banner)
@@ -740,33 +816,7 @@
             });
         });
     </script>
-    <script>
-        $(document).ready(function() {
 
-            // When any add-to-cart modal is shown
-            $('.modal').on('shown.bs.modal', function() {
-
-                let modal = $(this);
-                let mainImage = modal.find('.main-image');
-
-                if (!mainImage.length) return;
-
-                // Click on color image
-                modal.find('.color-label img').off('click').on('click', function() {
-
-                    let newSrc = $(this).data('image');
-
-                    if (!newSrc) return;
-
-                    mainImage.fadeOut(150, function() {
-                        mainImage.attr('src', newSrc).fadeIn(150);
-                    });
-
-                });
-            });
-
-        });
-    </script>
     <script type="text/javascript">
         cartQuantityInitialize();
         getVariantPrice();

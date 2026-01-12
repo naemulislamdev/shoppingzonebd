@@ -1,319 +1,282 @@
 @extends('layouts.back-end.app')
-@section('title', \App\CPU\translate('Career'))
+@section('title', \App\CPU\translate('Application List'))
 @push('css_or_js')
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <!-- Custom styles for this page -->
+    <link href="{{ asset('assets/back-end/vendor/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
+    <script src="{{ asset('assets/back-end/vendor/datatables/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('assets/back-end/vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
+
+    <style>
+        td.order_status {
+            display: inline-block;
+            width: 120px;
+        }
+
+        td.cName {
+            display: inline-block;
+            width: 120px;
+        }
+    </style>
 @endpush
 
+
 @section('content')
-    <div class="content container-fluid">
+    <div class="content container ">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">{{ \App\CPU\translate('Dashboard') }}</a>
                 </li>
-                <li class="breadcrumb-item" aria-current="page">{{ \App\CPU\translate('Applications') }}</li>
+                <li class="breadcrumb-item" aria-current="page">{{ \App\CPU\translate('Job_Applications') }}</li>
             </ol>
         </nav>
         <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-2">
+            <h1 class="h3 mb-0 text-black-50">{{ \App\CPU\translate('Application') }}
+                {{ \App\CPU\translate('List') }}
+                {{-- <span class="badge badge-soft-info">{{ \App\Models\UserInfo::all()->count() }}</span> </h1> --}}
 
-        <!-- Content Row -->
-
-        <div class="row" style="margin-top: 20px" id="banner-table">
+        </div>
+        <div class="row" style="margin-top: 20px">
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
-                        <div class="flex-between row justify-content-between align-items-center flex-grow-1 mx-1">
-                            <div>
-                                <div class="d-flex">
-                                    <div>
-                                        <h5>{{ \App\CPU\translate('Applications_table') }}</h5>
-                                    </div>
-                                    <div class="mx-1">
-                                        <h5 style="color: red;">{{ $applications->count() }}</h5>
-                                    </div>
-                                </div>
-                                <div style="width: 30vw" class="mt-4">
-                                    <!-- Search -->
-                                    <form action="{{ url()->current() }}" method="GET">
-                                        <div class="input-group input-group-merge input-group-flush">
-                                            <div class="input-group-prepend">
-                                                <div class="input-group-text">
-                                                    <i class="tio-search"></i>
-                                                </div>
-                                            </div>
-                                            <input id="datatableSearch_" type="search" name="search" class="form-control"
-                                                placeholder="{{ \App\CPU\translate('Search_Application_by_Status') }}"
-                                                aria-label="Search orders" value="" required>
-                                            <button type="submit"
-                                                class="btn btn-primary">{{ \App\CPU\translate('Search') }}</button>
-                                        </div>
-                                    </form>
-                                    <!-- End Search -->
-                                </div>
+                        <div class="row mb-3 w-100">
+                            <div class="col-md-3">
+                                <label for="from_date">From:</label>
+                                <input type="date" id="from_date" class="form-control">
                             </div>
 
+                            <div class="col-md-3">
+                                <label for="to_date">To:</label>
+                                <input type="date" id="to_date" class="form-control">
+                            </div>
+                            <div class="col-md-4">
+                                <button id="filterBtn" class="btn btn-primary">Filter</button>
+                                <button id="clearBtn" class="btn btn-secondary ms-3">Clear</button>
+                            </div>
+                            <div class="col-md-2">
+                                <a href="{{ route('admin.application.bulk-export') }}" class="btn btn-success text-white">
+                                    Export</a>
+                            </div>
                         </div>
                     </div>
                     <div class="card-body" style="padding: 0">
                         <div class="table-responsive">
-                            <table id="columnSearchDatatable"
-                                style="text-align: {{ Session::get('direction') === 'rtl' ? 'right' : 'left' }};"
-                                class="table table-borderless table-thead-bordered table-nowrap table-align-middle card-table">
-                                <thead class="thead-light">
-                                    <tr>
-                                        <th>{{ \App\CPU\translate('sl#') }}</th>
-                                        <th>{{ \App\CPU\translate('Name') }}</th>
-                                        <th>{{ \App\CPU\translate('Email') }}</th>
-                                        <th>{{ \App\CPU\translate('Phone') }}</th>
-
-                                        <th>{{ \App\CPU\translate('Applyed Job Position') }}</th>
-                                        <th>{{ \App\CPU\translate('CV') }}</th>
-                                        <th>{{ \App\CPU\translate('Applyed Date') }}</th>
-                                        <th>{{ \App\CPU\translate('Apply Status') }}</th>
-                                        <th>{{ \App\CPU\translate('action') }}</th>
-                                    </tr>
-                                </thead>
-
-                                <tbody>
-                                    @foreach ($applications as $i => $application)
+                            <div id="table-container ">
+                                <table id="application-table" class="table table-bordered table-striped">
+                                    <thead>
                                         <tr>
-                                            <th scope="row">{{ ++$i }}</th>
-                                            <td>{{ $application->name }}  </td>
-                                            <td>{{ $application->email }}</td>
-                                            <td>{{ $application->phone }}</td>
+                                            <th>{{ \App\CPU\translate('sl#') }}</th>
+                                            <th>{{ \App\CPU\translate('Name') }}</th>
+                                            <th>{{ \App\CPU\translate('Email') }}</th>
+                                            <th>{{ \App\CPU\translate('Phone') }}</th>
 
-                                            <td>{{ $application->career->position }}</td>
-                                            <td>
-                                                <a href="{{ asset('storage/files/job_resume/' . $application->resume) }}"
-                                                    class="btn btn-primary btn-sm edit" target="_blank"
-                                                    title="{{ \App\CPU\translate('view resume or CV') }}"
-                                                    style="cursor: pointer;">
-                                                    <img width="20px" src="{{ asset('assets/back-end/svg/cv.svg') }}"
-                                                        alt="">
-                                                </a>
-                                            </td>
-                                            <td> {{ \Carbon\Carbon::parse($application->created_at)->format('d-M-Y') }}
-                                            </td>
-                                            <td class="p-0">
-                                                <div class="form-group">
-
-                                                    <select class="form-control status m-0 p-0 w-100 border-0 shadow-none"
-                                                        name="status" id="{{ $application->id }}">
-                                                        <option {{ $application['status'] == 'pending' ? 'selected' : '' }}
-                                                            value="Pending">Pending</option>
-                                                        <option
-                                                            {{ $application['status'] == 'shortlisted' ? 'selected' : '' }}
-                                                            value="shortlisted">Shortlisted
-                                                        </option>
-                                                        <option
-                                                            {{ $application['status'] == 'rejected' ? 'selected' : '' }}
-                                                            value="rejected">Rejected</option>
-                                                    </select>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <a class="btn btn-info btn-sm edit"
-                                                    title="{{ \App\CPU\translate('View') }}" href="#"
-                                                    data-toggle="modal"
-                                                    data-target="#viewApplicationModal_{{ $application['id'] }}"
-                                                    style="cursor: pointer;">
-                                                    <i class="tio-visible"></i>
-                                                </a>
-
-                                                <a class="btn btn-danger btn-sm delete"
-                                                    title="{{ \App\CPU\translate('Delete') }}" style="cursor: pointer;"
-                                                    id="{{ $application->id }}">
-                                                    <i class="tio-add-to-trash"></i>
-                                                </a>
-                                            </td>
+                                            <th>{{ \App\CPU\translate('Applyed Job Position') }}</th>
+                                            <th>{{ \App\CPU\translate('CV') }}</th>
+                                            <th>{{ \App\CPU\translate('Applyed Date') }}</th>
+                                            <th>{{ \App\CPU\translate('Apply Status') }}</th>
+                                            <th>{{ \App\CPU\translate('Change Status') }}</th>
+                                            <th>{{ \App\CPU\translate('action') }}</th>
                                         </tr>
+                                    </thead>
+                                </table>
 
-                                        <!-- view Application Modal start-->
-                                        <div class="modal fade" id="viewApplicationModal_{{ $application['id'] }}"
-                                            tabindex="-1" aria-labelledby="viewApplicationModalLabel" aria-hidden="true">
-                                            <div class=" modal-dialog modal-dialog-centered modal-lg">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h3 class="modal-title" id="subcategoryModal">
-                                                            {{ \App\CPU\translate('Candidate_Info') }}</h3>
-                                                        <button type="button" class="close" data-dismiss="modal"
-                                                            aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <div>
-
-
-                                                            <div>
-                                                                <p class="mb-1 fw-bolder text-dark"><strong>
-                                                                        Full Name:</strong>
-                                                                </p>
-                                                                <p class="text-wrap d-inline-block">
-                                                                    {{ $application->name }}
-
-                                                                </p>
-                                                            </div>
-                                                            <div>
-                                                                <p class="mb-1 fw-bolder text-dark"><strong>
-                                                                        Email:</strong>
-                                                                </p>
-                                                                <p class="text-wrap d-inline-block">
-                                                                    {{ $application->email }}
-
-                                                                </p>
-                                                            </div>
-                                                            <div>
-                                                                <p class="mb-1 fw-bolder text-dark"><strong>
-                                                                        Phone:</strong>
-                                                                </p>
-                                                                <p class="text-wrap d-inline-block">
-                                                                    {{ $application->phone }}
-
-                                                                </p>
-                                                            </div>
-                                                            <div>
-                                                                <p class="mb-1 fw-bolder text-dark"><strong>
-                                                                        District:</strong>
-                                                                </p>
-                                                                <p class="text-wrap d-inline-block">
-                                                                    {{ $application->district }}
-
-                                                                </p>
-                                                            </div>
-                                                            <div>
-                                                                <p class="mb-1 fw-bolder text-dark">
-                                                                    <strong>Applyed Job Position:</strong>
-                                                                </p>
-                                                                <p class="text-wrap d-inline-block">
-                                                                    {{ $application->career->position }}
-
-                                                                </p>
-                                                            </div>
-                                                            <div>
-                                                                <p class="mb-1 fw-bolder text-dark"><strong>
-                                                                        Current Job Position :</strong>
-                                                                </p>
-                                                                <p class="text-wrap d-inline-block">
-                                                                    {{ $application->current_position }}
-
-                                                                </p>
-                                                            </div>
-                                                            <div>
-                                                                <p class="mb-1 fw-bolder text-dark"><strong>
-                                                                        Experiences :</strong>
-                                                                </p>
-                                                                <p class="text-wrap d-inline-block">
-                                                                    {{ $application->experience_level }}
-
-                                                                </p>
-                                                            </div>
-                                                            <div>
-                                                                <p class="mb-1 fw-bolder text-dark"><strong>
-                                                                        Expected salary:</strong>
-                                                                </p>
-                                                                <p class="text-wrap d-inline-block">
-                                                                    @if ($application->expected_salary)
-                                                                        {{ $application->expected_salary }}
-                                                                    @else
-                                                                        No
-                                                                    @endif
-
-                                                                </p>
-                                                            </div>
-                                                            <div>
-                                                                <p class="mb-1 fw-bolder text-dark"><strong>Portfolio Link
-                                                                        :</strong>
-                                                                </p>
-                                                                <p class="text-wrap d-inline-block">
-                                                                    {{ $application->portfolio_link }}
-
-                                                                </p>
-                                                            </div>
-                                                            <div>
-                                                                <p class="mb-1 fw-bolder text-dark"><strong>Candidate
-                                                                        Status:</strong>
-                                                                </p>
-                                                                <p class="text-wrap d-inline-block text-success">
-                                                                    {{ ucfirst($application->status) }}
-
-                                                                </p>
-                                                            </div>
-                                                            <div>
-                                                                <p class="mb-1 fw-bolder text-dark"><strong>Apply
-                                                                        Date:</strong>
-                                                                </p>
-                                                                <p class="text-wrap d-inline-block">
-                                                                    {{ \Carbon\Carbon::parse($application->created_at)->format('d-m-Y') }}
-
-                                                                </p>
-                                                            </div>
-                                                            <div>
-                                                                <p class="mb-1 fw-bolder text-dark"><strong>
-                                                                        Cover Letter:</strong>
-                                                                </p>
-                                                                <p class="text-wrap d-inline-block">
-
-                                                                    {{ strip_tags($application->message) }}
-
-                                                                </p>
-                                                            </div>
-                                                            <div>
-                                                                <p class="mb-1 fw-bolder text-dark"><strong>
-                                                                        Resume/CV:</strong>
-                                                                </p>
-                                                                <p class="text-wrap d-inline-block">
-                                                                    <a class="btn btn-secondary"
-                                                                        href="{{ asset('storage/files/job_resume/' . $application->resume) }}"
-                                                                        target="_blank" rel="noopener noreferrer">View
-                                                                        Resume or CV</a>
-                                                                </p>
-                                                            </div>
-
-                                                            <div class="modal-footer border-t-0">
-                                                                <button type="button" class="btn btn-secondary"
-                                                                    data-dismiss="modal">{{ \App\CPU\translate('close') }}</button>
-
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- view Application Modal End-->
-                                    @endforeach
-                                </tbody>
-
-                            </table>
+                            </div>
                         </div>
+
                     </div>
                     <div class="card-footer">
-                        {{ $applications->links() }}
                     </div>
-                    @if ($applications->count() <= 0)
-                        <div class="text-center p-4">
-                            <img class="mb-3" src="{{ asset('assets/back-end') }}/svg/illustrations/sorry.svg"
-                                alt="Image Description" style="width: 7rem;">
-                            <p class="mb-0">{{ \App\CPU\translate('No_data_to_show') }}</p>
-                        </div>
-                    @endif
+
                 </div>
             </div>
         </div>
+
     </div>
+
+    {{-- view modal --}}
+
+
+    <!-- view Application Modal start-->
+    <div class="modal fade" id="viewApplicationModal" tabindex="-1" aria-labelledby="viewApplicationModalLabel"
+        aria-hidden="true">
+        <div class=" modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="subcategoryModal">
+                        {{ \App\CPU\translate('Candidate_Info') }}</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- view Application Modal End-->
 @endsection
 
 @push('script')
-    <!-- include summernote css/js -->
-    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+    <!-- Page level plugins -->
+    <script src="{{ asset('assets/back-end') }}/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="{{ asset('assets/back-end') }}/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Page level custom scripts -->
+
+
     <script>
-        $(document).ready(function() {
-            $('#summernote').summernote();
+        // Datatable ajax query
+        $(function() {
+            let usertable = $('#application-table').DataTable({
+                processing: true,
+                serverSide: true,
+                scrollX: false,
+                autoWidth: false,
+                language: {
+                    processing: '<div class="d-flex flex-column justify-content-center align-items-center"> <div  class="spinner-border text-primary" role="status"></div>Loading...</div>'
+                },
+                ajax: {
+                    url: '{{ route('admin.application.datatables', 'all') }}',
+                    data: function(d) {
+                        d.from = $('#from_date').val();
+                        d.to = $('#to_date').val();
+                    }
+
+                }, // e.g., 'userinfos.datatable'
+                columns: [{
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex',
+                        title: 'SL#',
+                        orderable: false,
+                        searchable: false,
+
+                        className: 'text-center p-1',
+                        width: '3%'
+                    },
+                    {
+                        data: 'created_at',
+                        title: 'Applyed Date',
+                        width: '10%',
+
+
+                    },
+                    {
+                        data: 'name',
+                        title: 'NAME',
+                        width: '10%',
+                        searchable: true,
+                        className: 'cName',
+                    },
+                    {
+                        data: 'email',
+                        title: 'EMAIL',
+                        width: '10%',
+                        searchable: true,
+
+                    },
+                    {
+                        data: 'phone',
+                        title: 'PHONE',
+                        width: '15%',
+                        searchable: true,
+                        className: 'p-1',
+                    },
+                    {
+                        data: 'career_id',
+                        title: 'Applyed Job Position',
+                        width: '13%',
+                        searchable: true,
+                        className: 'p-1',
+                    },
+                    {
+                        title: 'CV',
+                        data: 'resume',
+                        name: 'resume',
+                        orderable: true,
+                        searchable: true,
+                        width: '5%',
+
+                    },
+                    {
+                        data: 'status',
+                        title: 'STATUS',
+                        width: '10%',
+                        searchable: true,
+                    },
+                    {
+                        data: 'change_status',
+                        title: 'Change Status',
+                        width: '15%',
+                        searchable: false,
+                    },
+
+                    // Add more columns as needed
+                    {
+                        data: 'action',
+                        title: '10%',
+                        orderable: false,
+                        searchable: false
+                    }
+                ],
+                order: [
+                    [1, 'desc']
+                ] // Default order by a real column (e.g., phone or created_at)
+            });
+
+            // ✅ Filter button
+            $('#filterBtn').click(function() {
+                usertable.ajax.reload();
+            });
+
+            // ✅ Clear button
+            $('#clearBtn').click(function() {
+                $('#from_date').val('');
+                $('#to_date').val('');
+                usertable.ajax.reload();
+            });
+
+            // 2️⃣ Delete button without reload
+            $(document).on('click', '.delete', function() {
+                var id = $(this).attr('id');
+
+                Swal.fire({
+                    title: 'Are you sure to delete?',
+                    text: "You won't be able to revert this!",
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!',
+                }).then((result) => {
+                    if (result.value) {
+                        $.ajax({
+                            url: "{{ route('admin.application.delete') }}",
+                            method: 'POST',
+                            data: {
+                                _token: "{{ csrf_token() }}",
+                                id: id
+                            },
+                            success: function(response) {
+                                toastr.success('Application deleted successfully');
+                                // remove row from DataTable
+                                usertable.row($(`#application-table button#${id}`)
+                                    .parents('tr')).remove().draw();
+                            },
+                            error: function() {
+                                toastr.error('Something went wrong!');
+                            }
+                        });
+                    }
+                });
+            });
         });
-    </script>
-    <script>
-        $(document).on('change', '.status', function() {
+
+        // change
+
+        $(document).on('change', '.changeStatus', function() {
             var id = $(this).attr("id");
             var status = $(this).val(); // <--- selected option এর value নাও
 
@@ -331,8 +294,31 @@
                     status: status
                 },
                 success: function(data) {
+
+
+                    if (data.status === 'pending') {
+                        $(`.statusBadge_${data.id}`).html(
+                            `<span class="badge badge-warning">${data.status.toUpperCase()}</span>`
+                        );
+                    }
+
+                    if (data.status === 'shortlisted') {
+                        $(`.statusBadge_${data.id}`).html(
+                            `<span class="badge badge-success">${data.status.toUpperCase()}</span>`
+                        );
+                    }
+
+                    if (data.status === 'rejected') {
+                        $(`.statusBadge_${data.id}`).html(
+                            `<span class="badge badge-danger">${data.status.toUpperCase()}</span>`
+                        );
+                    }
+
+
+
                     toastr.success(
-                        '{{ \App\CPU\translate('Application_status_update_successfully') }}');
+                        '{{ \App\CPU\translate('Application_status_update_successfully') }}'
+                    );
 
                 },
                 error: function(xhr) {
@@ -341,41 +327,54 @@
             });
         });
 
+        // view ajax
 
-        // delete job
-        $(document).on('click', '.delete', function() {
-            var id = $(this).attr("id");
-            Swal.fire({
-                title: "{{ \App\CPU\translate('Are_you_sure_delete_this_application') }}?",
-                text: "{{ \App\CPU\translate('You_will_not_be_able_to_revert_this') }}!",
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: '{{ \App\CPU\translate('Yes') }}, {{ \App\CPU\translate('delete_it') }}!',
-                type: 'warning',
-                reverseButtons: true
-            }).then((result) => {
-                if (result.value) {
-                    $.ajaxSetup({
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
-                        }
-                    });
-                    $.ajax({
-                        url: "{{ route('admin.application.delete') }}",
-                        method: 'POST',
-                        data: {
-                            id: id
-                        },
-                        success: function() {
-                            toastr.success(
-                                '{{ \App\CPU\translate('Appplication_deleted_successfully') }}'
-                            );
-                            location.reload();
-                        }
-                    });
+        $(document).on('click', '.viewBtn', function() {
+            let id = $(this).data('id');
+
+            $.ajax({
+                url: "{{ route('admin.application.viewApplication') }}",
+                type: "POST",
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    id: id
+                },
+                success: function(data) {
+
+                    $('.modal-body').html(`
+                <div>
+                    <p><strong>Full Name:</strong> ${data.name}</p>
+                    <p><strong>Email:</strong> ${data.email}</p>
+                    <p><strong>Phone:</strong> ${data.phone}</p>
+                    <p><strong>District:</strong> ${data.district}</p>
+                    <p><strong>Applyed Job Position:</strong> ${data.career}</p>
+                    <p><strong>Current Job Position:</strong> ${data.current_position}</p>
+                    <p><strong>Experiences:</strong> ${data.experience_level}</p>
+                    <p><strong>Expected Salary:</strong> ${data.expected_salary}</p>
+                    <p><strong>Portfolio Link:</strong>
+                        <a href="${data.portfolio_link}" target="_blank">${data.portfolio_link}</a>
+                    </p>
+                    <p><strong>Candidate Status:</strong>
+                        <span class="text-success">${data.status}</span>
+                    </p>
+                    <p><strong>Apply Date:</strong> ${data.created_at}</p>
+                    <p><strong>Cover Letter:</strong> ${data.message}</p>
+                    <p>
+                        <strong>Resume/CV:</strong>
+                        <a class="btn btn-secondary btn-sm"
+                           href="${data.resume_url}" target="_blank">
+                           View Resume or CV
+                        </a>
+                    </p>
+                </div>
+            `);
+
+                    $('#viewApplicationModal').modal('show');
+                },
+                error: function() {
+                    toastr.error('Something went wrong!');
                 }
-            })
+            });
         });
     </script>
 @endpush

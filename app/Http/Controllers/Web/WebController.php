@@ -181,7 +181,10 @@ class WebController extends Controller
     }
     public function home()
     {
-        $home_categories = Category::where('home_status', true)->get();
+        $home_categories = Category::where('home_status', true)
+            ->orderBy('order_number', 'asc') // asc default, তাও স্পষ্ট করে লেখা ভালো
+            ->get();
+
         //products based on top seller
         $top_sellers = Seller::approved()->with('shop')
             ->withCount(['orders'])->orderBy('orders_count', 'DESC')->take(12)->get();
@@ -536,6 +539,7 @@ class WebController extends Controller
             'result' => view('web-views.partials._search-result', compact('products'))->render(),
         ]);
     }
+
 
 
     public function checkout_payment()
@@ -1310,7 +1314,6 @@ class WebController extends Controller
         ]);
 
         Lead::create($request->all());
-
         return back()->with('success', 'Lead submitted successfully!');
     }
 

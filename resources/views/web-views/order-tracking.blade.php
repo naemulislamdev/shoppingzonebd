@@ -1,323 +1,491 @@
 @extends('layouts.front-end.app')
 
 @section('title', 'Track Order')
+<?php
+$order = \App\Model\OrderDetail::where('order_id', $orderDetails->id)->get();
+?>
 
 @push('css_or_js')
-    <meta property="og:image" content="{{ asset('storage/company') }}/{{ $web_config['web_logo']->value }}" />
-    <meta property="og:title" content="{{ $web_config['name']->value }} " />
-    <meta property="og:url" content="{{ env('APP_URL') }}">
-    <meta property="og:description" content="{!! substr(strip_tags($web_config['about']->value), 0, 100) !!}">
-
-    <meta property="twitter:card" content="{{ asset('storage/company') }}/{{ $web_config['web_logo']->value }}" />
-    <meta property="twitter:title" content="{{ $web_config['name']->value }}" />
-    <meta property="twitter:url" content="{{ env('APP_URL') }}">
-    <meta property="twitter:description" content="{!! substr(strip_tags($web_config['about']->value), 0, 100) !!}">
     <style>
-        .media-tab-media {
-            position: relative;
-            width: 3.75rem;
-            height: 3.75rem;
-            transition: color 0.25s ease-in-out, background-color 0.25s ease-in-out, box-shadow 0.25s ease-in-out, border-color 0.25s ease-in-out;
-            border: 1px solid #e3e9ef;
-            border-radius: 50%;
-            color: #4b566b;
-            text-align: center;
-            overflow: hidden;
-            margin: 0 auto;
-    background: #ffffff;
-    color: white;
-    padding: 12px 0px;
-    font-size: 20px;
+        /* Breadcrumb */
+        .breadcrumb-link {
+            color: #f26d21;
+            font-weight: 500;
+            text-decoration: none;
+            font-family: var(--jost);
         }
-        .product-title > a {
-    transition: color 0.25s ease-in-out;
-    color: #fc8c0b;
-    text-decoration: none !important;
-}
+
+        .breadcrumb-link:hover {
+            color: #d85e1c;
+        }
+
+        .breadcrumb-active {
+            color: #f26d21;
+            font-weight: 600;
+        }
+
+        /* Card Styling */
+        .track-card {
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 85%;
+            margin: 0 auto 30px;
+            font-family: var(--jost);
+
+        }
+
+        .track-card-header {
+            background: linear-gradient(90deg, #f26d21, #fc8c0b);
+            color: #fff;
+            font-weight: 600;
+            font-size: 18px;
+            padding: 15px 20px;
+        }
+
+        .track-card-body {
+            padding: 20px 35px;
+        }
+
+        .track-info-row {
+            border-bottom: 1px dashed #ddd;
+            padding: 10px 0;
+            font-size: 1.2rem;
+        }
+
+        .track-info-row:last-child {
+            border-bottom: none;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+        }
+
+        .steps {
+            display: flex;
+            gap: 30px;
+            position: relative;
+        }
+
+        .step {
+            position: relative;
+            flex: 1;
+            text-align: center;
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 4px solid #cbd5e1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            font-weight: bold;
+            font-size: 1.4rem;
+            color: #94a3b8;
+            background: white;
+            transition: all 0.4s;
+            position: relative;
+            z-index: 2;
+        }
+
+        .step.completed .step-number {
+            background: #10b981;
+            border-color: #10b981;
+            color: #fff;
+        }
+
+        .step.active .step-number {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: #fff;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.5);
+            }
+
+            70% {
+                box-shadow: 0 0 0 15px rgba(59, 130, 246, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+            }
+        }
+
+        .step-content {
+            padding: 0;
+            border-radius: 12px;
+            background: #fff;
+            box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+            height: 190px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            font-family: var(--jost);
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+
+        .step.active .step-content {
+            transform: translateY(-6px);
+
+        }
+
+
+
+        .step.completed .step-content {
+            border-color: #10b981;
+            /* background: #10b981; */
+            background: #fff;
+        }
+
+        .step-title {
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 6px;
+            color: #0f172a;
+        }
+
+        .step-time {
+            color: #64748b;
+            font-size: 0.95rem;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .step-description {
+            color: #475569;
+            font-size: 0.95rem;
+        }
+
+        /* Horizontal connector lines */
+        .step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 30px;
+            left: 12%;
+            width: 100%;
+            height: 3px;
+            background: #ddd;
+            z-index: 1;
+            transform: translateX(50%);
+        }
+
+        .step.completed:not(:last-child)::after {
+            background: #10b981;
+        }
+
+        /* Responsive Vertical Layout */
+        @media (max-width: 900px) {
+            .steps {
+                flex-direction: column;
+            }
+
+            .step-number {
+                margin: 0 0 12px;
+            }
+
+
+
+            .step:not(:last-child)::after {
+                width: 3px;
+                height: 121px;
+                top: 60px;
+                left: 30px;
+                transform: translateX(0);
+            }
+
+            .step {
+                display: flex;
+                flex-direction: row;
+            }
+
+            .step-content {
+                width: 80%;
+                padding: 0 20px;
+                flex-direction: row;
+                justify-content: start;
+                gap: 24px;
+                height: 130px;
+                text-align: left;
+            }
+
+            .number-div {
+                width: 20%;
+            }
+
+            .track-card {
+
+                width: 100%;
+            }
+        }
+
+        .modal.show .modal-dialog {
+            top: 20%;
+            font-family: var(--jost);
+        }
     </style>
 @endpush
 
 @section('content')
-    <!-- Order Details Modal-->
-    <?php
-    $order = \App\Model\OrderDetail::where('order_id', $orderDetails->id)->get();
-    ?>
-    <div class="modal fade" id="order-details" style="z-index: 99999;">
-        <div class="modal-dialog modal-lg modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">{{ \App\CPU\translate('Order No') }} - {{ $orderDetails['id'] }}</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span
-                            aria-hidden="true">&times;</span></button>
-                </div>
-                <div class="modal-body pb-0">
-                    @php($totalTax = 0)
 
-                    @php($sub_total = 0)
-                    @php($total_tax = 0)
-                    @php($total_shipping_cost = 0)
-                    @php($total_discount_on_product = 0)
-                    @php($extra_discount = 0)
-                    @php($coupon_discount = 0)
-                    @foreach ($order as $product)
-                        @php($productDetails = App\Model\Product::where('id', $product->product_id)->first())
 
-                        <div class="d-sm-flex justify-content-between mb-4 pb-3 pb-sm-2 border-bottom">
-                            <div class="media d-block d-sm-flex text-center text-sm-left">
-                                <a class="d-inline-block mx-auto mr-sm-4"
-                                    href="{{ route('product', $productDetails->slug) }}">
-                                    <img onerror="this.src='{{ asset('assets/front-end/img/image-place-holder.png') }}'"
-                                        src="{{ \App\CPU\ProductManager::product_image_path('thumbnail') }}/{{ $productDetails['thumbnail'] }}" style="width:5rem;">
-                                </a>
-                                <div class="media-body pt-2">
-                                    <h4 class="product-title font-size-base mb-2"><a
-                                            href="{{ route('product', $productDetails->slug) }}">{{ $productDetails['name'] }}</a>
-                                    </h4>
-                                    @if ($product['variation'])
-                                        @foreach (json_decode($product['variation'], true) as $key1 => $variation)
-                                            <div class="text-muted"><span class="mr-2">{{ $key1 }}
-                                                    :</span>{{ $variation }}</div>
-                                        @endforeach
-                                    @endif
-                                    <div class="font-size-lg text-accent pt-2">
-                                        {{ \App\CPU\Helpers::currency_converter($product['price']) }}</div>
-                                </div>
-                            </div>
-                            <div class="pt-2 pl-sm-3 mx-auto mx-sm-0 text-center">
-                                <div class="text-muted mb-2">{{ \App\CPU\translate('Quantity') }}:</div>
-                                {{ $product['qty'] }}
-                            </div>
-                            <div class="pt-2 pl-sm-2 mx-auto mx-sm-0 text-center">
-                                <div class="text-muted mb-2">{{ \App\CPU\translate('Tax') }}:
-                                </div>{{ \App\CPU\Helpers::currency_converter($product['tax']) }}
-                            </div>
-                            <div class="pt-2 pl-sm-3 mx-auto mx-sm-0 text-center">
-                                <div class="text-muted mb-2">{{ \App\CPU\translate('Subtotal') }}</div>
-                                {{ \App\CPU\Helpers::currency_converter($product['price'] * $product['qty']) }}
-                            </div>
-                        </div>
-                        @php($sub_total += $product['price'] * $product['qty'])
-                        @php($total_tax += $product['tax'])
-                        @php($total_discount_on_product += $product['discount'])
-                    @endforeach
 
-                    @php($total_shipping_cost = $orderDetails['shipping_cost'])
 
-                    <?php
-                    if ($orderDetails['extra_discount_type'] == 'percent') {
-                        $extra_discount = ($sub_total / 100) * $orderDetails['extra_discount'];
-                    } else {
-                        $extra_discount = $orderDetails['extra_discount'];
-                    }
-                    if (isset($orderDetails['discount_amount'])) {
-                        $coupon_discount = $orderDetails['discount_amount'];
-                    }
-                    ?>
-                </div>
-                <!-- Footer-->
-                <div class="modal-footer flex-wrap justify-content-between font-size-md">
+    <div class="container">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb bg-transparent px-0 mb-4">
+                <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Home</a></li>
+                <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Order Track</a></li>
+                <li class="breadcrumb-item active breadcrumb-active" aria-current="page">Track Result</li>
+            </ol>
+        </nav>
 
-                    <div class="px-2 py-1">
-                        <span
-                            class="text-muted">{{ \App\CPU\translate('Subtotal') }}:&nbsp;</span>{{ \App\CPU\Helpers::currency_converter($sub_total) }}
-                        <span></span>
+        <h2 style="color: #f26d21; text-align: center; " class="mt-0">Track Result</h2>
+        <!-- Order Information Card -->
+        <div class="card track-card">
+            <div class="card-header track-card-header">Order Information</div>
+            <div class="card-body track-card-body">
+                <div class="row">
+                    <div class="col-md-6 track-info-row"><strong>Order Number:</strong> #{{ $orderDetails['id'] }}</div>
+                    <div class="col-md-6 track-info-row"><strong>Order Date:</strong>
+                        {{ \Carbon\Carbon::parse($orderDetails['created_at'])->format('d F Y : h:i A') }}
                     </div>
-                    <div class="px-2 py-1">
-                        <span
-                            class="text-muted">{{ \App\CPU\translate('Shipping') }}:&nbsp;</span>{{ \App\CPU\Helpers::currency_converter($total_shipping_cost) }}
-                        <span></span>
+                    <div class="col-md-6 track-info-row">
+                        <strong>Customer Name:</strong>
+                        @if ($orderDetails->customer)
+                            {{ $orderDetails->customer['f_name'] }}
+                        @endif
                     </div>
-                    <div class="px-2 py-1">
-                        <span class="text-muted">{{ \App\CPU\translate('Tax') }}:&nbsp;</span>
-                        {{ \App\CPU\Helpers::currency_converter($total_tax) }}
-                        <span></span>
+                    <div class="col-md-6 track-info-row"><strong>Customer Phone:</strong>
+                        @if ($orderDetails->customer)
+                            {{ $orderDetails->customer['phone'] }}
+                        @endif
                     </div>
-
-                    <div class="px-2 py-1">
-                        <span class="text-muted">{{ \App\CPU\translate('Discount') }}:&nbsp;</span>
-                        - {{ \App\CPU\Helpers::currency_converter($total_discount_on_product) }}
-                        <span></span>
+                    <div class="col-md-6 track-info-row"><strong>Product Price:</strong>
+                        {{ \App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($orderDetails->order_amount)) }}
                     </div>
-                </div>
-                <div class="modal-footer flex-wrap justify-content-between font-size-md">
-                    <div class="px-2 py-1">
-                        <span class="text-muted">{{ \App\CPU\translate('Coupon Discount') }}:&nbsp;</span>
-                        - {{ \App\CPU\Helpers::currency_converter($coupon_discount) }}
-                        <span></span>
+                    <div class="col-md-6 track-info-row"><strong>Delivery Charge:</strong>
+                        {{ \App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($orderDetails->shipping_cost)) }}
                     </div>
-                    @if ($orderDetails['order_type'] == 'POS')
-                        <div class="px-2 py-1">
-                            <span class="text-muted">{{ \App\CPU\translate('Extra Discount') }}:&nbsp;</span>
-                            - {{ \App\CPU\Helpers::currency_converter($extra_discount) }}
-                            <span></span>
-                        </div>
-                    @endif
-                    <div class="px-2 py-1">
-                        <span class="text-muted">{{ \App\CPU\translate('Total') }}:&nbsp; </span>
-                        <span class="font-size-lg">
-                            {{ \App\CPU\Helpers::currency_converter($sub_total + $total_tax + $total_shipping_cost - $orderDetails->discount - $total_discount_on_product - $coupon_discount - $extra_discount) }}
+                    <div class="col-md-6 track-info-row"><strong>Total Amount:</strong>
+                        {{ \App\CPU\BackEndHelper::set_symbol(\App\CPU\BackEndHelper::usd_to_currency($orderDetails->order_amount + $orderDetails->shipping_cost)) }}
+                    </div>
+                    <div class="col-md-6 track-info-row"><strong>Payment Method:</strong> Cash On Delivery</div>
+                    <div class="col-md-6 track-info-row"><strong>Payment Status:</strong>
+                        {{ ucfirst($orderDetails->payment_status) }}
+                    </div>
+                    <div class="col-md-6 track-info-row"><strong>Order Status:</strong> <span
+                            style="background: #130f40; color: #fff;" class="btn btn-sm  disabled">
+                            @if ($orderDetails->order_status == 'pending')
+                                Placed
+                            @else
+                                {{ ucfirst($orderDetails->order_status) }}
+                            @endif
                         </span>
                     </div>
                 </div>
             </div>
+            <div class="text-center pb-4">
+                <button class="btn btn-info d-inline-block" data-toggle="modal" data-target="#order-details">
+                    <i class="fa fa-eye" aria-hidden="true"></i> View Product
+                </button>
+            </div>
+
         </div>
+
+        <!-- Timeline -->
+        @php
+            $statusSteps = ['placed', 'confirmed', 'processing', 'shipped', 'delivered'];
+        @endphp
+
+        @php
+            $statusSteps = ['placed', 'confirmed', 'processing', 'shipped', 'delivered'];
+            // Determine current step index
+            $currentStepIndex = $orderDetails->order_status
+                ? array_search($orderDetails->order_status, $statusSteps)
+                : 0;
+        @endphp
+
+        <div class="mb-5">
+            <div class="steps mb-4 ">
+                @foreach ($statusSteps as $index => $status)
+                    <div
+                        class="step
+        @if ($index < $currentStepIndex) completed
+        @elseif($index == $currentStepIndex) active @endif">
+                        <div class="number-div">
+                            <div class="step-number">{{ $index + 1 }}</div>
+                        </div>
+                        <div class="step-content">
+                            <div>
+                                @if ($status == 'placed')
+                                    <img style="width: 100px; height: auto;"
+                                        src="{{ asset('assets/front-end/img/track-result/placed.gif') }}"
+                                        alt="Order placed">
+                                @elseif ($status == 'confirmed')
+                                    <img style="width: 100px; height: auto;"
+                                        src="{{ asset('assets/front-end/img/track-result/confirmed.gif') }}"
+                                        alt="Order placed">
+                                @elseif ($status == 'processing')
+                                    <img style="width: 50px; height: auto;"
+                                        src="{{ asset('assets/front-end/img/track-result/process.gif') }}"
+                                        alt="Order placed">
+                                @elseif ($status == 'shipped')
+                                    <img style="width: 100px; height: auto;"
+                                        src="{{ asset('assets/front-end/img/track-result/shipped.gif') }}"
+                                        alt="Order placed">
+                                @else
+                                    <img style="width: 100px; height: auto;"
+                                        src="{{ asset('assets/front-end/img/track-result/delivery.gif') }}"
+                                        alt="Order placed">
+                                @endif
+                            </div>
+                            <div>
+                                <div class="step-title">Order {{ ucfirst($status) }}</div>
+                                @if ($status == 'placed')
+                                    <span class="step-time">{{ $orderDetails->created_at->format('d-M-Y') }}</span>
+                                @elseif($status == 'processing')
+                                    <span class="step-time">In Progress</span>
+                                @endif
+                                <p class="step-description">Status: {{ ucfirst($status) }}</p>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+
+        {{-- Product info modal start --}}
+        <!-- Order Details Modal -->
+        <div class="modal fade" id="order-details" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+                <div class="modal-content">
+
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            {{ \App\CPU\translate('Order No') }} - #{{ $orderDetails['id'] }}
+                        </h5>
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span>&times;</span>
+                        </button>
+                    </div>
+
+                    <!-- Modal Body -->
+                    <div class="modal-body">
+
+                        @php
+                            $sub_total = 0;
+                            $total_tax = 0;
+                            $total_discount_on_product = 0;
+                        @endphp
+
+                        @foreach ($order as $product)
+                            @php
+                                $productDetails = App\Model\Product::find($product->product_id);
+                            @endphp
+
+                            <div class="d-flex align-items-start border-bottom pb-3 mb-3">
+
+                                <!-- Product Image -->
+                                <a style="width: 20%" href="{{ route('product', $productDetails->slug) }}" class="mr-3">
+                                    <img src="{{ \App\CPU\ProductManager::product_image_path('thumbnail') }}/{{ $productDetails->thumbnail }}"
+                                        onerror="this.src='{{ asset('assets/front-end/img/image-place-holder.png') }}'"
+                                        style="width:80px;border-radius:6px;">
+                                </a>
+
+                                <!-- Product Info -->
+                                <div style="width: 60%" class="flex-grow-1 ">
+                                    <h6 class="mb-1">
+                                        <a href="{{ route('product', $productDetails->slug) }}">
+                                            {{ $productDetails['name'] }}
+                                        </a>
+                                    </h6>
+
+                                    {{-- Variations --}}
+                                    @if ($product->variation)
+                                        @foreach (json_decode($product->variation, true) as $key => $value)
+                                            <small class="text-muted d-block">
+                                                {{ $key }} :
+                                                {{ is_array($value) ? implode(', ', $value) : $value }}
+                                            </small>
+                                        @endforeach
+                                    @endif
+
+                                    <div class="text-primary font-weight-bold mt-1">
+                                        ৳ {{ \App\CPU\Helpers::currency_converter($product->price) }}
+                                    </div>
+                                </div>
+
+                                <!-- Qty / Tax / Subtotal -->
+                                <div style="width: 20%" class="text-right">
+                                    <small class="d-block text-muted">
+                                        Quantity: {{ $product->qty }}
+                                    </small>
+                                    <small class="d-block text-muted">
+                                        Tax: {{ \App\CPU\Helpers::currency_converter($product->tax) }}
+                                    </small>
+                                    <strong>
+                                        ৳ {{ \App\CPU\Helpers::currency_converter($product->price * $product->qty) }}
+                                    </strong>
+                                </div>
+                            </div>
+
+                            @php
+                                $sub_total += $product->price * $product->qty;
+                                $total_tax += $product->tax;
+                                $total_discount_on_product += $product->discount;
+                            @endphp
+                        @endforeach
+                    </div>
+
+                    <!-- Modal Footer -->
+                    <div class="modal-footer justify-content-between">
+
+                        <div>
+                            <small class="text-muted d-block">
+                                Subtotal: ৳ {{ \App\CPU\Helpers::currency_converter($sub_total) }}
+                            </small>
+                            <small class="text-muted d-block">
+                                Shipping: ৳{{ \App\CPU\Helpers::currency_converter($orderDetails->shipping_cost) }}
+                            </small>
+                            <small class="text-muted d-block">
+                                Tax: {{ \App\CPU\Helpers::currency_converter($total_tax) }}
+                            </small>
+                            <small class="text-muted d-block">
+                                Discount: -{{ \App\CPU\Helpers::currency_converter($total_discount_on_product) }}
+                            </small>
+                        </div>
+
+                        <div class="text-right">
+                            <h5 class="mb-0">
+                                {{ \App\CPU\translate('Total') }}:
+                                <span class="text-primary">
+                                    ৳
+                                    {{ \App\CPU\Helpers::currency_converter(
+                                        $sub_total + $total_tax + $orderDetails->shipping_cost - $total_discount_on_product - $orderDetails->discount,
+                                    ) }}
+                                </span>
+                            </h5>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- Product info modal end --}}
+
+
     </div>
-    <!-- Page Title (Dark)-->
-    <div class="container">
-
-        <div class="pt-3 pb-3">
-            <h2>{{ \App\CPU\translate('My Order') }}</h2>
-        </div>
-        <div class="btn-primary">
-            <div class="container d-lg-flex justify-content-between py-2 py-lg-3">
-
-                <div class="order-lg-1 pr-lg-4 text-center text-lg-left">
-                    <h4 class="text-light mb-0">{{ \App\CPU\translate('Order ID') }} : <span
-                            class="h4 font-weight-normal text-light">{{ $orderDetails['id'] }}</span></h4>
-                </div>
-            </div>
-        </div>
-
-    </div>
-    <!-- Page Content-->
-    <div class="container mb-md-3">
-        <!-- Details-->
-        <div class="row" style="background: #e2f0ff; margin: 0; width: 100%;">
-            <div class="col-sm-4">
-                <div class="pt-2 pb-2 text-center rounded-lg">
-                    <span class="font-weight-medium text-dark mr-2">{{ \App\CPU\translate('Order Status') }}:</span><br>
-                    <span class="text-uppercase ">{{ $orderDetails['order_status'] }}</span>
-                    {{-- <span class="text-uppercase ">Courier</span> --}}
-                </div>
-            </div>
-            <div class="col-sm-4">
-                <div class="pt-2 pb-2 text-center rounded-lg">
-                    <span class="font-weight-medium text-dark mr-2">{{ \App\CPU\translate('Payment Status') }}:</span> <br>
-                    <span class="text-uppercase">{{ $orderDetails['payment_status'] }}</span>
-                </div>
-            </div>
-            <div class="col-sm-4">
-                <div class="pt-2 pb-2 text-center rounded-lg">
-                    <span class="font-weight-medium text-dark mr-2"> {{ \App\CPU\translate('Estimated Delivary Date') }}:
-                    </span> <br>
-                    <span class="text-uppercase"
-                        style="font-weight: 600; color: {{ $web_config['primary_color'] }}">{{ Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $orderDetails['updated_at'])->format('Y-m-d') }}</span>
-                </div>
-            </div>
-        </div>
-        <!-- Progress-->
-        <div class="card border-0 box-shadow-lg mt-5">
-            <div class="card-body pb-2">
-                <ul class="nav nav-tabs media-tabs nav-justified">
-                    @if ($orderDetails['order_status'] != 'returned' && $orderDetails['order_status'] != 'failed')
-
-                        <li class="nav-item">
-                            <div class="nav-link">
-                                <div class="align-items-center">
-                                    <div class="media-tab-media" style="margin: 0 auto; background: #4bcc02; color: white;">
-                                        <i class="fa fa-check"></i>
-                                    </div>
-                                    <div class="media-body" style="text-align: center;">
-                                        <div class="media-tab-subtitle text-muted font-size-xs mb-1">
-                                            {{ \App\CPU\translate('First step') }}</div>
-                                        <h6 class="media-tab-title text-nowrap mb-0">
-                                            {{ \App\CPU\translate('Order placed') }}</h6>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-
-                        <li class="nav-item ">
-                            <div class="nav-link ">
-                                <div class="align-items-center">
-                                    <div class="media-tab-media"
-                                        style="margin: 0 auto; @if (
-                                            $orderDetails['order_status'] == 'processing' ||
-                                                $orderDetails['order_status'] == 'processed' ||
-                                                $orderDetails['order_status'] == 'delivered') background: #4bcc02; color: white; @endif ">
-                                        @if (
-                                            $orderDetails['order_status'] == 'processing' ||
-                                                $orderDetails['order_status'] == 'processed' ||
-                                                $orderDetails['order_status'] == 'delivered')
-                                           <i class="fa fa-check"></i>
-                                        @endif
-                                    </div>
-                                    <div class="media-body" style="text-align: center;">
-                                        <div class="media-tab-subtitle text-muted font-size-xs mb-1">
-                                            {{ \App\CPU\translate('Second step') }}</div>
-                                        <h6 class="media-tab-title text-nowrap mb-0">
-                                            {{ \App\CPU\translate('Processing order') }}</h6>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-
-                        <li class="nav-item">
-                            <div class="nav-link  ">
-                                <div class="align-items-center">
-                                    <div class="media-tab-media"
-                                        style="margin: 0 auto; @if ($orderDetails['order_status'] == 'processed' || $orderDetails['order_status'] == 'delivered') background: #4bcc02; color: white; @endif ">
-                                        @if ($orderDetails['order_status'] == 'processed' || $orderDetails['order_status'] == 'delivered')
-                                        <i class="fa fa-check"></i>
-                                        @endif
-                                    </div>
-                                    <div class="media-body" style="text-align: center;">
-                                        <div class="media-tab-subtitle text-muted font-size-xs mb-1">
-                                            {{ \App\CPU\translate('Third step') }}</div>
-                                        <h6 class="media-tab-title text-nowrap mb-0">
-                                            {{ \App\CPU\translate('Preparing Shipment') }}</h6>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-
-                        <li class="nav-item">
-                            <div class="nav-link ">
-                                <div class="align-items-center">
-                                    <div class="media-tab-media"
-                                        style="margin: 0 auto; @if ($orderDetails['order_status'] == 'delivered') background: #4bcc02; color: white; @endif">
-                                        @if ($orderDetails['order_status'] == 'delivered')
-                                        <i class="fa fa-check"></i>
-                                        @endif
-                                    </div>
-                                    <div class="media-body" style="text-align: center;">
-                                        <div class="media-tab-subtitle text-muted font-size-xs mb-1">
-                                            {{ \App\CPU\translate('Fourth step') }}</div>
-                                        <h6 class="media-tab-title text-nowrap mb-0">
-                                            {{ \App\CPU\translate('Order Shipped') }}</h6>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                    @elseif($orderDetails['order_status'] == 'returned')
-                        <li class="nav-item">
-                            <div class="nav-link" style="text-align: center;">
-                                <h1 class="text-warning">{{ \App\CPU\translate('Product Successfully Returned') }}</h1>
-                            </div>
-                        </li>
-                    @else
-                        <li class="nav-item">
-                            <div class="nav-link" style="text-align: center;">
-                                <h1 class="text-danger">{{ \App\CPU\translate("Sorry we can't complete your order") }}
-                                </h1>
-                            </div>
-                        </li>
-                    @endif
-
-                </ul>
-            </div>
-        </div>
-        <!-- Footer-->
-        <div class="d-sm-flex flex-wrap justify-content-between align-items-center text-center pt-3">
-            <div class="custom-control custom-checkbox mt-1 mr-3">
-            </div>
-            <a class="btn btn-primary btn-sm mt-2 mb-2" href="#order-details"
-                data-toggle="modal">{{ \App\CPU\translate('View Order Details') }}</a>
-        </div>
-    </div>
-
 @endsection
-
-@push('script')
-    <script src="{{ asset('assets/front-end') }}/vendor/nouislider/distribute/nouislider.min.js"></script>
-@endpush

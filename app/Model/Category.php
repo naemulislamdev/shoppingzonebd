@@ -27,16 +27,15 @@ class Category extends Model
         return $this->morphMany('App\Model\Translation', 'translationable');
     }
 
-
     public function subCategory()
     {
-        return $this->hasMany(SubCategory::class)->orderBy('order_number','asc');
+        return $this->hasMany(SubCategory::class)->orderBy('order_number');
     }
     public function childes()
     {
-        return $this->hasMany(ChildCategory::class)->orderBy('order_number','asc');
+        return $this->hasMany(ChildCategory::class)->orderBy('order_number');
     }
-    public function countProduct()
+    public function Products()
     {
         return $this->hasMany(Product::class, 'category_id');
     }
@@ -51,7 +50,7 @@ class Category extends Model
     }
     public function scopePriority($query)
     {
-        return $query->orderBy('priority','asc');
+        return $query->orderBy('priority', 'asc');
     }
 
     protected static function boot()
@@ -59,9 +58,9 @@ class Category extends Model
         parent::boot();
         static::addGlobalScope('translate', function (Builder $builder) {
             $builder->with(['translations' => function ($query) {
-                if (strpos(url()->current(), '/api')){
+                if (strpos(url()->current(), '/api')) {
                     return $query->where('locale', App::getLocale());
-                }else{
+                } else {
                     return $query->where('locale', Helpers::default_lang());
                 }
             }]);

@@ -14,12 +14,12 @@
     @php($main_banner = \App\Model\Banner::where('banner_type', 'Main Banner')->where('published', 1)->orderBy('id', 'desc')->get())
 
     <div class="container">
-        <div class="row">
-            <div class="@if ($left_promo_offers->count() > 0) col-lg-2 @endif px-0 d-none d-lg-block ">
+        <div class="row justify-content-center">
+            <div class="@if ($left_promo_offers->count() > 0) col-2 @endif">
                 @if ($left_promo_offers->count() > 0)
                     <div class="left-promo">
                         @foreach ($left_promo_offers as $promo)
-                            <a class="text-center" href="{{ $promo['url'] }}">
+                            <a class="text-center" href="{{ $promo['url'] }} ">
                                 <img style="max-width: 100%; max-height: 350px;"
                                     src="{{ asset('storage/banner') }}/{{ $promo['photo'] }}" alt="promo image"
                                     class="img-fluid">
@@ -29,7 +29,7 @@
                 @endif
 
             </div>
-            <div class=" @if ($total > 0) col-lg-8 @else col-lg-12 @endif">
+            <div class=" px-0 @if ($total > 0) col-8 @else col-12 @endif">
                 <div id="carouselExampleIndicators" class="carousel slide position-relative container "
                     data-ride="carousel" data-interval="3000">
                     <ol class="carousel-indicators">
@@ -62,7 +62,7 @@
                     </a>
                 </div>
             </div>
-            <div class="@if ($right_promo_offers->count() > 0) col-lg-2 @endif px-0 d-none d-lg-block text-end">
+            <div class="@if ($right_promo_offers->count() > 0) col-2 @endif ">
                 @if ($right_promo_offers->count() > 0)
                     <div class="right-promo">
                         @foreach ($right_promo_offers as $promo)

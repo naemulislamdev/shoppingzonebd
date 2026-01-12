@@ -334,6 +334,7 @@
                 bottom: 80px;
                 /* adjust for toggle button */
             }
+
         }
 
         .menu-area>ul>li>a {
@@ -349,7 +350,7 @@
             margin-bottom: 0;
             justify-content: center;
             position: relative;
-            bottom: 20px !important;
+            bottom: 6px !important;
         }
 
         .slick-initialized .slick-slide {
@@ -367,9 +368,7 @@
             content: '•';
         }
 
-        .slick-dots {
-            bottom: -35px;
-        }
+
 
         .slick-dots li {
             border: none;
@@ -439,6 +438,23 @@
             object-fit: contain;
             border-radius: 12px;
         }
+
+        @media (max-width: 768px) {
+            .chat-wrapper {
+                left: auto !important;
+                /* ignore saved left */
+                right: 10px !important;
+                /* always right */
+                bottom: 80px;
+                /* adjust for toggle button */
+            }
+
+            .slick-dots {
+                bottom: 5px;
+            }
+        }
+
+        @media
     </style>
     @php
         $request = request()->route()->getName();
@@ -1377,11 +1393,18 @@
             }, function(data) {
                 updateTotalCart();
                 updateNavCart();
+
                 $('#cart-summary').empty().html(data);
+                if (data.count === 0) {
+                    window.location.href = "{{ url('/') }}";
+                }
                 toastr.info('Item has been removed from cart', {
                     CloseButton: true,
                     ProgressBar: true
                 });
+                if (data.count === 0) {
+                    window.location.href = "{{ url('/') }}";
+                }
             });
         }
 
@@ -1401,7 +1424,7 @@
             });
         }
 
-        function cartQuantityInitialize() {
+        /* function cartQuantityInitialize() {
             $('.btn-number').click(function(e) {
                 // console.log("Ok");
                 e.preventDefault();
@@ -1485,7 +1508,7 @@
                     e.preventDefault();
                 }
             });
-        }
+        } */
 
         function updateQuantity(key, element) {
             $.post('<?php echo e(route('cart.updateQuantity')); ?>', {
@@ -1755,6 +1778,31 @@ End of Tawk.to Script-->
             lazyImages.forEach(img => {
                 imageObserver.observe(img);
             });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+
+            // When any add-to-cart modal is shown
+            $('.modal').on('shown.bs.modal', function() {
+                let modal = $(this);
+                let mainImage = modal.find('.main-image');
+
+                if (!mainImage.length) return;
+
+                // Click on color image
+                modal.find('.color-label img').off('click').on('click', function() {
+
+                    let newSrc = $(this).data('image');
+                    if (!newSrc) return;
+
+                    mainImage.fadeOut(150, function() {
+                        mainImage.attr('src', newSrc).fadeIn(150);
+                    });
+
+                });
+            });
+
         });
     </script>
 

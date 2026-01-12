@@ -11,6 +11,7 @@
             display: inline-block;
             width: 120px;
         }
+
         td.cName {
             display: inline-block;
             width: 120px;
@@ -54,8 +55,9 @@
                                 <button id="clearBtn" class="btn btn-secondary ms-3">Clear</button>
                             </div>
                             <div class="col-md-2">
-                                <a href="{{ route('admin.user-info.bulk-export') }}" class="btn btn-success text-white">
-                                    Export</a>
+                                <button id="exportExcel" class="btn btn-success text-white">
+                                    Export</button>
+                                {{-- {{ route('admin.user-info.bulk-export') }} --}}
                             </div>
                         </div>
                     </div>
@@ -84,6 +86,23 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Page level custom scripts -->
+    <script>
+        $(document).on('click', '#exportExcel', function() {
+            let from = $('#from_date').val();
+            let to = $('#to_date').val();
+            console.log(from);
+            console.log(to);
+            // Build URL with query parameters
+            let url = "{{ route('admin.user-info.bulk-export') }}";
+
+            if (from && to) {
+                url += `?from=${from}&to=${to}`;
+            }
+            // Trigger download
+            window.location.href = url;
+        });
+    </script>
+
     <script>
         $(document).on('click', '.viewBtn', function() {
             let id = $(this).data('id');

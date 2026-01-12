@@ -263,11 +263,13 @@ class CartController extends Controller
             'html'   => view('layouts.front-end.partials.cart_details')->render(),
             'html2'   => view('web-views.partials._order-summary')->render(),
             'count' => session()->has('cart') ? count(session()->get('cart')) : 0,
-            'total_amount' => Session()->has('cart') ? \App\CPU\Helpers::currency_converter( \App\CPU\CartManager::cart_total(session()->get('cart'))) : 0,
+            'total_amount' => Session()->has('cart') ? \App\CPU\Helpers::currency_converter(\App\CPU\CartManager::cart_total(session()->get('cart'))) : 0,
         ]);
 
         //return view('layouts.front-end.partials.cart_details');
     }
+
+
     public function totalCartCount()
     {
         $data = session()->has('cart') ? count(session()->get('cart')) : 0;
@@ -323,7 +325,7 @@ class CartController extends Controller
             'html'   => view('layouts.front-end.partials.cart_details')->render(),
             'html2'   => view('web-views.partials._order-summary')->render(),
             'count' => session()->has('cart') ? count(session()->get('cart')) : 0,
-            'total_amount' => Session()->has('cart') ? \App\CPU\Helpers::currency_converter( \App\CPU\CartManager::cart_total(session()->get('cart'))) : 0,
+            'total_amount' => Session()->has('cart') ? \App\CPU\Helpers::currency_converter(\App\CPU\CartManager::cart_total(session()->get('cart'))) : 0,
         ]);
     }
 }

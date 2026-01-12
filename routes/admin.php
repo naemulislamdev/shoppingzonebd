@@ -675,14 +675,16 @@ Route::prefix('/admin')->as('admin.')->group(function () {
         });
 
 
-        // career routes
+        // career management routes
         Route::controller(CareerController::class)->prefix("/career")->as('career.')->group(function () {
-            Route::get('/view', 'index')->name('view');
+            // Route::get('/view', 'index')->name('view');
             Route::post('/store', 'store')->name('store');
             Route::put('/update/{id}', 'update')->name('update');
             Route::post('/delete', 'delete')->name('delete');
             Route::post('/status', 'status')->name('status');
             Route::get('bulk-export', 'bulk_export_dataJobsInfo')->name('bulk-export');
+            Route::get('/datatables', 'datatables')->name('datatables'); //JSON REQUEST
+            Route::get('/view', 'index')->name('view');
         });
         // applications routes
         Route::controller(JobApplicationController::class)->prefix("/application")->as('application.')->group(function () {
@@ -690,6 +692,8 @@ Route::prefix('/admin')->as('admin.')->group(function () {
             Route::post('/delete', 'delete')->name('delete');
             Route::post('/status', 'status')->name('status');
             Route::get('bulk-export', 'bulk_export_applications')->name('bulk-export');
+            Route::get('/datatables/{slug}', 'datatables')->name('datatables'); //JSON REQUEST
+            Route::post('/viewApplication', 'viewApplication')->name('viewApplication');
         });
 
         // Job Department

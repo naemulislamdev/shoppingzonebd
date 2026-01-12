@@ -73,8 +73,7 @@ class UserProfileController extends Controller
 
     public function account_delete($id)
     {
-        if(auth('customer')->id() == $id)
-        {
+        if (auth('customer')->id() == $id) {
             $user = User::find($id);
             auth()->guard('customer')->logout();
 
@@ -84,12 +83,12 @@ class UserProfileController extends Controller
             $user->delete();
             Toastr::info(translate('Your_account_deleted_successfully!!'));
             return redirect()->route('home');
-        }else{
+        } else {
             Toastr::warning('access_denied!!');
         }
-
     }
-    public function accountLogout(){
+    public function accountLogout()
+    {
         auth()->guard('customer')->logout();
         Toastr::info(translate('Logout _successfully!!'));
         return redirect()->route('home');
@@ -115,22 +114,21 @@ class UserProfileController extends Controller
             'city' => $request->city,
             'zip' => $request->zip,
             'phone' => $request->phone,
-            'is_billing' =>$request->is_billing,
-            'latitude' =>$request->latitude,
-            'longitude' =>$request->longitude,
+            'is_billing' => $request->is_billing,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
             'created_at' => now(),
             'updated_at' => now(),
         ];
         DB::table('shipping_addresses')->insert($address);
         return back();
     }
-    public function address_edit(Request $request,$id)
+    public function address_edit(Request $request, $id)
     {
-        $shippingAddress = ShippingAddress::where('customer_id',auth('customer')->id())->find($id);
-        if(isset($shippingAddress))
-        {
-            return view('web-views.users-profile.account-address-edit',compact('shippingAddress'));
-        }else{
+        $shippingAddress = ShippingAddress::where('customer_id', auth('customer')->id())->find($id);
+        if (isset($shippingAddress)) {
+            return view('web-views.users-profile.account-address-edit', compact('shippingAddress'));
+        } else {
             Toastr::warning(translate('access_denied'));
             return back();
         }
@@ -145,9 +143,9 @@ class UserProfileController extends Controller
             'city' => $request->city,
             'zip' => $request->zip,
             'phone' => $request->phone,
-            'is_billing' =>$request->is_billing,
-            'latitude' =>$request->latitude,
-            'longitude' =>$request->longitude,
+            'is_billing' => $request->is_billing,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
             'created_at' => now(),
             'updated_at' => now(),
         ];
@@ -173,16 +171,14 @@ class UserProfileController extends Controller
     {
         if (auth('customer')->check()) {
             return view('web-views.users-profile.account-payment');
-
         } else {
             return redirect()->route('home');
         }
-
     }
 
     public function account_oder()
     {
-        $orders = Order::where('customer_id', auth('customer')->id())->orderBy('id','DESC')->paginate(15);
+        $orders = Order::where('customer_id', auth('customer')->id())->orderBy('id', 'DESC')->paginate(15);
         return view('web-views.users-profile.account-orders', compact('orders'));
     }
 
@@ -282,7 +278,6 @@ class UserProfileController extends Controller
         } else {
             return redirect()->back();
         }
-
     }
 
     public function account_wallet_history($user_id, $user_type = 'customer')
@@ -294,7 +289,6 @@ class UserProfileController extends Controller
         } else {
             return redirect()->route('home');
         }
-
     }
 
     public function track_order()
@@ -302,38 +296,60 @@ class UserProfileController extends Controller
         return view('web-views.order-tracking-page');
     }
 
+    // public function track_order_result(Request $request)
+    // {
+
+    //     $user =  auth('customer')->user();
+    //     if(!isset($user)){
+    //         $user_id = User::where('phone',$request->phone_number)->first()->id;
+    //         $orderDetails = Order::where('id',$request['order_id'])->whereHas('details',function ($query) use($user_id){
+    //             $query->where('customer_id',$user_id);
+    //         })->first();
+
+    //     }else{
+    //         if($user->phone == $request->phone_number){
+    //             $orderDetails = Order::where('id',$request['order_id'])->whereHas('details',function ($query){
+    //                 $query->where('customer_id',auth('customer')->id());
+    //             })->first();
+    //         }
+    //         if($request->from_order_details==1)
+    //         {
+    //             $orderDetails = Order::where('id',$request['order_id'])->whereHas('details',function ($query){
+    //                 $query->where('customer_id',auth('customer')->id());
+    //             })->first();
+    //         }
+
+    //     }
+
+
+    //     if (isset($orderDetails)){
+    //         return view('web-views.order-tracking', compact('orderDetails'));
+    //     }
+
+    //     return redirect()->route('track-order.index')->with('Error', \App\CPU\translate('Invalid Order Id or Phone Number'));
+    // }
+
     public function track_order_result(Request $request)
     {
+        // phone validation
+        $userData = User::where('phone', $request->phone_number)->first();
 
-        $user =  auth('customer')->user();
-        if(!isset($user)){
-            $user_id = User::where('phone',$request->phone_number)->first()->id;
-            $orderDetails = Order::where('id',$request['order_id'])->whereHas('details',function ($query) use($user_id){
-                $query->where('customer_id',$user_id);
-            })->first();
-
-        }else{
-            if($user->phone == $request->phone_number){
-                $orderDetails = Order::where('id',$request['order_id'])->whereHas('details',function ($query){
-                    $query->where('customer_id',auth('customer')->id());
-                })->first();
-            }
-            if($request->from_order_details==1)
-            {
-                $orderDetails = Order::where('id',$request['order_id'])->whereHas('details',function ($query){
-                    $query->where('customer_id',auth('customer')->id());
-                })->first();
-            }
-
-        }
-// dd($orderDetails);
-
-        if (isset($orderDetails)){
-            return view('web-views.order-tracking', compact('orderDetails'));
+        if (!$userData) {
+            return back()->with('Error', 'Invalid phone number');
         }
 
-        return redirect()->route('track-order.index')->with('Error', \App\CPU\translate('Invalid Order Id or Phone Number'));
+        // order validation (simple & correct)
+        $orderDetails = Order::where('id', $request->order_id)
+            ->where('customer_id', $userData->id)
+            ->first();
+
+        if (!$orderDetails) {
+            return back()->with('Error', 'Invalid order number');
+        }
+
+        return view('web-views.order-tracking', compact('orderDetails'));
     }
+
 
     public function track_last_order()
     {
@@ -344,7 +360,6 @@ class UserProfileController extends Controller
         } else {
             return redirect()->route('track-order.index')->with('Error', \App\CPU\translate('Invalid Order Id or Phone Number'));
         }
-
     }
 
     public function order_cancel($id)
@@ -361,25 +376,23 @@ class UserProfileController extends Controller
         Toastr::error(translate('status_not_changable_now'));
         return back();
     }
-    public function refund_request(Request $request,$id)
+    public function refund_request(Request $request, $id)
     {
         $order_details = OrderDetail::find($id);
         $user = auth('customer')->user();
 
         $wallet_status = Helpers::get_business_settings('wallet_status');
         $loyalty_point_status = Helpers::get_business_settings('loyalty_point_status');
-        if($loyalty_point_status == 1)
-        {
+        if ($loyalty_point_status == 1) {
             $loyalty_point = CustomerManager::count_loyalty_point_for_amount($id);
 
-            if($user->loyalty_point < $loyalty_point)
-            {
+            if ($user->loyalty_point < $loyalty_point) {
                 Toastr::warning(translate('you have not sufficient loyalty point to refund this order!!'));
                 return back();
             }
         }
 
-        return view('web-views.users-profile.refund-request',compact('order_details'));
+        return view('web-views.users-profile.refund-request', compact('order_details'));
     }
     public function store_refund(Request $request)
     {
@@ -394,12 +407,10 @@ class UserProfileController extends Controller
 
 
         $loyalty_point_status = Helpers::get_business_settings('loyalty_point_status');
-        if($loyalty_point_status == 1)
-        {
+        if ($loyalty_point_status == 1) {
             $loyalty_point = CustomerManager::count_loyalty_point_for_amount($request->order_details_id);
 
-            if($user->loyalty_point < $loyalty_point)
-            {
+            if ($user->loyalty_point < $loyalty_point) {
                 Toastr::warning(translate('you have not sufficient loyalty point to refund this order!!'));
                 return back();
             }
@@ -425,7 +436,7 @@ class UserProfileController extends Controller
         $order_details->save();
 
         Toastr::success(translate('refund_requested_successful!!'));
-        return redirect()->route('account-order-details',['id'=>$order_details->order_id]);
+        return redirect()->route('account-order-details', ['id' => $order_details->order_id]);
     }
 
     public function generate_invoice($id)
@@ -441,16 +452,15 @@ class UserProfileController extends Controller
     {
         $order_details = OrderDetail::find($id);
 
-        $refund = RefundRequest::where('customer_id',auth('customer')->id())
-                                ->where('order_details_id',$order_details->id )->first();
+        $refund = RefundRequest::where('customer_id', auth('customer')->id())
+            ->where('order_details_id', $order_details->id)->first();
 
-        return view('web-views.users-profile.refund-details',compact('order_details','refund'));
+        return view('web-views.users-profile.refund-details', compact('order_details', 'refund'));
     }
 
     public function submit_review($id)
     {
         $order_details = OrderDetail::find($id);
-        return view('web-views.users-profile.submit-review',compact('order_details'));
-
+        return view('web-views.users-profile.submit-review', compact('order_details'));
     }
 }
