@@ -145,84 +145,19 @@
             transition: opacity 0.3s ease;
         }
 
-<<<<<<< HEAD
         /* .color-label {
-                                                                                                                                                                cursor: pointer;
-                                                                                                                                                                margin-right: 8px;
-                                                                                                                                                                border-radius: 6px;
-                                                                                                                                                                overflow: hidden;
-                                                                                                                                                            }
-                                                                                                                                                            .color-label img {
-                                                                                                                                                                border: 2px solid transparent;
-                                                                                                                                                                transition: border 0.3s;
-                                                                                                                                                            }
-                                                                                                                                                            input[name="color"]:checked + .color-label img {
-                                                                                                                                                                border: 2px solid #007bff;
-                                                                                                                                                            } */
-=======
-        .p-dtls-box>table>tbody>tr {
-            display: block !important;
-            justify-content: space-between;
-            border: 1px solid #ddd;
-        }
-
-        .shipping-box {
-            border: 1px solid #ddd;
-            padding: 7px;
-            border-radius: 5px;
-            display: flex;
-            justify-content: space-evenly;
-            cursor: pointer;
-            align-items: center;
-            transition: 0.3s all ease-in-out;
-        }
-
-        .shipping-box input[type="radio"]:checked+.shipping-title {
-            font-weight: bold;
-            color: #f26d21;
-        }
-
-        .v-color-box>.color-label,
-        .v-size-box>.size-label {
-            cursor: pointer;
-            border: 2px solid #ccc;
-            padding: 0 !important;
-            border-radius: 5px;
-            width: 100%;
-            text-align: center;
-            height: 100px !important;
-            position: relative;
-            font-size: 18px !important;
-            font-weight: 600 !important;
-        }
-
-        .v-color-box>input:checked+.color-label::after {
-            content: '✔';
-            color: green;
-            font-size: 22px !important;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        .v-color-box,
-        .v-size-box {
-            margin-right: 0.925rem !important;
-        }
-
-        .btn-number {
-            width: 30px;
-            height: 30px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 0 !important;
-            line-height: 30px;
-            font-size: 16px !important;
-            text-align: center;
-        }
->>>>>>> 96e4c04d190111a0fae64867b130a65e1fab1c58
+                                                                                                                                                                        cursor: pointer;
+                                                                                                                                                                        margin-right: 8px;
+                                                                                                                                                                        border-radius: 6px;
+                                                                                                                                                                        overflow: hidden;
+                                                                                                                                                                    }
+                                                                                                                                                                    .color-label img {
+                                                                                                                                                                        border: 2px solid transparent;
+                                                                                                                                                                        transition: border 0.3s;
+                                                                                                                                                                    }
+                                                                                                                                                                    input[name="color"]:checked + .color-label img {
+                                                                                                                                                                        border: 2px solid #007bff;
+                                                                                                                                                                    } */
     </style>
     <?php
     $overallRating = \App\CPU\ProductManager::get_overall_rating($product->reviews);
@@ -934,6 +869,93 @@
     </section>
 @endsection
 @push('scripts')
+    <script>
+        function cartQuantityInitialize() {
+            $('.btn-number').click(function(e) {
+                // console.log("Ok");
+                e.preventDefault();
+
+                fieldName = $(this).attr('data-field');
+                type = $(this).attr('data-type');
+                var input = $("input[name='" + fieldName + "']");
+                var currentVal = parseInt(input.val());
+
+                if (!isNaN(currentVal)) {
+                    if (type == 'minus') {
+
+                        if (currentVal > input.attr('min')) {
+                            input.val(currentVal - 1).change();
+                        }
+                        if (parseInt(input.val()) == input.attr('min')) {
+                            $(this).attr('disabled', true);
+                        }
+
+                    } else if (type == 'plus') {
+
+                        if (currentVal < input.attr('max')) {
+                            input.val(currentVal + 1).change();
+                        }
+                        if (parseInt(input.val()) == input.attr('max')) {
+                            $(this).attr('disabled', true);
+                        }
+
+                    }
+                } else {
+                    input.val(0);
+                }
+            });
+
+            $('.input-number').focusin(function() {
+                $(this).data('oldValue', $(this).val());
+            });
+
+            $('.input-number').change(function() {
+
+                minValue = parseInt($(this).attr('min'));
+                maxValue = parseInt($(this).attr('max'));
+                valueCurrent = parseInt($(this).val());
+
+                var name = $(this).attr('name');
+                if (valueCurrent >= minValue) {
+                    $(".btn-number[data-type='minus'][data-field='" + name + "']").removeAttr('disabled')
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Cart',
+                        text: 'Sorry, the minimum value was reached'
+                    });
+                    $(this).val($(this).data('oldValue'));
+                }
+                if (valueCurrent <= maxValue) {
+                    $(".btn-number[data-type='plus'][data-field='" + name + "']").removeAttr('disabled')
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Cart',
+                        text: 'Sorry, stock limit exceeded.'
+                    });
+                    $(this).val($(this).data('oldValue'));
+                }
+
+
+            });
+            $(".input-number").keydown(function(e) {
+                // Allow: backspace, delete, tab, escape, enter and .
+                if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 190]) !== -1 ||
+                    // Allow: Ctrl+A
+                    (e.keyCode == 65 && e.ctrlKey === true) ||
+                    // Allow: home, end, left, right
+                    (e.keyCode >= 35 && e.keyCode <= 39)) {
+                    // let it happen, don't do anything
+                    return;
+                }
+                // Ensure that it is a number and stop the keypress
+                if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                    e.preventDefault();
+                }
+            });
+        }
+    </script>
     <script>
         /* 2️⃣ Product Detail View (Single Product Page) */
         dataLayer.push({
